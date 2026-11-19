@@ -1,10 +1,13 @@
 # Persönliche Daten: nie ins Repository
 seed.json
 **/seed.json
+src/seed.js
 uploads/
-alt/
+/alt/
 fotos/
 *backup*.json
+/chris-os.html
+/haltung.html
 
 # Builds: nur der öffentliche Web-Build gehört hinein
 dist/*
@@ -12,6 +15,9 @@ dist/*
 dev/figur-vorschau/dist/
 dev/figur-vorschau/shots/
 pwa/site-test/
+tests/*.png
+tests/*.html
+tests/backup.json
 
 # Werkzeuge und System
 __pycache__/

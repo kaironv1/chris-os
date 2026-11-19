@@ -1,0 +1,6009 @@
+{
+ "version": 4,
+ "profile": {
+  "name": "Alex",
+  "birth": "1990-05-15",
+  "heightCm": 180
+ },
+ "settings": {
+  "theme": "auto",
+  "home": {
+   "name": "Musterstadt",
+   "lat": 50.21,
+   "lon": 8.6
+  },
+  "office": {
+   "name": "Beispieldorf",
+   "lat": 50.17,
+   "lon": 9.4
+  },
+  "week": {
+   "0": "frei",
+   "1": "ho",
+   "2": "buero",
+   "3": "buero",
+   "4": "buero",
+   "5": "ho",
+   "6": "frei"
+  },
+  "coldSensitive": true,
+  "winterBelow": 6,
+  "coatBelow": 15,
+  "proteinGoal": 130,
+  "goals": {
+   "gym": 2,
+   "run": 1,
+   "routine": 3
+  },
+  "sound": true
+ },
+ "wardrobe": {
+  "items": [
+   {
+    "no": 1,
+    "nos": [
+     1
+    ],
+    "cat": "Kragenshirt",
+    "brand": "Morgenrot",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Slim",
+    "details": "Haifischkragen mit gleichfarbigen Knöpfen",
+    "colorKey": "braungrau",
+    "colorRaw": "Braungrau",
+    "pattern": "uni",
+    "name": "Kragenshirt",
+    "role": "polo",
+    "group": "Oberteile",
+    "hex": "#7A6E62",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Braungrau",
+    "L": 47,
+    "f": 3,
+    "w": 1.6,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Kragenshirt braungrau",
+    "id": "k1",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 2,
+    "nos": [
+     2,
+     16
+    ],
+    "cat": "T-Shirt",
+    "brand": "Morgenrot",
+    "qty": 2,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt schwarz",
+    "id": "k2",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 3,
+    "nos": [
+     3
+    ],
+    "cat": "T-Shirt",
+    "brand": "Feldweg",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "weinrot",
+    "colorRaw": "Weinrot",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#6E2430",
+    "fam": "accent",
+    "nl": false,
+    "colorName": "Weinrot",
+    "L": 26,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt weinrot",
+    "id": "k3",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 4,
+    "nos": [
+     4
+    ],
+    "cat": "T-Shirt",
+    "brand": "Holzwerk",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "dunkelgrün",
+    "colorRaw": "Dunkelgrün",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#2F4A3A",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Dunkelgrün",
+    "L": 29,
+    "f": 2,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt dunkelgrün",
+    "id": "k4",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 5,
+    "nos": [
+     5
+    ],
+    "cat": "T-Shirt",
+    "brand": "Leinenhof",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "leicht oversized",
+    "details": "Rundhals",
+    "colorKey": "olivgrün",
+    "colorRaw": "Olivgrün",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 1.8,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt olivgrün",
+    "id": "k5",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 6,
+    "nos": [
+     6
+    ],
+    "cat": "T-Shirt",
+    "brand": "Nordwerk",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "hellblau",
+    "colorRaw": "Hellblau",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#A9C4DE",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Hellblau",
+    "L": 78,
+    "f": 2,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt hellblau",
+    "id": "k6",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 7,
+    "nos": [
+     7,
+     13,
+     22
+    ],
+    "cat": "T-Shirt",
+    "brand": "Morgenrot",
+    "qty": 3,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "weiß",
+    "colorRaw": "Weiß",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt weiß",
+    "id": "k7",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 8,
+    "nos": [
+     8
+    ],
+    "cat": "T-Shirt",
+    "brand": "Leinenhof",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Oversized",
+    "details": "Rundhals",
+    "colorKey": "grau verwaschen",
+    "colorRaw": "Grau verwaschen",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#959894",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau verwaschen",
+    "L": 62,
+    "f": 1.8,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt grau verwaschen",
+    "id": "k8",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 9,
+    "nos": [
+     9
+    ],
+    "cat": "T-Shirt",
+    "brand": "Kupferstich",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt schwarz",
+    "id": "k9",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 10,
+    "nos": [
+     10
+    ],
+    "cat": "T-Shirt",
+    "brand": "Hanseatik",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "weinrot",
+    "colorRaw": "Weinrot",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#6E2430",
+    "fam": "accent",
+    "nl": false,
+    "colorName": "Weinrot",
+    "L": 26,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt weinrot",
+    "id": "k10",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 11,
+    "nos": [
+     11
+    ],
+    "cat": "T-Shirt",
+    "brand": "Holzwerk",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "Eingestricktes X in der Größe einer Handfläche unter dem Kragen",
+    "texture": "grob",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "olivgrün",
+    "colorRaw": "Olivgrün",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 2,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt olivgrün",
+    "id": "k11",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 12,
+    "nos": [
+     12
+    ],
+    "cat": "T-Shirt",
+    "brand": "Holzwerk",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "leicht oversized",
+    "details": "Rundhals",
+    "colorKey": "hellbeige",
+    "colorRaw": "Hellbeige",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#E4D8C3",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Hellbeige",
+    "L": 87,
+    "f": 1.8,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt hellbeige",
+    "id": "k12",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 14,
+    "nos": [
+     14
+    ],
+    "cat": "T-Shirt",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "dick",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "weiß",
+    "colorRaw": "Weiß",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 2,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt weiß",
+    "id": "k14",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 15,
+    "nos": [
+     15
+    ],
+    "cat": "T-Shirt",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "dick",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "hellgrün",
+    "colorRaw": "Hellgrün",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#A9C59A",
+    "fam": "accent",
+    "nl": false,
+    "colorName": "Hellgrün",
+    "L": 76,
+    "f": 2,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt hellgrün",
+    "id": "k15",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 17,
+    "nos": [
+     17
+    ],
+    "cat": "T-Shirt",
+    "brand": "Leinenhof",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "leicht oversized",
+    "details": "Rundhals",
+    "colorKey": "weiß",
+    "colorRaw": "Weiß",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 1.8,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt weiß",
+    "id": "k17",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 18,
+    "nos": [
+     18
+    ],
+    "cat": "T-Shirt",
+    "brand": "Atelier Süd",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "Kleiner Druck auf Brusthöhe eines Siebträgers",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Rundhals",
+    "colorKey": "dunkelblau",
+    "colorRaw": "Dunkelblau",
+    "pattern": "uni",
+    "print": true,
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#233150",
+    "fam": "blue",
+    "nl": true,
+    "colorName": "Dunkelblau",
+    "L": 21,
+    "f": 2,
+    "w": 1,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt dunkelblau",
+    "id": "k18",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 19,
+    "nos": [
+     19
+    ],
+    "cat": "T-Shirt",
+    "brand": "Kontor Sieben",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Oversized",
+    "details": "Rundhals",
+    "colorKey": "dunkelgrau",
+    "colorRaw": "Dunkelgrau",
+    "pattern": "uni",
+    "name": "T-Shirt",
+    "role": "tee",
+    "group": "Oberteile",
+    "hex": "#4B4F55",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Dunkelgrau",
+    "L": 33,
+    "f": 1.8,
+    "w": 1.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "T-Shirt dunkelgrau",
+    "id": "k19",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 20,
+    "nos": [
+     20
+    ],
+    "cat": "Business-Hemd",
+    "brand": "Westkai",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Beige Knöpfe, Haifischkragen",
+    "colorKey": "olivgrün",
+    "colorRaw": "Olivgrün",
+    "pattern": "uni",
+    "name": "Business-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 4,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Hemd olivgrün",
+    "id": "k20",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 21,
+    "nos": [
+     21
+    ],
+    "cat": "Hemd",
+    "brand": "Ostwind",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "Denim-Optik",
+    "fit": "Regular",
+    "details": "Haifischkragen",
+    "colorKey": "jeansblau",
+    "colorRaw": "Jeansblau",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#4F6F98",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Jeansblau",
+    "L": 46,
+    "f": 2.7,
+    "w": 1.4,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Jeanshemd jeansblau",
+    "id": "k21",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 23,
+    "nos": [
+     23
+    ],
+    "cat": "Hemd",
+    "brand": "Blauwal",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "Cord",
+    "fit": "Regular",
+    "details": "Haifischkragen",
+    "colorKey": "braun",
+    "colorRaw": "Braun",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#6A4A34",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Braun",
+    "L": 34,
+    "f": 2.8,
+    "w": 2.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Cordhemd braun",
+    "id": "k23",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 24,
+    "nos": [
+     24
+    ],
+    "cat": "Hemd",
+    "brand": "Morgenrot",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Haifischkragen",
+    "colorKey": "dunkelblau",
+    "colorRaw": "Dunkelblau",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#233150",
+    "fam": "blue",
+    "nl": true,
+    "colorName": "Dunkelblau",
+    "L": 21,
+    "f": 3,
+    "w": 1.4,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd dunkelblau",
+    "id": "k24",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 25,
+    "nos": [
+     25
+    ],
+    "cat": "Hemd",
+    "brand": "Kupferstich",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "Cord",
+    "fit": "Regular",
+    "details": "Haifischkragen",
+    "colorKey": "olivgrün",
+    "colorRaw": "Olivgrün",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 2.8,
+    "w": 2.2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Cordhemd olivgrün",
+    "id": "k25",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 26,
+    "nos": [
+     26
+    ],
+    "cat": "Hemd",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Relaxed",
+    "details": "Haifischkragen",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 2.7,
+    "w": 1.7,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd schwarz",
+    "id": "k26",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 27,
+    "nos": [
+     27
+    ],
+    "cat": "Hemd",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Relaxed",
+    "details": "Haifischkragen",
+    "colorKey": "weiß",
+    "colorRaw": "Weiß",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 2.7,
+    "w": 1.7,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd weiß",
+    "id": "k27",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 28,
+    "nos": [
+     28
+    ],
+    "cat": "Hemd",
+    "brand": "Linea Vera",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "dick",
+    "fit": "Relaxed",
+    "details": "Haifischkragen",
+    "colorKey": "schwarz-weiß",
+    "colorRaw": "Schwarz-weiß kariert",
+    "pattern": "kariert",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#2B2C2F",
+    "hex2": "#E6E6E2",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz-Weiß",
+    "L": 18,
+    "f": 2.2,
+    "w": 2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Karohemd schwarz-weiß",
+    "id": "k28",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 29,
+    "nos": [
+     29
+    ],
+    "cat": "Hemd",
+    "brand": "Linea Vera",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "fit": "Relaxed",
+    "details": "Haifischkragen",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 2.7,
+    "w": 1.7,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd schwarz",
+    "id": "k29",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 30,
+    "nos": [
+     30
+    ],
+    "cat": "Business-Hemd",
+    "brand": "Westkai",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "fit": "Regular",
+    "details": "Beige Knöpfe, Haifischkragen",
+    "colorKey": "grau",
+    "colorRaw": "Grau",
+    "pattern": "uni",
+    "name": "Business-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 4,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Hemd grau",
+    "id": "k30",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 31,
+    "nos": [
+     31
+    ],
+    "cat": "Overshirt",
+    "brand": "Holzwerk",
+    "qty": 1,
+    "material": [
+     "Polyester",
+     "Viskose"
+    ],
+    "notes": "",
+    "texture": "dick",
+    "details": "Haifischkragen, Gleichfarbige Knöpfe",
+    "colorKey": "beige",
+    "colorRaw": "Beige",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Overshirt",
+    "role": "overshirt",
+    "group": "Oberteile",
+    "hex": "#CDBA98",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Beige",
+    "L": 76,
+    "f": 2.8,
+    "w": 2.4,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Overshirt beige",
+    "id": "k31",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 32,
+    "nos": [
+     32
+    ],
+    "cat": "Hemd",
+    "brand": "Westkai",
+    "qty": 1,
+    "material": [],
+    "notes": "",
+    "texture": "sehr dick",
+    "fit": "Regular",
+    "details": "Haifischkragen, Schwarze knöpfe",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 3,
+    "w": 2.6,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Hemd schwarz",
+    "id": "k32",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 33,
+    "nos": [
+     33
+    ],
+    "cat": "Hemd",
+    "brand": "",
+    "qty": 1,
+    "material": [
+     "Leinen"
+    ],
+    "notes": "",
+    "fit": "Regular",
+    "details": "Haifischkragen",
+    "colorKey": "beige",
+    "colorRaw": "Beige",
+    "pattern": "uni",
+    "texture": "",
+    "name": "Leinenhemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#CDBA98",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Beige",
+    "L": 76,
+    "f": 2.8,
+    "w": 0.9,
+    "seasons": [
+     "Frühling",
+     "Sommer"
+    ],
+    "unknownColor": false,
+    "label": "Leinenhemd beige",
+    "id": "k33",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 34,
+    "nos": [
+     34
+    ],
+    "cat": "Business-Hemd",
+    "brand": "Wellenreiter",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "details": "Haifischkragen",
+    "colorKey": "schwarz-grau",
+    "colorRaw": "Schwarzgrau gepunktet",
+    "pattern": "gepunktet",
+    "fit": "",
+    "texture": "",
+    "name": "Business-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#2E2F33",
+    "hex2": "#9A9CA1",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz-Grau",
+    "L": 19,
+    "f": 3.6,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Hemd schwarz-grau",
+    "id": "k34",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 35,
+    "nos": [
+     35
+    ],
+    "cat": "Business-Hemd",
+    "brand": "Tannenhaus",
+    "qty": 14,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "Anzahl 14 (bitte prüfen)",
+    "texture": "fein",
+    "details": "Haifischkragen",
+    "colorKey": "weiß",
+    "colorRaw": "Weiß",
+    "pattern": "uni",
+    "fit": "",
+    "name": "KKlassische Business-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 4,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Hemd weiß",
+    "id": "k35",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 36,
+    "nos": [
+     36
+    ],
+    "cat": "Pullover",
+    "brand": "Stadtgrün",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "details": "Rundhals",
+    "colorKey": "schwarz",
+    "colorRaw": "Schwarz",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Pullover",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 2.8,
+    "w": 2.8,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Pullover schwarz",
+    "id": "k36",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 37,
+    "nos": [
+     37
+    ],
+    "cat": "Pullover",
+    "brand": "Stadtgrün",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "details": "Rundhals",
+    "colorKey": "hellbraun",
+    "colorRaw": "Hellbraun",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Pullover",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#A5805A",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Hellbraun",
+    "L": 56,
+    "f": 2.8,
+    "w": 2.8,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Pullover hellbraun",
+    "id": "k37",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 38,
+    "nos": [
+     38
+    ],
+    "cat": "Pullover",
+    "brand": "Morgenrot",
+    "qty": 1,
+    "material": [
+     "Elastan",
+     "Polyamid"
+    ],
+    "notes": "",
+    "texture": "wollig",
+    "details": "Rundhals",
+    "colorKey": "hellgrün",
+    "colorRaw": "Hellgrün",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Pulli",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#A9C59A",
+    "fam": "accent",
+    "nl": false,
+    "colorName": "Hellgrün",
+    "L": 76,
+    "f": 3,
+    "w": 2.6,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Pullover hellgrün",
+    "id": "k38",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 39,
+    "nos": [
+     39
+    ],
+    "cat": "Pullover",
+    "brand": "Linea Vera",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "details": "Rundhals",
+    "colorKey": "dunkleres blau",
+    "colorRaw": "Dunkleres blau",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Pulli",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#2D4270",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Dunkelblau",
+    "L": 28,
+    "f": 2.8,
+    "w": 2.8,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Pullover dunkelblau",
+    "id": "k39",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 40,
+    "nos": [
+     40
+    ],
+    "cat": "Pullover",
+    "brand": "Kupferstich",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "details": "Rundhals",
+    "colorKey": "olivgrün",
+    "colorRaw": "Olivgrün",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Pulli",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 3.2,
+    "w": 2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Pullover olivgrün",
+    "id": "k40",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 41,
+    "nos": [
+     41
+    ],
+    "cat": "Pullover",
+    "brand": "Morgenrot",
+    "qty": 1,
+    "material": [
+     "Baumwolle",
+     "Elastan"
+    ],
+    "notes": "",
+    "texture": "gerippt",
+    "details": "Rundhals",
+    "colorKey": "schwarz-weiß",
+    "colorRaw": "Schwarzweiß",
+    "pattern": "uni",
+    "fit": "",
+    "name": "Strickpulli",
+    "role": "knit",
+    "group": "Strick",
+    "hex": "#2B2C2F",
+    "hex2": "#E6E6E2",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz-Weiß",
+    "L": 18,
+    "f": 3.2,
+    "w": 2.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Pullover schwarz-weiß",
+    "id": "k41",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 42,
+    "nos": [
+     42
+    ],
+    "cat": "Jeans",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [],
+    "notes": "",
+    "fit": "Tapered",
+    "colorKey": "jeansblau",
+    "colorRaw": "Jeansblau",
+    "pattern": "uni",
+    "details": "",
+    "texture": "",
+    "name": "Jeans",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#4F6F98",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Jeansblau",
+    "L": 46,
+    "f": 2.2,
+    "w": 1.6,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Jeans jeansblau",
+    "id": "k42",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 43,
+    "nos": [
+     43
+    ],
+    "cat": "Jeans",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [],
+    "notes": "",
+    "fit": "Tapered",
+    "colorKey": "angehelltes schwarz",
+    "colorRaw": "Angehelltes schwarz",
+    "pattern": "uni",
+    "details": "",
+    "texture": "",
+    "name": "Jeans",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#3B3C40",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz verwaschen",
+    "L": 25,
+    "f": 2.5,
+    "w": 1.6,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Jeans schwarz verwaschen",
+    "id": "k43",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 44,
+    "nos": [
+     44
+    ],
+    "cat": "Stoffhose",
+    "brand": "Feldweg",
+    "qty": 1,
+    "material": [
+     "Polyester",
+     "Viskose",
+     "Elastan"
+    ],
+    "notes": "",
+    "colorKey": "hellgrau",
+    "colorRaw": "Hellgrau",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#B9BCC0",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Hellgrau",
+    "L": 76,
+    "f": 3.2,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose hellgrau",
+    "id": "k44",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 45,
+    "nos": [
+     45
+    ],
+    "cat": "Stoffhose",
+    "brand": "Silberfuchs",
+    "qty": 1,
+    "material": [
+     "Polyester"
+    ],
+    "notes": "",
+    "fit": "Slim",
+    "colorKey": "dunkleres grau",
+    "colorRaw": "Dunkleres grau",
+    "pattern": "uni",
+    "details": "",
+    "texture": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#55595F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Dunkelgrau",
+    "L": 38,
+    "f": 3.2,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose dunkelgrau",
+    "id": "k45",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 46,
+    "nos": [
+     46
+    ],
+    "cat": "Stoffhose",
+    "brand": "Grauton",
+    "qty": 1,
+    "material": [
+     "Polyester",
+     "Wolle"
+    ],
+    "notes": "",
+    "texture": "sehr dick",
+    "colorKey": "sehr dunkles blau",
+    "colorRaw": "Sehr dunkles blau",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#1C2438",
+    "fam": "blue",
+    "nl": true,
+    "colorName": "Nachtblau",
+    "L": 14,
+    "f": 3.9,
+    "w": 2.2,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose nachtblau",
+    "id": "k46",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 47,
+    "nos": [
+     47
+    ],
+    "cat": "Stoffhose",
+    "brand": "Silberfuchs",
+    "qty": 1,
+    "material": [
+     "Baumwolle"
+    ],
+    "notes": "",
+    "colorKey": "schwarz-grau",
+    "colorRaw": "Schwarz grau gepunktet",
+    "pattern": "gepunktet",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#2E2F33",
+    "hex2": "#9A9CA1",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz-Grau",
+    "L": 19,
+    "f": 3,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose schwarz-grau",
+    "id": "k47",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 48,
+    "nos": [
+     48
+    ],
+    "cat": "Stoffhose",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle",
+     "Viskose"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "colorKey": "braun",
+    "colorRaw": "Braun",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#6A4A34",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Braun",
+    "L": 34,
+    "f": 2.6,
+    "w": 1.8,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose braun",
+    "id": "k48",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 49,
+    "nos": [
+     49
+    ],
+    "cat": "Stoffhose",
+    "brand": "Kiesel und Co",
+    "qty": 1,
+    "material": [
+     "Baumwolle",
+     "Viskose"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "colorKey": "grau",
+    "colorRaw": "Grau",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 2.6,
+    "w": 1.8,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose grau",
+    "id": "k49",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 50,
+    "nos": [
+     50
+    ],
+    "cat": "Stoffhose",
+    "brand": "Holzwerk",
+    "qty": 1,
+    "material": [
+     "Polyester",
+     "Viskose"
+    ],
+    "notes": "",
+    "colorKey": "beige",
+    "colorRaw": "Beige",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#CDBA98",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Beige",
+    "L": 76,
+    "f": 3.2,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose beige",
+    "id": "k50",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 51,
+    "nos": [
+     51
+    ],
+    "cat": "Stoffhose",
+    "brand": "Fjordline",
+    "qty": 1,
+    "material": [
+     "Techno-Wool"
+    ],
+    "notes": "",
+    "details": "Bügelfalte",
+    "colorKey": "grau",
+    "colorRaw": "Grau",
+    "pattern": "uni",
+    "fit": "",
+    "texture": "",
+    "name": "Stoffhose",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 3.9,
+    "w": 1.8,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Stoffhose grau",
+    "id": "k51",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 52,
+    "nos": [
+     52
+    ],
+    "cat": "Hemd",
+    "brand": "Morgenrot",
+    "qty": 1,
+    "material": [
+     "Leinen",
+     "Polyester"
+    ],
+    "notes": "",
+    "texture": "fein",
+    "colorKey": "khaki",
+    "colorRaw": "Khaki",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "name": "Casual-Hemd",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#9B8E66",
+    "fam": "earth",
+    "nl": true,
+    "colorName": "Khaki",
+    "L": 59,
+    "f": 2.8,
+    "w": 0.9,
+    "seasons": [
+     "Frühling",
+     "Sommer"
+    ],
+    "unknownColor": false,
+    "label": "Leinenhemd khaki",
+    "id": "k52",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "no": 53,
+    "nos": [
+     53
+    ],
+    "cat": "Stoffhose",
+    "brand": "Grauton",
+    "qty": 1,
+    "material": [
+     "Leinen"
+    ],
+    "notes": "",
+    "texture": "grob",
+    "colorKey": "hellblau",
+    "colorRaw": "Hellblau",
+    "pattern": "uni",
+    "details": "",
+    "fit": "",
+    "name": "Leinenhosen",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#A9C4DE",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Hellblau",
+    "L": 78,
+    "f": 2.6,
+    "w": 0.7,
+    "seasons": [
+     "Frühling",
+     "Sommer"
+    ],
+    "unknownColor": false,
+    "label": "Leinenhose hellblau",
+    "id": "k53",
+    "status": "aktiv",
+    "source": "liste"
+   },
+   {
+    "material": [],
+    "notes": "Nr. 55 kommt in deiner Outfit-Liste vor („Hellblaues Hemd“), fehlt aber in der Kleiderliste.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "k55",
+    "nos": [
+     55
+    ],
+    "no": 55,
+    "cat": "Hemd",
+    "name": "Hemd",
+    "colorKey": "hellblau",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#A9C4DE",
+    "fam": "blue",
+    "nl": false,
+    "colorName": "Hellblau",
+    "L": 78,
+    "f": 3,
+    "w": 1.4,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd hellblau"
+   },
+   {
+    "material": [],
+    "notes": "Nr. 56 kommt in deiner Outfit-Liste vor („Graues Hemd“), fehlt aber in der Kleiderliste.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "k56",
+    "nos": [
+     56
+    ],
+    "no": 56,
+    "cat": "Hemd",
+    "name": "Hemd",
+    "colorKey": "grau",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 3,
+    "w": 1.4,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd grau"
+   },
+   {
+    "material": [],
+    "notes": "Nr. 57 kommt in deiner Outfit-Liste vor („Graues Hemd“), fehlt aber in der Kleiderliste.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "k57",
+    "nos": [
+     57
+    ],
+    "no": 57,
+    "cat": "Hemd",
+    "name": "Hemd",
+    "colorKey": "grau",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shirt",
+    "group": "Oberteile",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 3,
+    "w": 1.4,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Hemd grau"
+   },
+   {
+    "material": [
+     "Leder"
+    ],
+    "notes": "Aus deiner Outfit-Liste übernommen – Marke und Modell bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "weisse-sneaker",
+    "nos": [],
+    "cat": "Sneaker",
+    "name": "Sneaker",
+    "colorKey": "weiß",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shoes",
+    "group": "Schuhe",
+    "hex": "#F3F2EE",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Weiß",
+    "L": 95,
+    "f": 2.6,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Sneaker weiß"
+   },
+   {
+    "material": [
+     "Leder"
+    ],
+    "notes": "Aus deiner Outfit-Liste übernommen – Marke und Modell bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "braune-loafer",
+    "nos": [],
+    "cat": "Loafer",
+    "name": "Loafer",
+    "colorKey": "braun",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shoes",
+    "group": "Schuhe",
+    "hex": "#6A4A34",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Braun",
+    "L": 34,
+    "f": 3.3,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Loafer braun"
+   },
+   {
+    "material": [
+     "Leder"
+    ],
+    "notes": "Aus deiner Outfit-Liste übernommen – Marke und Modell bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "schwarze-loafer",
+    "nos": [],
+    "cat": "Loafer",
+    "name": "Loafer",
+    "colorKey": "schwarz",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shoes",
+    "group": "Schuhe",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 3.3,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Loafer schwarz"
+   },
+   {
+    "material": [
+     "Leder"
+    ],
+    "notes": "Aus deiner Outfit-Liste übernommen – Marke und Modell bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "braune-schuhe",
+    "nos": [],
+    "cat": "Business-Schuhe",
+    "name": "Business-Schuhe",
+    "colorKey": "braun",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shoes",
+    "group": "Schuhe",
+    "hex": "#6A4A34",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Braun",
+    "L": 34,
+    "f": 4,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Schuhe braun"
+   },
+   {
+    "material": [
+     "Leder"
+    ],
+    "notes": "Aus deiner Outfit-Liste übernommen – Marke und Modell bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "schwarze-schuhe",
+    "nos": [],
+    "cat": "Business-Schuhe",
+    "name": "Business-Schuhe",
+    "colorKey": "schwarz",
+    "incomplete": true,
+    "source": "outfitliste",
+    "role": "shoes",
+    "group": "Schuhe",
+    "hex": "#1F1F21",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Schwarz",
+    "L": 12,
+    "f": 4,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false,
+    "label": "Business-Schuhe schwarz"
+   },
+   {
+    "material": [],
+    "notes": "Hast du im Fragebogen erwähnt – Farbe und Material bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "mantel",
+    "nos": [],
+    "cat": "Mantel",
+    "name": "Mantel",
+    "colorKey": "unbekannt",
+    "incomplete": true,
+    "source": "angabe",
+    "role": "coat",
+    "group": "Jacken",
+    "hex": "#8C877F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Farbe offen",
+    "L": 57,
+    "f": 3.8,
+    "w": 4,
+    "seasons": [
+     "Herbst",
+     "Winter"
+    ],
+    "unknownColor": true,
+    "label": "Mantel"
+   },
+   {
+    "material": [],
+    "notes": "Hast du im Fragebogen erwähnt – Farbe und Material bitte ergänzen.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "winterjacke",
+    "nos": [],
+    "cat": "Winterjacke",
+    "name": "Winterjacke",
+    "colorKey": "unbekannt",
+    "incomplete": true,
+    "source": "angabe",
+    "role": "winter",
+    "group": "Jacken",
+    "hex": "#8C877F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Farbe offen",
+    "L": 57,
+    "f": 2.5,
+    "w": 6,
+    "seasons": [
+     "Herbst",
+     "Winter"
+    ],
+    "unknownColor": true,
+    "label": "Winterjacke"
+   },
+   {
+    "material": [],
+    "notes": "Du trägst privat oft Kappen – lege jede Kappe gern einzeln an.",
+    "details": "",
+    "fit": "",
+    "texture": "",
+    "pattern": "uni",
+    "qty": 1,
+    "status": "aktiv",
+    "brand": "",
+    "id": "kappe",
+    "nos": [],
+    "cat": "Kappe",
+    "name": "Kappe",
+    "colorKey": "unbekannt",
+    "incomplete": true,
+    "source": "angabe",
+    "role": "cap",
+    "group": "Accessoires",
+    "hex": "#8C877F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Farbe offen",
+    "L": 57,
+    "f": 1.5,
+    "w": 0,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": true,
+    "label": "Kappe"
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-navy-sakko",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [],
+    "texture": "",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": false,
+    "cat": "Sakko",
+    "colorKey": "navy",
+    "label": "Sakko navy",
+    "role": "blazer",
+    "group": "Jacken",
+    "hex": "#1F2A44",
+    "fam": "blue",
+    "nl": true,
+    "colorName": "Navy",
+    "L": 17,
+    "f": 4.2,
+    "w": 2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-olivgruene-stoffhose",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [],
+    "texture": "",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": false,
+    "cat": "Stoffhose",
+    "colorKey": "olivgrün",
+    "label": "Stoffhose olivgrün",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#6B6B3E",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Olivgrün",
+    "L": 44,
+    "f": 3.2,
+    "w": 1.3,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-bomberjacke",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [],
+    "texture": "",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": true,
+    "cat": "Jacke",
+    "colorKey": "unbekannt",
+    "label": "Bomberjacke",
+    "role": "jacket",
+    "group": "Jacken",
+    "hex": "#8C877F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Farbe offen",
+    "L": 57,
+    "f": 2.5,
+    "w": 2.5,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": true
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-feinstrick-cardigan",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [],
+    "texture": "fein",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": true,
+    "cat": "Cardigan",
+    "colorKey": "unbekannt",
+    "label": "Feinstrick-Cardigan",
+    "role": "cardigan",
+    "group": "Strick",
+    "hex": "#8C877F",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Farbe offen",
+    "L": 57,
+    "f": 3.2,
+    "w": 2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": true
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-graues-sakko",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [],
+    "texture": "",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": false,
+    "cat": "Sakko",
+    "colorKey": "grau",
+    "label": "Sakko grau",
+    "role": "blazer",
+    "group": "Jacken",
+    "hex": "#8D9096",
+    "fam": "neutral",
+    "nl": true,
+    "colorName": "Grau",
+    "L": 60,
+    "f": 4.2,
+    "w": 2,
+    "seasons": [
+     "ganzjährig"
+    ],
+    "unknownColor": false
+   },
+   {
+    "pattern": "uni",
+    "fit": "",
+    "details": "",
+    "qty": 1,
+    "brand": "",
+    "id": "w-dunkelbraune-cordhose",
+    "nos": [],
+    "status": "wunsch",
+    "source": "outfitliste",
+    "material": [
+     "Baumwolle"
+    ],
+    "texture": "Cord",
+    "notes": "Aus deiner Outfit-Liste („Neu“).",
+    "incomplete": false,
+    "cat": "Stoffhose",
+    "colorKey": "dunkelbraun",
+    "label": "Cordhose dunkelbraun",
+    "role": "bottom",
+    "group": "Hosen",
+    "hex": "#4A3426",
+    "fam": "earth",
+    "nl": false,
+    "colorName": "Dunkelbraun",
+    "L": 24,
+    "f": 3.2,
+    "w": 2.2,
+    "seasons": [
+     "Herbst",
+     "Winter",
+     "Frühling"
+    ],
+    "unknownColor": false
+   }
+  ],
+  "outfits": [
+   {
+    "id": "L1",
+    "no": 1,
+    "name": "Klassiker fürs Wochenende",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "w-navy-sakko"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-navy-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(7) Weißes T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "Neues Navy-Sakko",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L2",
+    "no": 2,
+    "name": "Minimalistisch & Modern",
+    "place": "Büro",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k26"
+    ],
+    "bottom": "k51",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(2) Schwarzes T-Shirt",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "(26) Schwarzes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L3",
+    "no": 3,
+    "name": "Erdig & Strukturiert",
+    "place": "Privat",
+    "base": [
+     "k5"
+    ],
+    "layer": [
+     "k23"
+    ],
+    "bottom": "k50",
+    "shoes": "braune-loafer",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(5) Olivgrünes T-Shirt",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "(23) Braunes Cordhemd (offen)",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L4",
+    "no": 4,
+    "name": "Sommerlich & Leicht",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "k53",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(13) Weißes T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L5",
+    "no": 5,
+    "name": "Monochrome Grautöne",
+    "place": "Privat",
+    "base": [
+     "k19"
+    ],
+    "layer": [
+     "k56"
+    ],
+    "bottom": "k44",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(19) Dunkelgraues T-Shirt",
+     "bottom": "(44) Hellgraue Stoffhose",
+     "layer": "(56) Graues Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L6",
+    "no": 6,
+    "name": "Moderner Preppy-Look",
+    "place": "Büro",
+    "base": [
+     "k55"
+    ],
+    "layer": [
+     "k39"
+    ],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(55) Hellblaues Hemd (geschl.)",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "(39) Dunkelblauer Pulli (über Schultern)",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L7",
+    "no": 7,
+    "name": "Urban & Kontrastreich",
+    "place": "Privat",
+    "base": [
+     "k17"
+    ],
+    "layer": [
+     "w-bomberjacke"
+    ],
+    "bottom": "k43",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-bomberjacke"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(17) Weißes T-Shirt",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "Neue Bomberjacke",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L8",
+    "no": 8,
+    "name": "Elegante Lässigkeit",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "w-feinstrick-cardigan"
+    ],
+    "bottom": "k46",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [
+     "w-feinstrick-cardigan"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(22) Weißes T-Shirt",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "Neuer Feinstrick-Cardigan (geschl.)",
+     "shoes": "Loafer/Derbys"
+    }
+   },
+   {
+    "id": "L9",
+    "no": 9,
+    "name": "Entspannter Büro-Look",
+    "place": "Büro",
+    "base": [
+     "k35"
+    ],
+    "layer": [
+     "w-graues-sakko"
+    ],
+    "bottom": "k51",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [
+     "w-graues-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(35) Weißes Businesshemd",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "Neues graues Sakko",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L10",
+    "no": 10,
+    "name": "Lässiger Farbakzent",
+    "place": "Privat",
+    "base": [
+     "k3"
+    ],
+    "layer": [
+     "k21"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(3) Weinrotes T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(21) Jeanshemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L11",
+    "no": 11,
+    "name": "Authentisch & Robust",
+    "place": "Privat",
+    "base": [
+     "k8"
+    ],
+    "layer": [
+     "k28"
+    ],
+    "bottom": "k43",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(8) Grau verwaschenes T-Shirt",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "(28) Kariertes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L12",
+    "no": 12,
+    "name": "Ton-in-Ton Herbstlook",
+    "place": "Büro",
+    "base": [
+     "k12"
+    ],
+    "layer": [
+     "k37"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-dunkelbraune-cordhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(12) Hellbeiges T-Shirt",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "(37) Hellbrauner Pullover",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L13",
+    "no": 13,
+    "name": "Souverän & Angezogen",
+    "place": "Büro",
+    "base": [
+     "k1"
+    ],
+    "layer": [
+     "w-navy-sakko"
+    ],
+    "bottom": "k45",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [
+     "w-navy-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(1) Kragenshirt Braungrau",
+     "bottom": "(45) Dunkelgraue Hose",
+     "layer": "Neues Navy-Sakko",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L14",
+    "no": 14,
+    "name": "Frische Grüntöne",
+    "place": "Privat",
+    "base": [
+     "k15"
+    ],
+    "layer": [
+     "k27"
+    ],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(15) Hellgrünes T-Shirt",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "(27) Weißes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L15",
+    "no": 15,
+    "name": "Abend-Look mit Muster",
+    "place": "Büro",
+    "base": [
+     "k34"
+    ],
+    "layer": [
+     "w-graues-sakko"
+    ],
+    "bottom": "k43",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [
+     "w-graues-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(34) Gepunktetes Hemd",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "Neues graues Sakko",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L16",
+    "no": 16,
+    "name": "Luftiger Sommer-Look",
+    "place": "Privat",
+    "base": [
+     "k14"
+    ],
+    "layer": [
+     "k33"
+    ],
+    "bottom": "k53",
+    "shoes": "braune-loafer",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(14) Weißes T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(33) Beiges Leinenhemd (offen)",
+     "shoes": "Loafer"
+    }
+   },
+   {
+    "id": "L17",
+    "no": 17,
+    "name": "Dunkel & Dezent",
+    "place": "Büro",
+    "base": [
+     "k9"
+    ],
+    "layer": [
+     "k36"
+    ],
+    "bottom": "k46",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(9) Schwarzes T-Shirt",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "(36) Schwarzer Pullover",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L18",
+    "no": 18,
+    "name": "Zeitloser Lagenlook",
+    "place": "Privat",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k31"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(7) Weißes T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(31) Beiges Overshirt",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L19",
+    "no": 19,
+    "name": "\"Blau auf Blau\"",
+    "place": "Büro",
+    "base": [
+     "k18"
+    ],
+    "layer": [
+     "k21"
+    ],
+    "bottom": "k46",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(18) Dunkelblaues T-Shirt",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "(21) Jeanshemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L20",
+    "no": 20,
+    "name": "Sicherer Allrounder",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "k51",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(13) Weißes T-Shirt",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L21",
+    "no": 21,
+    "name": "Sommerlich & Erdig",
+    "place": "Büro",
+    "base": [
+     "k12"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(12) Hellbeiges T-Shirt",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L22",
+    "no": 22,
+    "name": "Smart & Dunkel",
+    "place": "Büro",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k30"
+    ],
+    "bottom": "k46",
+    "shoes": "schwarze-schuhe",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(16) Schwarzes T-Shirt",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "(30) Graues Businesshemd (offen)",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L23",
+    "no": 23,
+    "name": "Tonaler Blau-Look",
+    "place": "Privat",
+    "base": [
+     "k6"
+    ],
+    "layer": [
+     "k39"
+    ],
+    "bottom": "k53",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(6) Hellblaues T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(39) Dunkelblauer Pullover",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L24",
+    "no": 24,
+    "name": "Grafisch & Kontrastreich",
+    "place": "Büro",
+    "base": [
+     "k41"
+    ],
+    "layer": [],
+    "bottom": "k43",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(41) S/W geriffelter Pulli",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "-",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L25",
+    "no": 25,
+    "name": "Büro-Look mit Textur",
+    "place": "Büro",
+    "base": [
+     "k35"
+    ],
+    "layer": [
+     "w-graues-sakko"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [
+     "w-dunkelbraune-cordhose",
+     "w-graues-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(35) Weißes Businesshemd",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "Neues graues Sakko",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L26",
+    "no": 26,
+    "name": "Relaxed Fit & Lässig",
+    "place": "Privat",
+    "base": [
+     "k17"
+    ],
+    "layer": [
+     "k29"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(17) Weißes oversized T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(29) Schwarzes Hemd, Relaxed Fit (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L27",
+    "no": 27,
+    "name": "Grün in Grün",
+    "place": "Büro",
+    "base": [
+     "k40"
+    ],
+    "layer": [],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(40) Olivgrüner feiner Pulli",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "-",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L28",
+    "no": 28,
+    "name": "Cardigan fürs Büro",
+    "place": "Büro",
+    "base": [
+     "k55"
+    ],
+    "layer": [
+     "w-feinstrick-cardigan"
+    ],
+    "bottom": "k51",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [
+     "w-feinstrick-cardigan"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(55) Hellblaues Hemd (geschl.)",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "Neuer Feinstrick-Cardigan",
+     "shoes": "Loafer/Derbys"
+    }
+   },
+   {
+    "id": "L29",
+    "no": 29,
+    "name": "Urban & Geschichtet",
+    "place": "Privat",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k21",
+     "w-bomberjacke"
+    ],
+    "bottom": "k43",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-bomberjacke"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(7) Weißes T-Shirt",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "(21) Jeanshemd (offen) + Neue Bomberjacke",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L30",
+    "no": 30,
+    "name": "Elegant mit Farbe",
+    "place": "Büro",
+    "base": [
+     "k10"
+    ],
+    "layer": [
+     "w-navy-sakko"
+    ],
+    "bottom": "k51",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [
+     "w-navy-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(10) Weinrotes T-Shirt",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "Neues Navy-Sakko",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L31",
+    "no": 31,
+    "name": "Leinen auf Leinen",
+    "place": "Privat",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k33"
+    ],
+    "bottom": "k53",
+    "shoes": "braune-loafer",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(13) Weißes T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(33) Beiges Leinenhemd (offen)",
+     "shoes": "Loafer"
+    }
+   },
+   {
+    "id": "L32",
+    "no": 32,
+    "name": "Solo-Polo & Jeans",
+    "place": "Büro",
+    "base": [
+     "k1"
+    ],
+    "layer": [],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(1) Kragenshirt Braungrau",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "-",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L33",
+    "no": 33,
+    "name": "Cord & Grau",
+    "place": "Büro",
+    "base": [
+     "k14"
+    ],
+    "layer": [
+     "k25"
+    ],
+    "bottom": "k45",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(14) Weißes T-Shirt",
+     "bottom": "(45) Dunkelgraue Hose",
+     "layer": "(25) Olivgrünes Cordhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L34",
+    "no": 34,
+    "name": "Klassische Farbkombi",
+    "place": "Büro",
+    "base": [
+     "k18"
+    ],
+    "layer": [
+     "k24"
+    ],
+    "bottom": "k50",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(18) Dunkelblaues T-Shirt",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "(24) Dunkelblaues Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L35",
+    "no": 35,
+    "name": "Frisch & Ungezwungen",
+    "place": "Privat",
+    "base": [
+     "k15"
+    ],
+    "layer": [
+     "k27"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(15) Hellgrünes T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(27) Weißes Hemd, grob gestrickt (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L36",
+    "no": 36,
+    "name": "All-Black mit Textur",
+    "place": "Privat",
+    "base": [
+     "k9"
+    ],
+    "layer": [
+     "k36"
+    ],
+    "bottom": "k43",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(9) Schwarzes T-Shirt",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "(36) Schwarzer grob gestrickter Pulli",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L37",
+    "no": 37,
+    "name": "Simpel aber schick",
+    "place": "Büro",
+    "base": [
+     "k57"
+    ],
+    "layer": [],
+    "bottom": "k46",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(57) Graues Hemd (geschl.)",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "-",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L38",
+    "no": 38,
+    "name": "Warme Beigetöne",
+    "place": "Büro",
+    "base": [
+     "k12"
+    ],
+    "layer": [
+     "k37"
+    ],
+    "bottom": "k50",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(12) Hellbeiges T-Shirt",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "(37) Hellbrauner Pullover",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L39",
+    "no": 39,
+    "name": "Lässiger Strick-Look",
+    "place": "Privat",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "k49",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(22) Weißes T-Shirt",
+     "bottom": "(49) Graue \"gestrickte\" Hose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L40",
+    "no": 40,
+    "name": "Einfach & Gut",
+    "place": "Büro",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k40"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(2) Schwarzes T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(40) Olivgrüner feiner Pulli",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L41",
+    "no": 41,
+    "name": "Kreativ & Mutig",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "w-navy-sakko"
+    ],
+    "bottom": "k47",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-navy-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(7) Weißes T-Shirt",
+     "bottom": "(47) S/W gepunktete Hose",
+     "layer": "Neues Navy-Sakko",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L42",
+    "no": 42,
+    "name": "Lagenlook mit Polo",
+    "place": "Privat",
+    "base": [
+     "k1"
+    ],
+    "layer": [
+     "k21"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(1) Kragenshirt Braungrau",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(21) Jeanshemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L43",
+    "no": 43,
+    "name": "Frühlingshaft",
+    "place": "Büro",
+    "base": [
+     "k38"
+    ],
+    "layer": [],
+    "bottom": "k50",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(38) Hellgrüner Pulli",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "-",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L44",
+    "no": 44,
+    "name": "All-Black Smart",
+    "place": "Privat",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k32"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [
+     "w-dunkelbraune-cordhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(2) Schwarzes T-Shirt",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "(32) Schwarzes Hemd, dicker Stoff",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L45",
+    "no": 45,
+    "name": "Hemd als Hauptdarsteller",
+    "place": "Büro",
+    "base": [
+     "k20"
+    ],
+    "layer": [],
+    "bottom": "k46",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(20) Olivgrünes Businesshemd",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "-",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L46",
+    "no": 46,
+    "name": "Entspannter Minimalismus",
+    "place": "Privat",
+    "base": [
+     "k12"
+    ],
+    "layer": [],
+    "bottom": "k43",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(12) Hellbeiges T-Shirt",
+     "bottom": "(43) Schwarze Jeans",
+     "layer": "-",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L47",
+    "no": 47,
+    "name": "Doppel-Strick",
+    "place": "Büro",
+    "base": [
+     "k40"
+    ],
+    "layer": [
+     "w-feinstrick-cardigan"
+    ],
+    "bottom": "k51",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [
+     "w-feinstrick-cardigan"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(40) Olivgrüner feiner Pulli",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "Neuer Feinstrick-Cardigan",
+     "shoes": "Loafer/Derbys"
+    }
+   },
+   {
+    "id": "L48",
+    "no": 48,
+    "name": "Hoher Kontrast",
+    "place": "Privat",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k27"
+    ],
+    "bottom": "k53",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(16) Schwarzes T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(27) Weißes Hemd, grob gestrickt (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L49",
+    "no": 49,
+    "name": "Sicherer Büro-Look",
+    "place": "Büro",
+    "base": [
+     "k56"
+    ],
+    "layer": [
+     "w-graues-sakko"
+    ],
+    "bottom": "k46",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [
+     "w-graues-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(56) Graues Hemd (geschl.)",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "Neues graues Sakko",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L50",
+    "no": 50,
+    "name": "Weinrot & Jeans",
+    "place": "Privat",
+    "base": [
+     "k35"
+    ],
+    "layer": [
+     "k3"
+    ],
+    "bottom": "k42",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(35) Weißes Businesshemd",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(3) Weinrotes T-Shirt (als Farbakzent)",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L51",
+    "no": 51,
+    "name": "Strukturiert & Neutral",
+    "place": "Büro",
+    "base": [
+     "k41"
+    ],
+    "layer": [
+     "w-graues-sakko"
+    ],
+    "bottom": "k51",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [
+     "w-graues-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(41) S/W geriffelter Pulli",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "Neues graues Sakko",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L52",
+    "no": 52,
+    "name": "Sommerlicher Cord",
+    "place": "Privat",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k25"
+    ],
+    "bottom": "k53",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(13) Weißes T-Shirt",
+     "bottom": "(53) Hellblaue Leinenhose",
+     "layer": "(25) Olivgrünes Cordhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L53",
+    "no": 53,
+    "name": "Dunkelblau & Braun",
+    "place": "Büro",
+    "base": [
+     "k18"
+    ],
+    "layer": [
+     "k24"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-dunkelbraune-cordhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(18) Dunkelblaues T-Shirt",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "(24) Dunkelblaues Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L54",
+    "no": 54,
+    "name": "Lässiger Mustermix",
+    "place": "Privat",
+    "base": [
+     "k11"
+    ],
+    "layer": [
+     "k28"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(11) Olivgrünes T-Shirt (X)",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(28) Kariertes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L55",
+    "no": 55,
+    "name": "Einfach & Elegant",
+    "place": "Büro",
+    "base": [
+     "k37"
+    ],
+    "layer": [],
+    "bottom": "k46",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(37) Hellbrauner Pullover",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "-",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L56",
+    "no": 56,
+    "name": "Leichter Lagenlook",
+    "place": "Privat",
+    "base": [
+     "k6"
+    ],
+    "layer": [
+     "k55"
+    ],
+    "bottom": "k50",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(6) Hellblaues T-Shirt",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "(55) Hellblaues Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L57",
+    "no": 57,
+    "name": "Business Casual",
+    "place": "Büro",
+    "base": [
+     "k35"
+    ],
+    "layer": [
+     "k39"
+    ],
+    "bottom": "k45",
+    "shoes": "schwarze-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(35) Weißes Businesshemd",
+     "bottom": "(45) Dunkelgraue Hose",
+     "layer": "(39) Dunkelblauer Pulli",
+     "shoes": "Schwarze Schuhe"
+    }
+   },
+   {
+    "id": "L58",
+    "no": 58,
+    "name": "Khaki & Schwarz",
+    "place": "Büro",
+    "base": [
+     "k9"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(9) Schwarzes T-Shirt",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L59",
+    "no": 59,
+    "name": "Grau & Braun",
+    "place": "Büro",
+    "base": [
+     "k19"
+    ],
+    "layer": [
+     "k30"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "braune-loafer",
+    "open": true,
+    "needs": [
+     "w-dunkelbraune-cordhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(19) Dunkelgraues T-Shirt",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "(30) Graues Hemd (offen)",
+     "shoes": "Braune Loafer"
+    }
+   },
+   {
+    "id": "L60",
+    "no": 60,
+    "name": "Spiel mit Weite",
+    "place": "Privat",
+    "base": [
+     "k8"
+    ],
+    "layer": [
+     "k31"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(8) Grau verwaschenes T-Shirt",
+     "bottom": "(42) Blaue Jeans, tapered",
+     "layer": "(31) Beiges Overshirt",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L61",
+    "no": 61,
+    "name": "Leinen & Wolle",
+    "place": "Büro",
+    "base": [
+     "k33"
+    ],
+    "layer": [],
+    "bottom": "k51",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(33) Beiges Leinenhemd",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "-",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L62",
+    "no": 62,
+    "name": "Grüne Harmonie",
+    "place": "Privat",
+    "base": [
+     "k5"
+    ],
+    "layer": [
+     "k20"
+    ],
+    "bottom": "w-olivgruene-stoffhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-olivgruene-stoffhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(5) Olivgrünes T-Shirt",
+     "bottom": "Neue olivgrüne Stoffhose",
+     "layer": "(20) Olivgrünes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L63",
+    "no": 63,
+    "name": "Schwarz & Beige",
+    "place": "Büro",
+    "base": [
+     "k2"
+    ],
+    "layer": [
+     "k26"
+    ],
+    "bottom": "k50",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(2) Schwarzes T-Shirt",
+     "bottom": "(50) Beige Stoffhose",
+     "layer": "(26) Schwarzes Hemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L64",
+    "no": 64,
+    "name": "Formell mit Twist",
+    "place": "Büro",
+    "base": [
+     "k35"
+    ],
+    "layer": [
+     "k40"
+    ],
+    "bottom": "k51",
+    "shoes": "braune-schuhe",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(35) Weißes Businesshemd",
+     "bottom": "(51) Graue Wollhose",
+     "layer": "(40) Olivgrüner feiner Pulli",
+     "shoes": "Braune Schuhe"
+    }
+   },
+   {
+    "id": "L65",
+    "no": 65,
+    "name": "Heller Alltagslook",
+    "place": "Büro",
+    "base": [
+     "k14"
+    ],
+    "layer": [
+     "k21"
+    ],
+    "bottom": "k44",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(14) Weißes T-Shirt",
+     "bottom": "(44) Hellgraue Stoffhose",
+     "layer": "(21) Jeanshemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L66",
+    "no": 66,
+    "name": "Statement-Hose",
+    "place": "Privat",
+    "base": [
+     "k17"
+    ],
+    "layer": [
+     "w-bomberjacke"
+    ],
+    "bottom": "k47",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [
+     "w-bomberjacke"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(17) Weißes oversized T-Shirt",
+     "bottom": "(47) S/W gepunktete Hose",
+     "layer": "Neue Bomberjacke",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L67",
+    "no": 67,
+    "name": "Blautöne & Textur",
+    "place": "Privat",
+    "base": [
+     "k18"
+    ],
+    "layer": [
+     "k39"
+    ],
+    "bottom": "k42",
+    "shoes": "weisse-sneaker",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(18) Dunkelblaues T-Shirt",
+     "bottom": "(42) Blaue Jeans",
+     "layer": "(39) Dunkelblauer grob gestrickter Pulli",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L68",
+    "no": 68,
+    "name": "Eleganter Strick",
+    "place": "Büro",
+    "base": [
+     "k41"
+    ],
+    "layer": [],
+    "bottom": "k45",
+    "shoes": "schwarze-loafer",
+    "open": false,
+    "needs": [],
+    "missing": [],
+    "raw": {
+     "base": "(41) S/W geriffelter Pulli",
+     "bottom": "(45) Dunkelgraue Hose",
+     "layer": "-",
+     "shoes": "Schwarze Loafer"
+    }
+   },
+   {
+    "id": "L69",
+    "no": 69,
+    "name": "Khaki & Cord",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "k52"
+    ],
+    "bottom": "w-dunkelbraune-cordhose",
+    "shoes": "weisse-sneaker",
+    "open": true,
+    "needs": [
+     "w-dunkelbraune-cordhose"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(13) Weißes T-Shirt",
+     "bottom": "Neue dunkelbraune Cordhose",
+     "layer": "(52) Khaki Leinenhemd (offen)",
+     "shoes": "Weiße Sneaker"
+    }
+   },
+   {
+    "id": "L70",
+    "no": 70,
+    "name": "Finaler Klassiker",
+    "place": "Büro",
+    "base": [
+     "k7"
+    ],
+    "layer": [
+     "w-navy-sakko"
+    ],
+    "bottom": "k46",
+    "shoes": "braune-loafer",
+    "open": false,
+    "needs": [
+     "w-navy-sakko"
+    ],
+    "missing": [],
+    "raw": {
+     "base": "(7) Weißes T-Shirt",
+     "bottom": "(46) Dunkelblaue Stoffhose",
+     "layer": "Neues Navy-Sakko",
+     "shoes": "Braune Loafer"
+    }
+   }
+  ],
+  "wear": [],
+  "ratings": {},
+  "pairs": {},
+  "reroll": {}
+ },
+ "training": {
+  "exercises": {
+   "legpress": {
+    "type": "reps",
+    "alts": [
+     "splitsquat",
+     "legext"
+    ],
+    "id": "legpress",
+    "name": "Beinpresse horizontal",
+    "where": "711 #01",
+    "group": "Beine",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 120,
+    "inc": 5,
+    "start": 109,
+    "cue": "Knie zeigen über den 2.–3. Zeh, Fußgewölbe aktiv halten. Nur so tief, wie der Po am Polster bleibt."
+   },
+   "cablerow": {
+    "type": "reps",
+    "alts": [
+     "dbrow",
+     "chestrow"
+    ],
+    "id": "cablerow",
+    "name": "Rudern sitzend am Kabel",
+    "where": "Kabelzug oder Rudermaschine",
+    "group": "Oberer Rücken",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2.5,
+    "start": 45,
+    "estimate": true,
+    "cue": "Brust raus, erst die Schulterblätter nach hinten-unten ziehen, dann die Arme. Am Ende 1 s halten."
+   },
+   "chestpress": {
+    "type": "reps",
+    "alts": [
+     "dbbench",
+     "pushup"
+    ],
+    "id": "chestpress",
+    "name": "Bankdrückmaschine",
+    "where": "711 #16",
+    "group": "Brust",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2.5,
+    "start": 35,
+    "cue": "Schulterblätter nach hinten-unten ins Polster, Ellbogen etwa 45° vom Körper."
+   },
+   "rdl": {
+    "type": "reps",
+    "alts": [
+     "legcurl",
+     "backext"
+    ],
+    "id": "rdl",
+    "name": "Rumänisches Kreuzheben",
+    "where": "Kurzhanteln",
+    "group": "Hüfte & Beinrückseite",
+    "focus": "haltung",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2,
+    "start": 16,
+    "estimate": true,
+    "cue": "Hüfte nach hinten schieben, Rücken lang, Rippen unten. Oben Po anspannen, ohne ins Hohlkreuz zu gehen."
+   },
+   "facepull": {
+    "type": "reps",
+    "alts": [
+     "revfly"
+    ],
+    "id": "facepull",
+    "name": "Face Pull am Kabel",
+    "where": "Kabelzug, Seil auf Augenhöhe",
+    "group": "Hintere Schulter",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 15,
+    "estimate": true,
+    "cue": "Ellbogen hoch, Seil zur Stirn ziehen und die Hände dabei nach außen drehen."
+   },
+   "latraise": {
+    "type": "reps",
+    "alts": [
+     "dblatraise"
+    ],
+    "id": "latraise",
+    "name": "Seitheben einarmig am Kabel",
+    "where": "Kabelzug",
+    "group": "Schultern",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 2.5,
+    "start": 10,
+    "perSide": true,
+    "cue": "Schulter bleibt unten, Arm leicht gebeugt bis knapp Schulterhöhe führen."
+   },
+   "pallof": {
+    "type": "reps",
+    "alts": [
+     "deadbug"
+    ],
+    "id": "pallof",
+    "name": "Pallof Press",
+    "where": "Kabelzug, Brusthöhe",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 45,
+    "inc": 2.5,
+    "start": 10,
+    "perSide": true,
+    "estimate": true,
+    "cue": "Seitlich zum Kabel, Po und Bauch fest. Arme gerade nach vorn drücken, nicht mitdrehen."
+   },
+   "calf": {
+    "type": "reps",
+    "alts": [
+     "calfstand"
+    ],
+    "id": "calf",
+    "name": "Wadenheben an der Beinpresse",
+    "where": "711 #01",
+    "group": "Waden",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 5,
+    "start": 60,
+    "estimate": true,
+    "cue": "Langsam, oben 1 s halten. Druck über den Großzehenballen, damit der Fuß nicht nach außen kippt."
+   },
+   "hipthrust": {
+    "type": "reps",
+    "alts": [
+     "glutebridge",
+     "pullthrough"
+    ],
+    "id": "hipthrust",
+    "name": "Hip Thrust",
+    "where": "Langhantel auf Bank oder Maschine",
+    "group": "Gesäß",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 120,
+    "inc": 5,
+    "start": 40,
+    "estimate": true,
+    "cue": "Kinn Richtung Brust, Rippen unten. Oben das Becken einrollen und den Po fest anspannen, kein Hohlkreuz."
+   },
+   "latpull": {
+    "type": "reps",
+    "alts": [
+     "dbrow"
+    ],
+    "id": "latpull",
+    "name": "Latzug Maschine",
+    "where": "711 #12",
+    "group": "Oberer Rücken",
+    "focus": "beides",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 5,
+    "start": 65,
+    "cue": "Schultern weg von den Ohren, zur oberen Brust ziehen, nicht zurücklehnen."
+   },
+   "splitsquat": {
+    "type": "reps",
+    "alts": [
+     "legext",
+     "lunges"
+    ],
+    "id": "splitsquat",
+    "name": "Bulgarian Split Squat",
+    "where": "Kurzhanteln + Bank",
+    "group": "Beine",
+    "focus": "beides",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 10,
+    "rest": 90,
+    "inc": 2,
+    "start": 8,
+    "perSide": true,
+    "estimate": true,
+    "cue": "Vorderes Knie bleibt über dem 2.–3. Zeh, Fußgewölbe aktiv. Oberkörper leicht nach vorn."
+   },
+   "shoulderpress": {
+    "type": "reps",
+    "alts": [
+     "dbpress"
+    ],
+    "id": "shoulderpress",
+    "name": "Schulterpresse Maschine",
+    "where": "711 #19",
+    "group": "Schultern",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2.5,
+    "start": 20,
+    "cue": "Rücken ans Polster, Rippen unten, nicht ins Hohlkreuz drücken."
+   },
+   "revfly": {
+    "type": "reps",
+    "alts": [
+     "facepull"
+    ],
+    "id": "revfly",
+    "name": "Butterfly reverse",
+    "where": "711 #13",
+    "group": "Hintere Schulter",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 15,
+    "cue": "Arme leicht gebeugt, Schulterblätter zusammen, Schultern nicht hochziehen."
+   },
+   "extrot": {
+    "type": "reps",
+    "alts": [
+     "facepull"
+    ],
+    "id": "extrot",
+    "name": "Außenrotation am Kabel",
+    "where": "Kabelzug, Ellbogenhöhe",
+    "group": "Rotatorenmanschette",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 1.25,
+    "start": 5,
+    "perSide": true,
+    "estimate": true,
+    "cue": "Ellbogen am Körper (Handtuch einklemmen), Unterarm langsam nach außen drehen."
+   },
+   "backext": {
+    "type": "reps",
+    "alts": [
+     "rdl"
+    ],
+    "id": "backext",
+    "name": "Rückenstrecker 45°",
+    "where": "Hyperextension-Bank",
+    "group": "Gesäß & unterer Rücken",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 0,
+    "cue": "Aus der Hüfte bewegen, Po anspannen, oben nicht überstrecken."
+   },
+   "plank": {
+    "type": "time",
+    "alts": [
+     "deadbug",
+     "abwheel"
+    ],
+    "id": "plank",
+    "name": "Unterarmstütz mit Vollspannung",
+    "where": "Matte",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "s",
+    "sets": 3,
+    "repMin": 20,
+    "repMax": 40,
+    "rest": 45,
+    "inc": 5,
+    "start": 0,
+    "cue": "Po und Bauch fest anspannen, Becken leicht einrollen, Ellbogen Richtung Füße ziehen."
+   },
+   "bicep": {
+    "type": "reps",
+    "alts": [
+     "dbcurl"
+    ],
+    "id": "bicep",
+    "name": "Bizepscurls am Kabel",
+    "where": "Kabelzug",
+    "group": "Arme",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 25,
+    "cue": "Ellbogen bleiben am Körper, langsam ablassen."
+   },
+   "tricep": {
+    "type": "reps",
+    "alts": [
+     "dips"
+    ],
+    "id": "tricep",
+    "name": "Trizepsstrecken am Kabel",
+    "where": "Kabelzug, Seil",
+    "group": "Arme",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 25,
+    "cue": "Ellbogen fixiert, unten das Seil auseinanderziehen."
+   },
+   "legext": {
+    "type": "reps",
+    "alts": [],
+    "id": "legext",
+    "name": "Beinstrecker",
+    "where": "711 #02",
+    "group": "Beine",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 20,
+    "cue": "Oben 1 s halten, langsam ablassen."
+   },
+   "abmachine": {
+    "type": "reps",
+    "alts": [],
+    "id": "abmachine",
+    "name": "Bauchmuskelmaschine",
+    "where": "711 #25",
+    "group": "Rumpf",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 5,
+    "start": 40,
+    "cue": "Langsam einrollen, ohne Schwung."
+   },
+   "dbrow": {
+    "type": "reps",
+    "alts": [],
+    "id": "dbrow",
+    "name": "Kurzhantelrudern einarmig",
+    "where": "Kurzhantel + Bank",
+    "group": "Oberer Rücken",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2,
+    "start": 20,
+    "perSide": true,
+    "cue": "Rücken lang, Ellbogen Richtung Hüfte ziehen."
+   },
+   "chestrow": {
+    "type": "reps",
+    "alts": [],
+    "id": "chestrow",
+    "name": "Brustgestütztes Rudern",
+    "where": "Schrägbank + Kurzhanteln",
+    "group": "Oberer Rücken",
+    "focus": "haltung",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2,
+    "start": 14,
+    "cue": "Brust bleibt auf der Bank, Schulterblätter zusammenziehen."
+   },
+   "dbbench": {
+    "type": "reps",
+    "alts": [],
+    "id": "dbbench",
+    "name": "Kurzhantel-Bankdrücken",
+    "where": "Kurzhanteln + Flachbank",
+    "group": "Brust",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2,
+    "start": 16,
+    "cue": "Schulterblätter zusammen, kontrolliert ablassen."
+   },
+   "pushup": {
+    "type": "reps",
+    "alts": [],
+    "id": "pushup",
+    "name": "Liegestütz",
+    "where": "Boden",
+    "group": "Brust",
+    "focus": "beides",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 0,
+    "start": 0,
+    "cue": "Körper wie ein Brett, Po fest."
+   },
+   "legcurl": {
+    "type": "reps",
+    "alts": [],
+    "id": "legcurl",
+    "name": "Beinbeuger",
+    "where": "Maschine",
+    "group": "Beinrückseite",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 30,
+    "estimate": true,
+    "cue": "Hüfte bleibt am Polster, langsam ablassen."
+   },
+   "dblatraise": {
+    "type": "reps",
+    "alts": [],
+    "id": "dblatraise",
+    "name": "Seitheben mit Kurzhanteln",
+    "where": "Kurzhanteln",
+    "group": "Schultern",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 2,
+    "start": 6,
+    "max": 14,
+    "cue": "Schultern unten, Arme bis Schulterhöhe."
+   },
+   "deadbug": {
+    "type": "reps",
+    "alts": [],
+    "id": "deadbug",
+    "name": "Dead Bug",
+    "where": "Matte",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 8,
+    "repMax": 10,
+    "rest": 45,
+    "inc": 0,
+    "start": 0,
+    "perSide": true,
+    "cue": "Unterer Rücken bleibt am Boden, langsam ausatmen."
+   },
+   "calfstand": {
+    "type": "reps",
+    "alts": [],
+    "id": "calfstand",
+    "name": "Wadenheben stehend",
+    "where": "Maschine oder Stufe",
+    "group": "Waden",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 5,
+    "start": 0,
+    "cue": "Oben halten, Druck über den Großzehenballen."
+   },
+   "glutebridge": {
+    "type": "reps",
+    "alts": [],
+    "id": "glutebridge",
+    "name": "Glute Bridge mit Langhantel",
+    "where": "Boden + Langhantel",
+    "group": "Gesäß",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 5,
+    "start": 30,
+    "estimate": true,
+    "cue": "Becken oben einrollen, Po fest."
+   },
+   "pullthrough": {
+    "type": "reps",
+    "alts": [],
+    "id": "pullthrough",
+    "name": "Pull-Through am Kabel",
+    "where": "Kabelzug, Seil unten",
+    "group": "Gesäß",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2.5,
+    "start": 20,
+    "estimate": true,
+    "cue": "Hüfte nach hinten, mit dem Po nach vorn schieben."
+   },
+   "lunges": {
+    "type": "reps",
+    "alts": [],
+    "id": "lunges",
+    "name": "Ausfallschritte gehend",
+    "where": "Kurzhanteln",
+    "group": "Beine",
+    "focus": "beides",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2,
+    "start": 8,
+    "perSide": true,
+    "cue": "Knie über dem mittleren Zeh, Oberkörper aufrecht."
+   },
+   "dbpress": {
+    "type": "reps",
+    "alts": [],
+    "id": "dbpress",
+    "name": "Schulterdrücken mit Kurzhanteln",
+    "where": "Kurzhanteln + Bank",
+    "group": "Schultern",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 90,
+    "inc": 2,
+    "start": 10,
+    "cue": "Rippen unten, nicht ins Hohlkreuz."
+   },
+   "abwheel": {
+    "type": "reps",
+    "alts": [],
+    "id": "abwheel",
+    "name": "Ab Wheel kniend",
+    "where": "Bauchroller",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 6,
+    "repMax": 10,
+    "rest": 60,
+    "inc": 0,
+    "start": 0,
+    "cue": "Becken eingerollt lassen, nur so weit, wie der Rücken gerade bleibt."
+   },
+   "dbcurl": {
+    "type": "reps",
+    "alts": [],
+    "id": "dbcurl",
+    "name": "Bizepscurls mit Kurzhanteln",
+    "where": "Kurzhanteln",
+    "group": "Arme",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 2,
+    "start": 10,
+    "max": 14,
+    "cue": "Ellbogen ruhig, langsam ablassen."
+   },
+   "dips": {
+    "type": "reps",
+    "alts": [],
+    "id": "dips",
+    "name": "Dips an der Maschine",
+    "where": "Maschine",
+    "group": "Arme",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 60,
+    "inc": 5,
+    "start": 30,
+    "estimate": true,
+    "cue": "Schultern unten halten."
+   },
+   "h_goblet": {
+    "type": "reps",
+    "alts": [
+     "h_split"
+    ],
+    "id": "h_goblet",
+    "home": true,
+    "name": "Goblet Squat",
+    "where": "Kurzhantel vor der Brust",
+    "group": "Beine",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 20,
+    "rest": 75,
+    "inc": 2,
+    "start": 14,
+    "estimate": true,
+    "max": 14,
+    "cue": "Aufrecht bleiben, Knie über den Zehen, Fußgewölbe aktiv."
+   },
+   "h_rdl": {
+    "type": "reps",
+    "alts": [
+     "h_hip"
+    ],
+    "id": "h_rdl",
+    "home": true,
+    "name": "Rumänisches Kreuzheben",
+    "where": "Kurzhanteln",
+    "group": "Hüfte & Beinrückseite",
+    "focus": "haltung",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 75,
+    "inc": 2,
+    "start": 14,
+    "estimate": true,
+    "max": 14,
+    "cue": "Hüfte nach hinten schieben, Rücken lang, Rippen unten. Oben Po anspannen, ohne Hohlkreuz."
+   },
+   "h_split": {
+    "type": "reps",
+    "alts": [
+     "h_goblet"
+    ],
+    "id": "h_split",
+    "home": true,
+    "name": "Split Squat",
+    "where": "Kurzhanteln, hinterer Fuß auf Stuhl oder Sofa",
+    "group": "Beine",
+    "focus": "beides",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 75,
+    "inc": 2,
+    "start": 10,
+    "perSide": true,
+    "estimate": true,
+    "max": 14,
+    "cue": "Vorderes Knie über dem 2.–3. Zeh, Fußgewölbe aktiv, Oberkörper leicht nach vorn."
+   },
+   "h_hip": {
+    "type": "reps",
+    "alts": [
+     "h_rdl"
+    ],
+    "id": "h_hip",
+    "home": true,
+    "name": "Hip Thrust am Sofa",
+    "where": "Kurzhantel auf der Hüfte, Rücken an der Sofakante",
+    "group": "Gesäß",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 15,
+    "repMax": 20,
+    "rest": 60,
+    "inc": 2,
+    "start": 14,
+    "estimate": true,
+    "max": 14,
+    "cue": "Kinn Richtung Brust, oben Becken einrollen und Po fest anspannen."
+   },
+   "h_row": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_row",
+    "home": true,
+    "name": "Einarmiges Rudern",
+    "where": "Kurzhantel, Hand und Knie auf Stuhl oder Sofa",
+    "group": "Oberer Rücken",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 60,
+    "inc": 2,
+    "start": 14,
+    "perSide": true,
+    "estimate": true,
+    "max": 14,
+    "cue": "Rücken lang, Schulterblatt zuerst nach hinten-unten, Ellbogen Richtung Hüfte ziehen."
+   },
+   "h_revfly": {
+    "type": "reps",
+    "alts": [
+     "h_ytw"
+    ],
+    "id": "h_revfly",
+    "home": true,
+    "name": "Reverse Fly vorgebeugt",
+    "where": "Kurzhanteln",
+    "group": "Hintere Schulter",
+    "focus": "haltung",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 45,
+    "inc": 2,
+    "start": 4,
+    "estimate": true,
+    "max": 14,
+    "cue": "Rücken gerade vorgebeugt, Arme leicht gebeugt seitlich heben, Schulterblätter zusammen."
+   },
+   "h_floor": {
+    "type": "reps",
+    "alts": [
+     "pushup"
+    ],
+    "id": "h_floor",
+    "home": true,
+    "name": "Bodendrücken",
+    "where": "Kurzhanteln, auf dem Rücken liegend",
+    "group": "Brust",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 10,
+    "repMax": 15,
+    "rest": 75,
+    "inc": 2,
+    "start": 12,
+    "estimate": true,
+    "max": 14,
+    "cue": "Ellbogen etwa 45° vom Körper, Oberarme kurz am Boden ablegen."
+   },
+   "h_press": {
+    "type": "reps",
+    "alts": [
+     "dblatraise"
+    ],
+    "id": "h_press",
+    "home": true,
+    "name": "Schulterdrücken stehend",
+    "where": "Kurzhanteln",
+    "group": "Schultern",
+    "focus": "aufbau",
+    "unit": "kg je Hand",
+    "sets": 3,
+    "repMin": 8,
+    "repMax": 12,
+    "rest": 75,
+    "inc": 2,
+    "start": 10,
+    "estimate": true,
+    "max": 14,
+    "cue": "Po und Bauch fest, Rippen unten, nicht ins Hohlkreuz."
+   },
+   "h_tri": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_tri",
+    "home": true,
+    "name": "Trizepsstrecken über Kopf",
+    "where": "Kurzhantel beidhändig",
+    "group": "Arme",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 45,
+    "inc": 2,
+    "start": 10,
+    "estimate": true,
+    "max": 14,
+    "cue": "Ellbogen zeigen nach vorn oben, Rippen unten."
+   },
+   "h_side": {
+    "type": "time",
+    "alts": [],
+    "id": "h_side",
+    "home": true,
+    "name": "Seitstütz",
+    "where": "Matte",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "s",
+    "sets": 2,
+    "repMin": 20,
+    "repMax": 40,
+    "rest": 30,
+    "inc": 5,
+    "start": 0,
+    "perSide": true,
+    "cue": "Körper in einer Linie, Hüfte hoch, Po fest."
+   },
+   "h_birddog": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_birddog",
+    "home": true,
+    "name": "Bird Dog",
+    "where": "Matte",
+    "group": "Rumpf",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 8,
+    "repMax": 10,
+    "rest": 30,
+    "inc": 0,
+    "start": 0,
+    "perSide": true,
+    "cue": "Gegenüberliegenden Arm und Bein lang machen, Becken bleibt ruhig."
+   },
+   "h_ytw": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_ytw",
+    "home": true,
+    "name": "Y-T-W in Bauchlage",
+    "where": "Matte, ohne oder mit leichten Hanteln",
+    "group": "Hintere Schulter",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 8,
+    "repMax": 10,
+    "rest": 45,
+    "inc": 0,
+    "start": 0,
+    "cue": "Stirn auf einem Handtuch, Arme als Y, T und W anheben, Schulterblätter nach hinten-unten."
+   },
+   "h_calf": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_calf",
+    "home": true,
+    "name": "Wadenheben einbeinig",
+    "where": "an der Wand, Kurzhantel optional",
+    "group": "Waden",
+    "focus": "aufbau",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 12,
+    "repMax": 15,
+    "rest": 30,
+    "inc": 2,
+    "start": 0,
+    "perSide": true,
+    "max": 14,
+    "cue": "Langsam, oben halten, Druck über den Großzehenballen."
+   },
+   "h_wall": {
+    "type": "reps",
+    "alts": [],
+    "id": "h_wall",
+    "home": true,
+    "name": "Wandengel",
+    "where": "Wand",
+    "group": "Haltung",
+    "focus": "haltung",
+    "unit": "kg",
+    "sets": 2,
+    "repMin": 10,
+    "repMax": 12,
+    "rest": 30,
+    "inc": 0,
+    "start": 0,
+    "cue": "Po, Rücken und Hinterkopf an der Wand, Arme langsam hoch und runter schieben."
+   }
+  },
+  "equipment": {
+   "dumbbells": {
+    "max": 14,
+    "step": 2,
+    "note": "Zwei verstellbare Kurzhanteln bis je 14 kg, Scheiben zu 1 und 2 kg"
+   },
+   "mat": true,
+   "bench": false,
+   "bands": false,
+   "bar": false
+  },
+  "plans": [
+   {
+    "id": "A",
+    "name": "Ganzkörper A",
+    "focus": "Rücken waagerecht, Beine, Brust",
+    "minutes": 55,
+    "items": [
+     {
+      "ex": "legpress"
+     },
+     {
+      "ex": "cablerow"
+     },
+     {
+      "ex": "chestpress"
+     },
+     {
+      "ex": "rdl"
+     },
+     {
+      "ex": "facepull",
+      "ss": "A1"
+     },
+     {
+      "ex": "latraise",
+      "ss": "A1"
+     },
+     {
+      "ex": "pallof",
+      "ss": "A2"
+     },
+     {
+      "ex": "calf",
+      "ss": "A2",
+      "optional": true
+     }
+    ]
+   },
+   {
+    "id": "B",
+    "name": "Ganzkörper B",
+    "focus": "Rücken senkrecht, Gesäß, Schultern",
+    "minutes": 55,
+    "items": [
+     {
+      "ex": "hipthrust"
+     },
+     {
+      "ex": "latpull"
+     },
+     {
+      "ex": "splitsquat"
+     },
+     {
+      "ex": "shoulderpress"
+     },
+     {
+      "ex": "revfly",
+      "ss": "B1"
+     },
+     {
+      "ex": "extrot",
+      "ss": "B1",
+      "optional": true
+     },
+     {
+      "ex": "backext",
+      "ss": "B2"
+     },
+     {
+      "ex": "plank",
+      "ss": "B2"
+     },
+     {
+      "ex": "bicep",
+      "ss": "B3"
+     },
+     {
+      "ex": "tricep",
+      "ss": "B3"
+     }
+    ]
+   }
+  ],
+  "warmup": [
+   {
+    "name": "Katze-Kuh",
+    "dose": "8×",
+    "cue": "Wirbel für Wirbel rund und lang machen."
+   },
+   {
+    "name": "Thorax-Rotation im Vierfüßlerstand",
+    "dose": "6× je Seite",
+    "cue": "Hand an den Hinterkopf, Ellbogen zur Decke aufdrehen."
+   },
+   {
+    "name": "Glute Bridge",
+    "dose": "12×",
+    "cue": "Becken einrollen, oben 2 s den Po anspannen."
+   },
+   {
+    "name": "Dead Bug",
+    "dose": "6× je Seite",
+    "cue": "Unterer Rücken bleibt am Boden."
+   },
+   {
+    "name": "Face Pull leicht",
+    "dose": "15×",
+    "cue": "Leichtes Gewicht, nur zum Aktivieren."
+   }
+  ],
+  "routines": {
+   "haltung": {
+    "id": "haltung",
+    "name": "Haltungsroutine",
+    "minutes": 7,
+    "where": "zu Hause, ohne Geräte",
+    "items": [
+     {
+      "name": "Wandengel",
+      "dose": "10×",
+      "cue": "Po, Rücken und Hinterkopf an der Wand. Arme langsam hoch und runter schieben, Rippen unten."
+     },
+     {
+      "name": "Dead Bug",
+      "dose": "8× je Seite",
+      "cue": "Unterer Rücken bleibt am Boden, langsam ausatmen."
+     },
+     {
+      "name": "Glute Bridge",
+      "dose": "12×, oben 2 s",
+      "cue": "Becken einrollen, Po fest, nicht ins Hohlkreuz drücken."
+     },
+     {
+      "name": "Hüftbeuger-Dehnung im Halbkniestand",
+      "dose": "30 s je Seite",
+      "cue": "Po des hinteren Beins anspannen, Becken einrollen. Die Dehnung spürst du vorn an der Hüfte."
+     },
+     {
+      "name": "Brustdehnung im Türrahmen",
+      "dose": "30 s je Seite",
+      "cue": "Unterarm an den Rahmen, Oberkörper sanft wegdrehen."
+     },
+     {
+      "name": "Kurzfuß",
+      "dose": "10× 5 s je Fuß",
+      "cue": "Zehen lang lassen, Fußballen Richtung Ferse ziehen, das Gewölbe hebt sich."
+     }
+    ]
+   },
+   "buero": {
+    "id": "buero",
+    "name": "Büro-Pause",
+    "minutes": 2,
+    "where": "im Stehen",
+    "items": [
+     {
+      "name": "Schulterblätter zurück und runter",
+      "dose": "10× 3 s",
+      "cue": "Als würdest du sie in die Gesäßtaschen schieben."
+     },
+     {
+      "name": "Kinn zurückschieben",
+      "dose": "10×",
+      "cue": "Leichtes Doppelkinn, Blick bleibt geradeaus."
+     },
+     {
+      "name": "Hüftbeuger-Dehnung im Stehen",
+      "dose": "30 s je Seite",
+      "cue": "Kleiner Ausfallschritt, Po des hinteren Beins anspannen."
+     },
+     {
+      "name": "Wadenheben",
+      "dose": "15×",
+      "cue": "Langsam, Druck über den Großzehenballen."
+     }
+    ]
+   }
+  },
+  "sessions": [
+   {
+    "id": "s-import",
+    "date": "2026-11-17",
+    "plan": "import",
+    "name": "Stand aus der Studio-App",
+    "imported": true,
+    "entries": [
+     {
+      "ex": "legpress",
+      "sets": [
+       {
+        "kg": 109,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 109,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 109,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "legext",
+      "sets": [
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "chestpress",
+      "sets": [
+       {
+        "kg": 35,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 35,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 35,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "shoulderpress",
+      "sets": [
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 20,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "latraise",
+      "sets": [
+       {
+        "kg": 10,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 10,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 10,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "latpull",
+      "sets": [
+       {
+        "kg": 65,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 65,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 65,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "revfly",
+      "sets": [
+       {
+        "kg": 15,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 15,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 15,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "abmachine",
+      "sets": [
+       {
+        "kg": 40,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 40,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 40,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "tricep",
+      "sets": [
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     },
+     {
+      "ex": "bicep",
+      "sets": [
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       },
+       {
+        "kg": 25,
+        "reps": 12,
+        "done": true
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "active": null,
+  "runs": [],
+  "routineLog": [],
+  "bodyweight": [
+   {
+    "date": "2026-11-17",
+    "kg": 72
+   }
+  ],
+  "protein": {},
+  "foods": [
+   {
+    "name": "Skyr, 150 g",
+    "g": 17
+   },
+   {
+    "name": "Magerquark, 250 g",
+    "g": 30
+   },
+   {
+    "name": "3 Eier",
+    "g": 19
+   },
+   {
+    "name": "Hähnchenbrust, 150 g",
+    "g": 35
+   },
+   {
+    "name": "Proteinshake",
+    "g": 25
+   },
+   {
+    "name": "Linsen gekocht, 200 g",
+    "g": 18
+   },
+   {
+    "name": "Thunfisch, 1 Dose",
+    "g": 25
+   },
+   {
+    "name": "Hüttenkäse, 200 g",
+    "g": 24
+   },
+   {
+    "name": "Tofu, 200 g",
+    "g": 26
+   },
+   {
+    "name": "Lachs, 125 g",
+    "g": 25
+   }
+  ]
+ },
+ "grooming": {
+  "tasks": [
+   {
+    "id": "bart",
+    "slot": "rhythmus",
+    "name": "Bart auf 3-Tage-Länge trimmen",
+    "every": 3,
+    "first": 0,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "kopf",
+    "slot": "rhythmus",
+    "name": "Kopf und Nacken rasieren",
+    "every": 7,
+    "weekend": true,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "naegel",
+    "slot": "rhythmus",
+    "name": "Fingernägel kürzen und feilen",
+    "every": 7,
+    "first": 2,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "peeling",
+    "slot": "rhythmus",
+    "name": "Sanftes Gesichtspeeling",
+    "every": 7,
+    "first": 3,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "waesche",
+    "slot": "rhythmus",
+    "name": "Handtücher und Kissenbezug wechseln",
+    "every": 7,
+    "first": 4,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": ""
+   },
+   {
+    "id": "brauen",
+    "slot": "rhythmus",
+    "name": "Augenbrauen zupfen",
+    "every": 14,
+    "first": 2,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "nase",
+    "slot": "rhythmus",
+    "name": "Nasen- und Ohrhaare trimmen",
+    "every": 14,
+    "first": 5,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "fuesse",
+    "slot": "rhythmus",
+    "name": "Fußpflege",
+    "every": 14,
+    "first": 6,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "geraete",
+    "slot": "rhythmus",
+    "name": "Trimmer und Rasierer reinigen und ölen",
+    "every": 14,
+    "first": 8,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "koerper",
+    "slot": "rhythmus",
+    "name": "Körperhaare trimmen",
+    "every": 21,
+    "first": 8,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   },
+   {
+    "id": "buerste",
+    "slot": "rhythmus",
+    "name": "Zahnbürste oder Bürstenkopf wechseln",
+    "every": 90,
+    "first": 26,
+    "how": "Beispiel-Anleitung für die Testdaten.",
+    "with": "Beispiel"
+   }
+  ],
+  "products": [
+   {
+    "id": "p-lotion",
+    "name": "Beispielprodukt 1",
+    "note": "Hast du schon (Alverde).",
+    "have": true
+   },
+   {
+    "id": "p-q10",
+    "name": "Beispielprodukt 2",
+    "note": "Hast du schon (Alverde).",
+    "have": true
+   },
+   {
+    "id": "p-clean",
+    "name": "Beispielprodukt 3",
+    "note": "Reinigungsmilch oder Cremewaschgel, z. B. von Alverde, Lavera oder Weleda."
+   },
+   {
+    "id": "p-spf",
+    "name": "Beispielprodukt 4",
+    "note": "Für Gesicht, Ohren und Kopf. Naturkosmetik-Varianten gibt es z. B. von Lavera oder Alverde."
+   },
+   {
+    "id": "p-lips",
+    "name": "Beispielprodukt 5",
+    "note": "Naturkosmetik mit Sheabutter oder Bienenwachs."
+   },
+   {
+    "id": "p-peel",
+    "name": "Beispielprodukt 6",
+    "note": "Ohne grobe Körner, für trockene Haut."
+   },
+   {
+    "id": "p-floss",
+    "name": "Beispielprodukt 7",
+    "note": ""
+   },
+   {
+    "id": "p-deo",
+    "name": "Beispielprodukt 8",
+    "note": "Naturkosmetik-Deo als Roll-on oder Creme."
+   },
+   {
+    "id": "p-tweezer",
+    "name": "Beispielprodukt 9",
+    "note": "Edelstahl, schräge Spitze, für die Augenbrauen."
+   },
+   {
+    "id": "p-nosetrim",
+    "name": "Beispielprodukt 10",
+    "note": "Nur nötig, wenn dein Trimmer keinen Aufsatz dafür hat."
+   },
+   {
+    "id": "p-nails",
+    "name": "Beispielprodukt 11",
+    "note": ""
+   },
+   {
+    "id": "p-feet",
+    "name": "Beispielprodukt 12",
+    "note": "Fußcreme für trockene Haut."
+   },
+   {
+    "id": "p-oil",
+    "name": "Beispielprodukt 13",
+    "note": "Liegt meist dem Trimmer bei."
+   },
+   {
+    "id": "p-beard",
+    "name": "Beispielprodukt 14",
+    "note": "Optional. Beim 3-Tage-Bart reicht meist deine Gesichtscreme.",
+    "optional": true
+   },
+   {
+    "id": "p-zunge",
+    "name": "Beispielprodukt 15",
+    "note": "Hast du schon. Alle paar Monate erneuern.",
+    "have": true
+   },
+   {
+    "id": "p-nase",
+    "name": "Beispielprodukt 16",
+    "note": "Hast du schon. Salz rechtzeitig nachkaufen.",
+    "have": true
+   }
+  ],
+  "routine": {
+   "morgens": [
+    "Kalt duschen",
+    "Zähne putzen",
+    "Zungenschaber",
+    "Körper und Gesicht eincremen"
+   ],
+   "abends": [
+    "Nasenspülung",
+    "Zähne putzen und Zahnseide",
+    "Gesicht waschen und eincremen"
+   ]
+  },
+  "last": {}
+ },
+ "health": {
+  "days": {},
+  "obs": [],
+  "epOut": {},
+  "questions": [],
+  "meds": [],
+  "intake": {},
+  "measures": [
+   {
+    "id": "schlaf",
+    "l": "Früh ins Bett"
+   },
+   {
+    "id": "trinken",
+    "l": "Viel getrunken"
+   },
+   {
+    "id": "tee",
+    "l": "Tee oder Warmes"
+   },
+   {
+    "id": "nase_extra",
+    "l": "Extra Nasenspülung"
+   },
+   {
+    "id": "gurgeln",
+    "l": "Salzwasser gegurgelt"
+   },
+   {
+    "id": "pause",
+    "l": "Training pausiert"
+   },
+   {
+    "id": "warm",
+    "l": "Warm eingepackt"
+   },
+   {
+    "id": "ruhe",
+    "l": "Ruhiger Tag"
+   },
+   {
+    "id": "essen",
+    "l": "Gesund gegessen"
+   }
+  ],
+  "profile": {
+   "early": [
+    "glieder",
+    "hals_schmerz"
+   ],
+   "then": [
+    "nase_lauf"
+   ],
+   "triggers": [
+    "schlaf"
+   ],
+   "measures": [
+    "schlaf",
+    "trinken",
+    "tee",
+    "warm",
+    "nase_extra",
+    "gurgeln"
+   ],
+   "sleepGoal": 7.5,
+   "wake": "06:00",
+   "bed": "22:30",
+   "coldsPerSeason": 3,
+   "breathHint": "hunger"
+  },
+  "doctors": [
+   {
+    "id": "d-hausarzt",
+    "fach": "allg",
+    "title": "Hausarzt",
+    "name": "Dr. Muster, Praxis Mitte",
+    "phone": "",
+    "note": "Musterstraße 1"
+   },
+   {
+    "id": "d-zahn",
+    "fach": "zahn",
+    "title": "Zahnarzt",
+    "name": "Dr. Beispiel",
+    "phone": "",
+    "note": "Marktplatz"
+   },
+   {
+    "id": "d-haut",
+    "fach": "haut",
+    "title": "Hautärztin",
+    "name": "Frau Probe",
+    "phone": "",
+    "note": "Hauptstraße"
+   },
+   {
+    "id": "d-neuro",
+    "fach": "neuro",
+    "title": "Neurologin",
+    "name": "Frau Test, Neurologie Beispiel",
+    "phone": "",
+    "note": "Musterstadt"
+   },
+   {
+    "id": "d-augen",
+    "fach": "augen",
+    "title": "Augenarzt",
+    "name": "",
+    "phone": "",
+    "note": ""
+   },
+   {
+    "id": "d-hno",
+    "fach": "hno",
+    "title": "HNO-Arzt",
+    "name": "",
+    "phone": "",
+    "note": ""
+   },
+   {
+    "id": "d-ortho",
+    "fach": "ortho",
+    "title": "Orthopäde",
+    "name": "",
+    "phone": "",
+    "note": ""
+   }
+  ],
+  "vorsorge": [
+   {
+    "id": "checkup",
+    "name": "Gesundheits-Check-up",
+    "doc": "d-hausarzt",
+    "every": 1095,
+    "jan": true,
+    "last": "2026-09-15",
+    "est": true,
+    "note": "Ab 35 alle drei Jahre als Kassenleistung, mit Blut- und Urinwerten; einmalig auch ein Test auf Hepatitis B und C. Frag, ob das Hautkrebs-Screening gleich im selben Termin mitgemacht werden kann."
+   },
+   {
+    "id": "haut",
+    "name": "Hautkrebs-Screening",
+    "doc": "d-haut",
+    "every": 730,
+    "jan": true,
+    "last": "2026-02-10",
+    "est": true,
+    "note": "Ab 35 alle zwei Jahre als Kassenleistung, beim Hautarzt oder geschulten Hausarzt. Lass die Kopfhaut mit ansehen."
+   },
+   {
+    "id": "zahn",
+    "name": "Zahnarzt-Kontrolle",
+    "doc": "d-zahn",
+    "every": 182,
+    "jan": true,
+    "last": "2026-02-10",
+    "est": true,
+    "note": "Halbjährlich; mindestens einmal im Jahr für das Bonusheft."
+   },
+   {
+    "id": "pzr",
+    "name": "Professionelle Zahnreinigung",
+    "doc": "d-zahn",
+    "every": 365,
+    "optional": true,
+    "last": "2026-02-10",
+    "est": true,
+    "note": "Je nach Zahnarzt ein- bis zweimal im Jahr, meist selbst bezahlt. Hilft auch gegen Mundgeruch und Zungenbelag; lässt sich gut mit der Kontrolle verbinden."
+   },
+   {
+    "id": "tetanus",
+    "name": "Tetanus und Diphtherie auffrischen",
+    "doc": "d-hausarzt",
+    "every": 3650,
+    "jan": true,
+    "last": null,
+    "checked": "2026-10-19",
+    "note": "Alle zehn Jahre, die nächste fällige Impfung einmalig zusammen mit Keuchhusten. Das Datum der letzten Impfung steht im Impfpass; beim Check-up mit ansehen lassen."
+   },
+   {
+    "id": "augen",
+    "name": "Augen-Check",
+    "doc": "d-augen",
+    "every": 1095,
+    "optional": true,
+    "last": null,
+    "note": "Ohne Beschwerden gibt es keinen festen Rhythmus. Ab etwa 40 wird oft eine Glaukom-Früherkennung empfohlen, meist als Selbstzahlerleistung."
+   },
+   {
+    "id": "einlagen",
+    "name": "Füße und Einlagen prüfen",
+    "doc": "d-ortho",
+    "every": 730,
+    "optional": true,
+    "last": null,
+    "note": "Wegen der Knick-, Senk- und Spreizfüße, besonders wenn du regelmäßig läufst."
+   },
+   {
+    "id": "grippe",
+    "name": "Grippeimpfung",
+    "doc": "d-hausarzt",
+    "every": 365,
+    "season": "10-01",
+    "last": "2026-11-05",
+    "est": true,
+    "note": "Jedes Jahr ab Oktober. Die STIKO empfiehlt sie vor allem ab 60 und für Risikogruppen; frag beim Hausarzt, ob deine Kasse sie übernimmt."
+   },
+   {
+    "id": "prostata",
+    "name": "Prostata-Früherkennung",
+    "doc": "d-hausarzt",
+    "every": 365,
+    "ageFrom": 45,
+    "last": null,
+    "note": "Ab 45 jährlich als Kassenleistung."
+   },
+   {
+    "id": "darm",
+    "name": "Darmkrebs-Früherkennung",
+    "doc": "d-hausarzt",
+    "every": 3650,
+    "ageFrom": 50,
+    "last": null,
+    "note": "Ab 50: zwei Darmspiegelungen im Abstand von zehn Jahren oder alle zwei Jahre ein Stuhlbluttest."
+   }
+  ],
+  "record": {
+   "allergies": "Hausstaub (leicht)",
+   "conditions": "Beispiel-Diagnose (fachärztlich betreut)",
+   "supplements": "Vitamin D (Beispiel)",
+   "notes": "Beispielnotiz für die Testdaten."
+  },
+  "appts": [
+   {
+    "id": "a-checkup-2026",
+    "doc": "d-hausarzt",
+    "date": "2026-09-15",
+    "time": "",
+    "reason": "Gesundheits-Check-up",
+    "talk": "Beispiel: alles in Ordnung.",
+    "next": "",
+    "done": true,
+    "vs": "checkup",
+    "est": true
+   }
+  ],
+  "followups": [
+   {
+    "id": "f-neuro-rueckruf",
+    "doc": "d-neuro",
+    "by": "2026-11-26",
+    "text": "Beispiel: Rückruf der Praxis abwarten"
+   }
+  ]
+ },
+ "meta": {
+  "setup": null,
+  "lastBackup": null
+ }
+}

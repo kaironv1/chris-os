@@ -1,0 +1,753 @@
+1. Langärmliges Kragenshirt von Morgenrot
+
+- braungrau
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Slim fit
+
+- Haifischkragen mit gleichfarbigen Knöpfen
+
+
+
+2. T-Shirt von Morgenrot
+
+- schwarz
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+3. T-Shirt von Feldweg
+
+- weinrot
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+4. T-Shirt von Holzwerk
+
+- dunkelgrün
+
+- Baumwolle
+
+- grob gestrickt
+
+- Regular Fit
+
+- Rundhals
+
+
+
+5. T-Shirt von Leinenhof
+
+- olivgrün
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- leicht oversized
+
+- Rundhals
+
+
+
+6. T-Shirt von Nordwerk
+
+- hellblau
+
+- kein Muster
+
+- Baumwolle
+
+- grob gestrickt
+
+- Regular Fit
+
+- Rundhals
+
+
+
+7. T-Shirt von Morgenrot
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+8. T-Shirt von Leinenhof
+
+- grau verwaschen
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Oversized
+
+- Rundhals
+
+
+
+9. T-Shirt von Kupferstich
+
+- schwarz
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+10. T-Shirt von Hanseatik
+
+- weinrot
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+11. T-Shirt von Holzwerk
+
+- olivgrün
+
+- eingestricktes X in der Größe einer Handfläche unter dem Kragen
+
+- Baumwolle
+
+- grob gestrickt
+
+- Regular Fit
+
+- Rundhals
+
+
+
+12. T-Shirt von Holzwerk
+
+- hellbeige
+
+- kein Muster
+
+- Baumwolle
+
+- grob gestrickt
+
+- leicht oversized
+
+- Rundhals
+
+
+
+13. T-Shirt von Morgenrot
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+14. T-Shirt von Kiesel und Co
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- dicker Stoff
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+15. T-Shirt von Kiesel und Co
+
+- hellgrün
+
+- kein Muster
+
+- Baumwolle
+
+- dicker Stoff
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+16. T-Shirt von Morgenrot
+
+- schwarz
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+17. T-Shirt von Leinenhof
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit, leicht oversized
+
+- Rundhals
+
+
+
+18. T-Shirt von Atelier Süd
+
+- dunkelblau
+
+- kein Muster, aber kleiner Druck auf Brusthöhe eines Siebträgers
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+19. T-Shirt von Kontor Sieben
+
+- dunkelgrau
+
+- kein Muster
+
+- Baumwolle
+
+- grober Strick
+
+- oversized
+
+- Rundhals
+
+
+
+20. Business-Hemd von Westkai
+
+- olivgrün
+
+- kein Muster
+
+- Baumwolle
+
+- feingestrickt
+
+- Regular
+
+- beige Knöpfe
+
+- Haifischkragen
+
+
+
+21. Casual-Hemd von Ostwind
+
+- jeansblau
+
+- kein Muster
+
+- Baumwolle (Jeans-Optik)
+
+- feingestrickt
+
+- Regular
+
+- Haifischkragen
+
+
+
+22. T-Shirt von Morgenrot
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Rundhals
+
+
+
+23. Casual-Hemd von Blauwal
+
+- braun
+
+- kein Muster
+
+- Baumwolle
+
+- Cord
+
+- Regular Fit
+
+- Haifischkragen
+
+
+
+24. Casual-Hemd von Morgenrot
+
+- dunkelblau
+
+- kein Muster
+
+- Baumwolle
+
+- feiner Strick
+
+- Regular Fit
+
+- Haifischkragen
+
+
+
+25. Casual-Hemd von Kupferstich
+
+- olivgrün
+
+- kein Muster
+
+- Baumwolle
+
+- Cord
+
+- Regular Fit
+
+- Haifischkragen
+
+
+
+26. Casual-Hemd von Kiesel und Co
+
+- schwarz
+
+- kein Muster
+
+- Baumwolle
+
+- grob gestrickt
+
+- Relaxed Fit
+
+- Haifischkragen
+
+
+
+27. Casual-Hemd von Kiesel und Co
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- grob gestrickt
+
+- Relaxed Fit
+
+- Haifischkragen
+
+
+
+28. Casual-Hemd von Linea Vera
+
+- schwarz-weiß kariert
+
+- Baumwolle
+
+- dicker Stoff
+
+- grob gestrickt
+
+- Relaxed Fit
+
+- Haifischkragen
+
+
+
+29. Casual-Hemd von Linea Vera
+
+- schwarz
+
+- Baumwolle
+
+- grob gestrickt
+
+- Relaxed Fit
+
+- Haifischkragen
+
+
+
+30. Business-Hemd von Westkai
+
+- grau
+
+- kein Muster
+
+- Baumwolle
+
+- feingestrickt
+
+- Regular
+
+- beige Knöpfe
+
+- Haifischkragen
+
+
+
+31. Overshirt von Holzwerk
+
+- beige
+
+- kein Muster
+
+- dicker Stoff
+
+- Poliester und Viskose
+
+- Haifischkragen
+
+- gleichfarbige Knöpfe
+
+
+
+32. Casual-Hemd von Westkai
+
+- schwarz
+
+- kein Muster
+
+- sehr dicker Stoff
+
+- regular fit
+
+- Haifischkragen
+
+- schwarze knöpfe
+
+
+
+33. Leinenhemd
+
+- beige
+
+- Leinen
+
+- kein Muster
+
+- regular fit
+
+- Haifischkragen
+
+
+
+34. Business-Hemd von Wellenreiter
+
+- schwarzgrau gepunktet
+
+- kein Muster
+
+- Baumwolle
+
+- Haifischkragen
+
+
+
+35. Insgesamt 14kKlassische Business-Hemd von Tannenhaus
+
+- weiß
+
+- kein Muster
+
+- Baumwolle
+
+- feingestrickt
+
+- Haifischkragen
+
+
+
+36. Pullover von Stadtgrün
+
+- schwarz
+
+- kein Muster
+
+- grob gestrickt
+
+- Baumwolle
+
+- Rundhals
+
+
+
+37. Pullover von Stadtgrün
+
+- hellbraun
+
+- kein Muster
+
+- grob gestrickt
+
+- Baumwolle
+
+- Rundhals
+
+
+
+38. Pulli von Morgenrot
+
+- hellgrün
+
+- kein Muster
+
+- wollig
+
+- Polyamid, elastan
+
+- Rundhals
+
+
+
+39. Pulli von Linea Vera
+
+- dunkleres blau
+
+- kein Muster
+
+- grob gestrickt
+
+- Baumwolle
+
+- Rundhals
+
+
+
+40. Pulli von Kupferstich
+
+- olivgrün
+
+- kein Muster
+
+- feingestrickt
+
+- Baumwolle
+
+- Rundhals
+
+
+
+41. Strickpulli von Morgenrot
+
+- Schwarzweiß
+
+- kein Muster
+
+- Geriffelt
+
+- Baumwolle und Elastan
+
+- Rundhals
+
+
+
+42. Jeans von Kiesel und Co
+
+- jeansblau
+
+- tapered fit
+
+
+
+43. Jeans von Kiesel und Co
+
+- angehelltes schwarz
+
+- tapered fit
+
+
+
+44. Stoffhose von Feldweg
+
+- Viskose, Polyester und Elastan
+
+- hellgrau
+
+
+
+45. Stoffhose von Silberfuchs
+
+- dunkleres grau
+
+- polyyester
+
+- slim fit
+
+
+
+46. Stoffhose von Grauton
+
+- sehr dunkles blau
+
+- sehr dicker Stoff
+
+- Polyester und Wolle
+
+
+
+47. Stoffhose von Silberfuchs
+
+- schwarz grau gepunktet
+
+- Baumwolle
+
+
+
+48. Stoffhose von Kiesel und Co
+
+- braun
+
+- grob gestrickt
+
+- Baumwolle, Viskose
+
+
+
+49. Stoffhose von Kiesel und Co
+
+- grau
+
+- grob gestrickt
+
+- Baumwolle, Viskose
+
+
+
+50. Stoffhose von Holzwerk
+
+- beige
+
+- Polyester, Viskose
+
+
+
+51. Stoffhose von Fjordline
+
+- grau
+
+- stretch techno wool
+
+- Bügelfalte
+
+
+
+52. Casual-Hemd von Morgenrot
+
+- Khaki
+
+- Leinen und Poliester
+
+- sehr feingestrickt
+
+- Kein Muster
+
+
+
+53. Blaue Leinenhosen von Grauton
+
+- hellblau
+
+- Leinen
+
+- kein Muster
+
+- etwas grober gestrickt
