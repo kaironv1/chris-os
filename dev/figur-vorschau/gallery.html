@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><title>Galerie</title>
+<style>
+:root{--garment-line:#2E2B27;--fig-skin:#E6DED2;--fig-ground:rgba(0,0,0,.1)}
+body{margin:0;background:#F5F2EC;font:13px system-ui;color:#222}
+body.dark{background:#171614;color:#eee;--garment-line:#0E0D0C;--fig-skin:#5B554D;--fig-ground:rgba(0,0,0,.35)}
+.grid{display:grid;grid-template-columns:repeat(var(--n,5),1fr);gap:8px;padding:8px}
+.cell{background:rgba(255,255,255,.55);border-radius:10px;padding:6px}
+body.dark .cell{background:#211F1C}
+.cell svg{width:100%;height:auto;display:block}
+.zoom svg{width:100%;height:auto}
+</style></head><body>
+<div class="grid" id="g"></div>
+<script src="../../src/figure.js"></script>
+<script src="src/demo-data.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+if (q.get('dark')) document.body.classList.add('dark');
+const set = q.get('set') === 'gallery' ? Demo.GALLERY : Demo.OUTFITS;
+const n = +(q.get('n') || 4); document.querySelector('.grid').style.setProperty('--n', n);
+const vb = q.get('vb');
+const g = document.getElementById('g');
+set.forEach(def => {
+  let s = Figure.svg(Demo.resolve(def));
+  if (vb) s = s.replace('viewBox="0 0 100 200"', 'viewBox="' + vb + '"');
+  g.insertAdjacentHTML('beforeend', '<div class="cell"><div>' + (def.name || def.id) + '</div>' + s + '</div>');
+});
+</script></body></html>

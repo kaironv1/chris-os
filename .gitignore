@@ -1,0 +1,21 @@
+# Persönliche Daten: nie ins Repository
+seed.json
+**/seed.json
+uploads/
+alt/
+fotos/
+*backup*.json
+
+# Builds: nur der öffentliche Web-Build gehört hinein
+dist/*
+!dist/web/
+dev/figur-vorschau/dist/
+dev/figur-vorschau/shots/
+pwa/site-test/
+
+# Werkzeuge und System
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+Thumbs.db
