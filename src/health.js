@@ -245,7 +245,7 @@
       if (!signs || !myMeas.length) tips.push('Viel trinken, gern warm.');
       tips.push('Training nur locker, oder dehnen statt schwer.');
       const then = (P.then || []).filter(k => !(src && src.sym && src.sym[k]));
-      if (signs && early && early.length && then.length) tips.push('Bei dir folgt meist der Schnupfen. Die extra Nasenspülung lohnt sich schon jetzt.');
+      if (signs && early && early.length && then.length) tips.push('Als Nächstes kommt bei dir meist: ' + then.map(symLabel).join(', ') + '.' + ((P.measures || []).includes('nase_extra') ? ' Die extra Nasenspülung lohnt sich schon jetzt.' : ''));
     } else if (level === 'schonen') {
       tips.push('Krafttraining heute ausfallen lassen.', 'Ruhe, Schlaf und viel trinken.', 'Bei Fieber gar kein Sport.');
     } else if (level === 'arzt') {

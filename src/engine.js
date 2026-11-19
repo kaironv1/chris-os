@@ -200,7 +200,7 @@
     else if (dL < 10 && outer.fam === bottom.fam && outer.fam !== 'neutral') { s += 2; R.push([3, 'Ton in Ton']); }
     if (ctx.occasion === 'abend') { const avgL = vis.reduce((a, i) => a + i.L, 0) / vis.length; if (avgL < 45) { s += 5; R.push([5, 'Dunklere Töne für den Abend']); } }
     // slim build
-    if (tops.length >= 2 && ctx.effT < 22) { s += 6; R.push([6, 'Lagenlook trägt auf, gut für deine schlanke Statur']); }
+    if (tops.length >= 2 && ctx.effT < 22) { s += 6; R.push([6, 'Lagenlook trägt auf und gibt Volumen']); }
     const tex = all.filter(i => /cord|grob|dick|wollig|gerippt/i.test(i.texture || '')).length;
     if (tex && ctx.effT < 20) { s += Math.min(6, tex * 3); R.push([4, 'Strukturierte Stoffe geben Volumen']); }
     if (/slim/i.test(bottom.fit || '')) s -= 6;

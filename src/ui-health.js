@@ -255,14 +255,22 @@
           <h2 class="sec-title" style="margin:18px 0 8px">Befinden, letzte 30 Tage</h2>${lineChart('mood30', mood30, { label: 'Befinden von 1 bis 5', unit: '', col: 'Befinden', pad: 0.5, h: 160 })}</div>
       </div>`;
   }
-  // Chris suspects hunger. Show how the data looks for that, plus what usually helps.
+  // Next dental check from the user's own Vorsorge data, e.g. " (fällig ab März 2027)"
+  function zahnNext() {
+    const v = S.health.vorsorge.find(x => x.id === 'zahn'); if (!v) return '';
+    const r = H.vorsorgeDue(S, v, E.today());
+    if (!r.date) return '';
+    const M = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    return r.state === 'faellig' ? ' (schon fällig)' : ' (fällig ab ' + M[+r.date.slice(5, 7) - 1] + ' ' + r.date.slice(0, 4) + ')';
+  }
+  // Suspected trigger from the user's own data (breathHint). Show how the data looks for that, plus what usually helps.
   function breathHunch(br) {
     if ((S.health.profile || {}).breathHint !== 'hunger') return '';
     const f = br.factors.find(x => x.label === 'Lange nichts gegessen');
     let status = 'Markiere „Bei Hunger aufgefallen“, wenn du ihn bemerkst. Dann prüft die App deinen Verdacht.';
     if (f && f.nWith >= 3) status = f.diff >= 0.25 ? 'Bestätigt sich bisher: an Hunger-Tagen ist dein Atem im Schnitt ' + breathWord(f.avgWith) + ', sonst ' + breathWord(f.avgWithout) + '.' : 'Bisher kein klarer Zusammenhang mit Hunger. Bleib beim Markieren.';
     return `<div class="hunch"><h3 class="mini-h">Dein Verdacht: Mundgeruch bei Hunger</h3><p class="small ink2">${esc(status)}</p>
-      <ul class="tips small"><li>Nicht zu lange ohne Essen: kleine Snacks wie Apfel oder Nüsse, dazu Wasser.</li><li>Zuckerfreier Kaugummi regt den Speichel an, wenn der Magen knurrt.</li><li>Weißlicher Zungenbelag: Zungenschaber weiter nutzen und beim Zahnarzt ansprechen. Die professionelle Zahnreinigung kannst du gut mit der Kontrolle Anfang 2027 verbinden.</li></ul></div>`;
+      <ul class="tips small"><li>Nicht zu lange ohne Essen: kleine Snacks wie Apfel oder Nüsse, dazu Wasser.</li><li>Zuckerfreier Kaugummi regt den Speichel an, wenn der Magen knurrt.</li><li>Bei Zungenbelag: Zungenschaber nutzen und beim Zahnarzt ansprechen. Die professionelle Zahnreinigung lässt sich gut mit der nächsten Kontrolle verbinden${zahnNext()}.</li></ul></div>`;
   }
   const breathWord = v => v < 0.5 ? 'frisch' : v < 1.3 ? 'mittel' : 'schlecht';
 
@@ -407,7 +415,7 @@
     ui.repPhotos = ui.repPhotos || {};
     for (const o of S.health.obs) {
       const k = 'obs:' + o.id; if (ui.repPhotos[k] || !Photos.url(k)) continue;
-      try { const b = await (await fetch(Photos.url(k))).blob(); ui.repPhotos[k] = await blobToDataURL(b); } catch (e) { /* skip */ }
+      try { const b = await Photos.get(k); if (b) ui.repPhotos[k] = await blobToDataURL(b); } catch (e) { /* skip */ }
     }
   }
   function reportHTML() {
@@ -755,7 +763,7 @@
       const P = S.health.profile || {}, bed = P.bed || '22:30';
       const [h, m] = bed.split(':').map(Number), rem = String(h * 60 + m - 15 < 0 ? 0 : Math.floor((h * 60 + m - 15) / 60)).padStart(2, '0') + ':' + String((h * 60 + m - 15) % 60).padStart(2, '0');
       let date = E.today(); while (![0, 1, 2, 3, 4].includes(E.weekday(date))) date = E.addDays(date, 1);
-      download('bettzeit-erinnerung.ics', H.ics([{ uid: 'bettzeit', date, time: rem, minutes: 15, title: 'Schlafenszeit: in 15 Minuten ins Bett', desc: 'Damit du um ' + bed + ' Uhr im Bett bist und auf ' + n0(P.sleepGoal || 7.5) + ' Stunden kommst. Schlafmangel ist dein häufigster Erkältungs-Auslöser.', rrule: 'FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH', alarms: ['PT0M'] }]), 'text/calendar');
+      download('bettzeit-erinnerung.ics', H.ics([{ uid: 'bettzeit', date, time: rem, minutes: 15, title: 'Schlafenszeit: in 15 Minuten ins Bett', desc: 'Damit du um ' + bed + ' Uhr im Bett bist und auf ' + n0(P.sleepGoal || 7.5) + ' Stunden kommst.' + ((P.triggers || []).includes('schlaf') ? ' Schlafmangel ist dein häufigster Erkältungs-Auslöser.' : ''), rrule: 'FREQ=WEEKLY;BYDAY=SU,MO,TU,WE,TH', alarms: ['PT0M'] }]), 'text/calendar');
       toast('Kalender-Datei gespeichert: Sonntag bis Donnerstag um ' + rem + ' Uhr.');
     },
     'ics.checkin': () => {

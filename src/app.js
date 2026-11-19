@@ -3,6 +3,9 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
+  const VERSION = '2.4';
+  // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
+  const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const uid = p => (p || 'x') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -45,20 +48,31 @@
   const ic = (k, cls) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${cls ? ` class="${cls}"` : ''}>${IC[k] || ''}</svg>`;
 
   // ---------- State ----------
+  // Start data: only the test build embeds a seed (loaded on the first start). The PC and web versions come
+  // without start data since 2.4: on a device without saved data the app opens the welcome screen with the backup import.
+  const seedEl = () => document.getElementById('seed');
+  const seedState = () => { const el = seedEl(); return el ? JSON.parse(el.textContent) : null; };
+  // Without a seed, older states are migrated against empty lists: structure only, nothing personal
+  const baseState = () => ({ profile: {}, grooming: { tasks: [], products: [], routine: { morgens: [], abends: [] } }, training: { exercises: {}, equipment: { dumbbells: null, mat: true, bench: false, bands: false, bar: false } }, health: { measures: [], doctors: [], vorsorge: [], record: {}, appts: [], followups: [], profile: {} } });
+  function freshState() {
+    const st = seedState();
+    if (!st) return null;
+    const d = E.today();
+    st.meta = st.meta || {}; st.meta.setup = d;
+    E.initGrooming(st, d);
+    return st;
+  }
   function load() {
     let st = null;
     try { st = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { st = null; }
     if (!st) {
-      st = JSON.parse(document.getElementById('seed').textContent);
-      const d = E.today();
-      st.meta.setup = d;
-      E.initGrooming(st, d);
+      st = freshState();
+      if (!st) return null;
       localStorage.setItem(KEY, JSON.stringify(st));
     }
     if (migrate(st)) { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* saved on next change */ } }
     return st;
   }
-  const seedState = () => JSON.parse(document.getElementById('seed').textContent);
   // Brings older saved states (v1.x) up to the current structure. Returns true if the version changed.
   function migrate(st) {
     st.wardrobe.tempOverride = st.wardrobe.tempOverride || {};
@@ -66,7 +80,7 @@
     st.meta = st.meta || {}; st.meta.dismissed = st.meta.dismissed || {};
     let changed = false;
     if (!st.version || st.version < 2) {
-      const seed = seedState();
+      const seed = seedState() || baseState();
       const L = st.grooming.last || (st.grooming.last = {});
       st.health = Object.assign(seed.health, st.health || {});
       [['zahnarzt', 'zahn'], ['hautcheck', 'haut'], ['checkup', 'checkup']].forEach(([from, to]) => {
@@ -86,7 +100,7 @@
     }
     if (st.version < 3) {
       // Answers from the clarification list (K9-K22) and the home dumbbells; only fills what is still empty.
-      const seed = seedState(), sh = seed.health, h = st.health;
+      const seed = seedState() || baseState(), sh = seed.health, h = st.health;
       Object.entries(seed.training.exercises).forEach(([id, ex]) => {
         if (!st.training.exercises[id]) { st.training.exercises[id] = ex; return; }
         if (ex.max) ['start', 'inc', 'max', 'repMin', 'repMax'].forEach(k => { if (ex[k] != null) st.training.exercises[id][k] = ex[k]; });
@@ -114,12 +128,13 @@
     }
     if (st.version < 4) {
       // Answers K23, K25, K31 (only fills what is still empty)
-      const seed = seedState(), sh = seed.health, h = st.health;
+      const seed = seedState() || baseState(), sh = seed.health, h = st.health;
+      h.doctors = h.doctors || []; h.vorsorge = h.vorsorge || []; h.record = h.record || {};
       const nd = sh.doctors.find(d => d.id === 'd-neuro'), xd = h.doctors.find(d => d.id === 'd-neuro');
-      if (!xd) h.doctors.push(nd); else { if (!xd.name) xd.name = nd.name; if (!xd.note) xd.note = nd.note; }
+      if (nd) { if (!xd) h.doctors.push(nd); else { if (!xd.name) xd.name = nd.name; if (!xd.note) xd.note = nd.note; } }
       const hv = h.vorsorge.find(v => v.id === 'haut'), sv = sh.vorsorge.find(v => v.id === 'haut');
-      if (hv && !hv.last) { hv.last = sv.last; hv.est = sv.est; }
-      if (!h.record.conditions) h.record.conditions = sh.record.conditions;
+      if (hv && sv && !hv.last) { hv.last = sv.last; hv.est = sv.est; }
+      if (!h.record.conditions && sh.record.conditions) h.record.conditions = sh.record.conditions;
       st.training.equipment = Object.assign({}, seed.training.equipment, st.training.equipment || {}, { mat: true });
       st.version = 4; changed = true;
     }
@@ -140,9 +155,10 @@
   const item = id => S.wardrobe.items.find(i => i.id === id);
   const exById = id => S.training.exercises[id];
   function applyTheme() {
-    const t = S.settings.theme;
+    const t = S ? S.settings.theme : 'auto';
     const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', dark ? '#121822' : '#F1F2EE'));
   }
 
   // ---------- Photos (IndexedDB) ----------
@@ -170,6 +186,7 @@
     async put(id, blob) { await this.run('readwrite', s => s.put(blob, id)); const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.set(id, URL.createObjectURL(blob)); },
     async del(id) { await this.run('readwrite', s => s.delete(id)); const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.delete(id); },
     async all() { const db = await this.open(); return new Promise(res => { const out = []; const req = db.transaction('p').objectStore('p').openCursor(); req.onsuccess = () => { const c = req.result; if (c) { out.push([c.key, c.value]); c.continue(); } else res(out); }; req.onerror = () => res(out); }); },
+    async get(id) { return this.run('readonly', s => s.get(id)); },
     async clear() { await this.run('readwrite', s => s.clear()); for (const u of this.urls.values()) URL.revokeObjectURL(u); this.urls.clear(); },
     url(id) { return this.urls.get(id) || null; }
   };
@@ -449,7 +466,7 @@
   function viewTraining(sub) {
     if (sub === 'session') return viewSession();
     if (sub === 'dehnen') return viewPlayer();
-    const head = `<header class="page-head"><div><h1 class="page-title">Training</h1><p class="page-sub">2× Ganzkörper pro Woche, 60 % Haltung und 40 % Aufbau. Dazu 1× Laufen und regelmäßig dehnen. Ohne Gym geht es mit Kurzhanteln zu Hause.</p></div></header>`;
+    const head = `<header class="page-head"><div><h1 class="page-title">Training</h1><p class="page-sub">${S.settings.goals.gym}× Ganzkörper pro Woche, 60 % Haltung und 40 % Aufbau.${S.settings.goals.run ? ' Dazu ' + S.settings.goals.run + '× Laufen und regelmäßig dehnen.' : ' Dazu regelmäßig dehnen.'} Ohne Gym geht es mit Kurzhanteln zu Hause.</p></div></header>`;
     let body;
     if (sub === 'zuhause') body = viewHome();
     else if (sub === 'verlauf') body = viewHistory();
@@ -730,7 +747,7 @@
       <details class="panel" style="margin-top:18px"><summary style="cursor:pointer;font-weight:620">So entstehen die Vorschläge</summary>
         <ul class="how-text" style="margin:10px 0 0;padding-left:18px">
           <li>Alle sinnvollen Kombinationen aus deinem Schrank werden bewertet: Anlass, gefühlte Temperatur, Farben (Blau und Erdtöne bevorzugt, höchstens ein Akzent), Muster und Material.</li>
-          <li>Für deine schlanke Statur gibt es Pluspunkte für Lagen, strukturierte Stoffe und Hosen, die die Beine voller wirken lassen. Slim-Fit-Hosen bekommen Abzug.</li>
+          <li>Pluspunkte gibt es für Lagen, strukturierte Stoffe und Hosen, die die Beine voller wirken lassen. Slim-Fit-Hosen bekommen Abzug.</li>
           <li>Kombinationen aus deiner Outfit-Liste und alles mit 👍 werden bevorzugt, 👎 wird nicht mehr vorgeschlagen.</li>
           <li>Was du in den letzten Tagen getragen hast oder in der Wäsche ist, rückt nach hinten.</li>
           <li>Jacke: unter ${S.settings.winterBelow}° gefühlt Winterjacke, unter ${S.settings.coatBelow}° Mantel${S.settings.coldSensitive ? ', und weil du schnell frierst, rechnet die App für die Lagen 2° kälter' : ''}. Ändern kannst du das in den Einstellungen.</li>
@@ -884,12 +901,26 @@
         <div><div><span class="lbl">Backup speichern</span><p class="hint">Eine Datei mit allem, inklusive Fotos. ${lb ? 'Letztes Backup: ' + E.fmtDate(lb) + '.' : 'Noch kein Backup gespeichert.'}</p></div><button class="btn sm" data-a="backup.export">${ic('download')}Backup speichern</button></div>
         <div><div><span class="lbl">Backup laden</span><p class="hint">Ersetzt alle Daten in dieser App durch das Backup.</p></div><label class="btn sm quiet">${ic('upload')}Datei wählen<input type="file" accept=".json,application/json" data-c="backup.import" class="sr"></label></div>
         <div><div><span class="lbl">Kleiderliste importieren</span><p class="hint">Excel (.xlsx), CSV oder Text in deinem bisherigen Format. Neue Teile kommen dazu, bekannte Nummern werden aktualisiert.</p></div><div class="row"><button class="btn sm quiet" data-a="import.open">${ic('upload')}Importieren</button><button class="btn sm ghost" data-a="csv.template">CSV-Vorlage</button></div></div>
-        <div><div><span class="lbl">Alles zurücksetzen</span><p class="hint">Löscht deine Einträge und Fotos und lädt die Startdaten neu.</p></div><button class="btn sm danger" data-a="reset">Zurücksetzen</button></div>
+        <div><div><span class="lbl">Alles zurücksetzen</span><p class="hint">${seedEl() ? 'Löscht deine Einträge und Fotos und lädt die Startdaten neu.' : 'Löscht alle Daten und Fotos auf diesem Gerät. Danach kannst du ein Backup einspielen.'}</p></div><button class="btn sm danger" data-a="reset">Zurücksetzen</button></div>
       </div></div>
+      ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
-        <p class="how-text">Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version 2.3, November 2026. Neu: Ankleide-Figur am Outfit-Vorschlag, jedes Teil mit Marke. Davor in 2.2: neuer Name Chris OS.</p></div>
+        <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Handy-Version mit Fingerabdruck-Sperre, Start ohne Startdaten mit „Backup einspielen“. Davor in 2.3: Ankleide-Figur am Outfit-Vorschlag.</p></div>
     </div>`;
+  }
+  // Lock and updates: only in the web version, which embeds lock.js and pwa.js
+  function lockPanel() {
+    if (!WEB) return '';
+    const on = !!(window.Lock && Lock.status().enabled), ok = ui.lockOk;
+    const hint = on ? 'An. Beim Öffnen und nach einer Minute im Hintergrund fragt die App nach Fingerabdruck, Gesicht oder Geräte-PIN.'
+      : ok === false ? 'Dieses Gerät bietet hier keine Bestätigung per Fingerabdruck, Gesicht oder PIN an. Am Handy klappt es in Chrome, sobald eine Displaysperre eingerichtet ist.'
+      : 'Aus. Schützt die App vor fremden Blicken, auch wenn dein Handy entsperrt in anderen Händen ist.';
+    return `<div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:6px">Sperre und Updates</h2><div class="settings-list">
+        <div><div><span class="lbl">Fingerabdruck-Sperre</span><p class="hint">${hint}</p></div>${on ? '<div class="row"><button class="btn sm quiet" data-a="lock.now">Jetzt sperren</button><button class="btn sm ghost" data-a="lock.off">Ausschalten</button></div>' : `<button class="btn sm" data-a="lock.on"${ok === false ? ' disabled' : ''}>Einrichten</button>`}</div>
+        ${on ? '<div><div><span class="lbl">Kein Zugriff mehr?</span><p class="hint">Auf dem Sperrbildschirm „Kein Zugriff mehr?“ wählen. Dann löschst du die Daten auf diesem Gerät und spielst dein Backup neu ein.</p></div></div>' : ''}
+        <div><div><span class="lbl">App-Version</span><p class="hint">${ui.update ? 'Eine neue Version ist bereit.' : 'Version ' + VERSION + '. Neue Versionen kündigt die App an, du lädst sie auf Knopfdruck.'}</p></div>${ui.update ? '<button class="btn sm" data-a="app.update">Jetzt laden</button>' : ''}</div>
+      </div></div>`;
   }
 
   // ---------- Router ----------
@@ -1070,7 +1101,15 @@
 
   // ---------- Backup ----------
   const blobToDataURL = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(b); });
-  async function dataURLToBlob(u) { const r = await fetch(u); return r.blob(); }
+  // Decoded by hand: the web version's CSP does not allow fetch() on data: URLs
+  function dataURLToBlob(u) {
+    const i = u.indexOf(','), head = u.slice(0, i), body = u.slice(i + 1);
+    const type = (head.match(/^data:([^;,]+)/) || [])[1] || 'application/octet-stream';
+    if (!/;base64$/.test(head)) return new Blob([decodeURIComponent(body)], { type });
+    const bin = atob(body), out = new Uint8Array(bin.length);
+    for (let k = 0; k < bin.length; k++) out[k] = bin.charCodeAt(k);
+    return new Blob([out], { type });
+  }
   function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
   async function exportBackup() {
     const photos = {};
@@ -1079,15 +1118,24 @@
     download('chris-os-backup-' + E.today() + '.json', JSON.stringify({ app: 'haltung', version: S.version || 2, exported: new Date().toISOString(), state: S, photos }));
     render(); toast('Backup gespeichert. Leg die Datei an einen sicheren Ort.');
   }
-  async function importBackup(file) {
+  async function readBackup(file) {
     let data;
-    try { data = JSON.parse(await file.text()); } catch (e) { toast('Die Datei ist kein gültiges Backup.'); return; }
-    if (!data || data.app !== 'haltung' || !data.state) { toast('Die Datei ist kein Backup dieser App.'); return; }
+    try { data = JSON.parse(await file.text()); } catch (e) { return { err: 'Die Datei ist kein gültiges Backup.' }; }
+    if (!data || data.app !== 'haltung' || !data.state || !data.state.wardrobe) return { err: 'Die Datei ist kein Backup dieser App.' };
+    return { data };
+  }
+  async function applyBackup(data) {
+    S = data.state; migrate(S);
+    await Photos.clear();
+    for (const [id, u] of Object.entries(data.photos || {})) { try { await Photos.put(id, dataURLToBlob(u)); } catch (e) { /* skip */ } }
+    save(); applyTheme();
+  }
+  async function importBackup(file) {
+    const r = await readBackup(file);
+    if (r.err) { toast(r.err); return; }
+    const data = r.data;
     confirmDlg('Backup laden?', 'Alle aktuellen Daten werden durch das Backup vom ' + (data.exported ? E.fmtDate(data.exported.slice(0, 10)) : 'unbekannten Datum') + ' ersetzt.', 'Backup laden', async () => {
-      S = data.state; migrate(S);
-      await Photos.clear();
-      for (const [id, u] of Object.entries(data.photos || {})) { try { await Photos.put(id, await dataURLToBlob(u)); } catch (e) { /* skip */ } }
-      save(); applyTheme(); render(); toast('Backup geladen');
+      await applyBackup(data); render(); toast('Backup geladen');
     });
   }
 
@@ -1183,7 +1231,7 @@
     'item.save': () => saveItem(),
     'item.delete': el => { const id = el.dataset.id; const it = item(id); confirmDlg('Teil löschen?', capF(it.label) + ' wird aus dem Kleiderschrank entfernt. Zum Aufbewahren kannst du es stattdessen auf „Aussortiert“ setzen.', 'Löschen', async () => { S.wardrobe.items = S.wardrobe.items.filter(i => i.id !== id); try { await Photos.del(id); } catch (e) { /* none */ } save(); render(); toast('Gelöscht'); }, true); },
     'item.photo.del': async el => { await Photos.del(el.dataset.id); const art0 = $('#ed-art'); if (art0) art0.innerHTML = G.svg(item(el.dataset.id)); el.remove(); render(); },
-    'photos.bulk': () => openDialog(`${dlgHead('Fotos zuordnen')}<p class="how-text">Benenne die Fotos mit der Nummer des Teils, z. B. „5.jpg“ für das olivgrüne T-Shirt Nr. 5, und wähle dann alle auf einmal aus. Schuhe und Teile ohne Nummer ordnest du einzeln über das Teil zu.</p><label class="btn quiet" style="margin-top:14px">${ic('camera')}Fotos wählen<input type="file" accept="image/*" multiple class="sr" data-c="photos.files"></label><div id="bulk-res" style="margin-top:14px"></div>`),
+    'photos.bulk': () => openDialog(`${dlgHead('Fotos zuordnen')}<p class="how-text">Benenne die Fotos mit der Nummer des Teils, z. B. „5.jpg“ für das Teil Nr. 5, und wähle dann alle auf einmal aus. Schuhe und Teile ohne Nummer ordnest du einzeln über das Teil zu.</p><label class="btn quiet" style="margin-top:14px">${ic('camera')}Fotos wählen<input type="file" accept="image/*" multiple class="sr" data-c="photos.files"></label><div id="bulk-res" style="margin-top:14px"></div>`),
     'import.open': () => importDialog(),
     'import.apply': async el => { const r = mergeImport(ui.importRes, el.dataset.mode); closeDialog(); render(); toast(r.added + ' neu, ' + r.updated + ' aktualisiert' + (r.oCount ? ', ' + r.oCount + ' Outfits' : '')); },
     'csv.template': () => download('kleiderliste-vorlage.csv', '﻿Nr;Kategorie;Bezeichnung;Marke;Farbe;Muster;Material;Struktur;Passform;Formalität;Anzahl;Notiz\n54;Hemd;Oxford-Hemd;Marke;hellblau;uni;Baumwolle;fein;Regular;3;1;\n58;Schuhe;Chelsea Boots;Marke;braun;uni;Wildleder;;;3;1;\n', 'text/csv'),
@@ -1227,7 +1275,16 @@
     // settings
     'theme': el => { S.settings.theme = el.dataset.v; save(); applyTheme(); render(); },
     'backup.export': () => exportBackup(),
-    'reset': () => confirmDlg('Alles zurücksetzen?', 'Trainings, Pflege-Einträge, Bewertungen und Fotos werden gelöscht. Speichere vorher ein Backup, wenn du etwas behalten willst.', 'Alles löschen', async () => { localStorage.removeItem(KEY); await Photos.clear(); S = load(); save(); applyTheme(); location.hash = '#/heute'; render(); toast('Zurückgesetzt'); }, true),
+    'reset': () => seedEl()
+      ? confirmDlg('Alles zurücksetzen?', 'Trainings, Pflege-Einträge, Bewertungen und Fotos werden gelöscht. Speichere vorher ein Backup, wenn du etwas behalten willst.', 'Alles löschen', async () => { localStorage.removeItem(KEY); await Photos.clear(); S = load(); save(); applyTheme(); location.hash = '#/heute'; render(); toast('Zurückgesetzt'); }, true)
+      : confirmDlg('Alles zurücksetzen?', 'Alle Daten und Fotos auf diesem Gerät werden gelöscht. Danach kannst du ein Backup einspielen. Speichere vorher ein Backup, wenn du etwas behalten willst.', 'Alles löschen', async () => { await wipeDevice(); location.hash = '#/heute'; location.reload(); }, true),
+    // lock and updates (web version)
+    'lock.on': () => lockSetup(),
+    'lock.off': async () => { try { const ok = await Lock.disable(); render(); toast(ok ? 'Sperre ausgeschaltet' : 'Nicht bestätigt, die Sperre bleibt an.'); } catch (e) { toast(lockErr(e)); } },
+    'lock.now': () => Lock.lockNow(),
+    'lock.setup': () => { closeDialog(); lockSetup(); },
+    'app.update': () => { if (ui.update) ui.update(); },
+    'toast.act': () => { const f = ui.toastAct; ui.toastAct = null; $('#toast').classList.add('hidden'); if (f) f(); },
     'loc.open': el => locDialog(el.dataset.k),
     'loc.clear': () => { S.settings.office = null; save(); refreshWeather(true); render(); },
     'loc.search': async () => {
@@ -1300,7 +1357,7 @@
           ${nav.slice(0, 5).map(([k, i, l]) => `<a class="nav-item" href="#/${k}" data-nav="${k}">${ic(i)}<span>${l}</span>${badge(k)}</a>`).join('')}
           <span class="spacer"></span>
           <a class="nav-item" href="#/einstellungen" data-nav="einstellungen">${ic('settings')}<span>Einstellungen</span></a>
-          <p class="rail-foot">Deine Daten bleiben in diesem Browser.</p></nav>
+          <p class="rail-foot">Deine Daten bleiben ${WEB ? 'auf diesem Gerät' : 'in diesem Browser'}.</p></nav>
         <main id="view" tabindex="-1"></main>
         <nav class="tabbar" aria-label="Hauptnavigation">${nav.map(([k, i, l]) => `<a href="#/${k}" data-nav="${k}">${ic(i)}<span>${k === 'einstellungen' ? 'Mehr' : l}</span>${badge(k)}</a>`).join('')}</nav>
       </div>
@@ -1325,11 +1382,90 @@
     setInterval(() => { const c = document.querySelector('[data-clock]'); if (c) c.textContent = minText(+clockText()); badges(); }, 15000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); render(); } });
   }
-  async function boot() {
-    S = load(); applyTheme(); loadWx(); shell();
-    await Photos.loadAll();
+  // ---------- Welcome: no data on this device yet ----------
+  const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#3E5C8A"/><path d="M341 171A120 120 0 1 0 341 341" fill="none" stroke="#F4F1EB" stroke-width="58" stroke-linecap="round"/><circle cx="364" cy="256" r="31" fill="#D39A6A"/></svg>';
+  function welcome(msg) {
+    let w = $('#welcome');
+    if (!w) { w = document.createElement('main'); w.id = 'welcome'; w.className = 'welcome'; document.body.prepend(w); }
+    w.innerHTML = `<div class="welcome-in">
+        <div class="welcome-mark">${LOGO}</div>
+        <h1 class="welcome-title">Chris OS</h1>
+        <p class="welcome-lead">Auf diesem Gerät sind noch keine Daten. Spiel dein Backup ein, dann geht es weiter, wo du aufgehört hast.</p>
+        <label class="btn welcome-btn">${ic('upload')}Backup einspielen<input type="file" accept=".json,application/json" class="sr" id="welcome-file"></label>
+        <p class="welcome-msg${msg ? ' err' : ''}" role="status" aria-live="polite">${esc(msg || '')}</p>
+        <ol class="welcome-steps">
+          <li>Auf dem bisherigen Gerät in Chris OS: Einstellungen, Daten, „Backup speichern“.</li>
+          <li>Die Datei per Kabel oder Quick Share auf dieses Gerät holen, nicht über die Cloud.</li>
+          <li>Hier auf „Backup einspielen“ tippen und die Datei wählen.</li>
+        </ol>
+        <p class="welcome-foot">Deine Daten bleiben auf diesem Gerät. Ohne Konto, ohne Cloud.</p>
+      </div>`;
+    $('#welcome-file').addEventListener('change', async e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      $('.welcome-msg').textContent = 'Lese das Backup …';
+      const r = await readBackup(f);
+      if (r.err) { welcome(r.err); return; }
+      try { await applyBackup(r.data); }
+      catch (err) { S = null; welcome('Das Backup ließ sich nicht einspielen. Versuch es noch einmal.'); return; }
+      w.remove();
+      location.hash = '#/heute';
+      start();
+      toast('Backup geladen. Schön, dass du da bist.');
+      offerLock();
+    });
+  }
+
+  // ---------- Lock and updates (web version) ----------
+  async function wipeDevice() {
+    try { localStorage.removeItem(KEY); localStorage.removeItem(WXKEY); } catch (e) { /* storage blocked */ }
+    try { if (Photos.db) { Photos.db.close(); Photos.db = null; } } catch (e) { /* already closed */ }
+    await new Promise(res => { try { const r = indexedDB.deleteDatabase('haltung-fotos'); r.onsuccess = r.onerror = r.onblocked = () => res(); } catch (e) { res(); } });
+  }
+  function lockErr(e) {
+    if (e && e.message === 'unsupported') return 'Dieses Gerät unterstützt die Sperre hier nicht.';
+    if (e && e.name === 'NotAllowedError') return 'Abgebrochen. Versuch es noch einmal, wenn du so weit bist.';
+    return 'Das hat nicht geklappt. Versuch es noch einmal.';
+  }
+  async function lockSetup() {
+    try { await Lock.enable(); render(); toast('Sperre eingerichtet. Ab jetzt fragt die App nach deinem Fingerabdruck.'); }
+    catch (e) { toast(lockErr(e)); }
+  }
+  async function offerLock() {
+    if (!WEB || Lock.status().enabled) return;
+    if (ui.lockOk == null) ui.lockOk = await Lock.supported();
+    if (!ui.lockOk) return;
+    openDialog(`${dlgHead('Fingerabdruck-Sperre einrichten?')}<p class="how-text">Dann fragt die App beim Öffnen und nach einer Minute im Hintergrund nach deinem Fingerabdruck, Gesicht oder der Geräte-PIN. Die Daten bleiben dabei auf diesem Gerät.</p><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Später</button><button class="btn" data-a="lock.setup">Einrichten</button></div>`);
+  }
+  function notice(msg, label, fn) {
+    const t = $('#toast');
+    if (!t) return;
+    clearTimeout(toastTimer);
+    t.innerHTML = `<span>${esc(msg)}</span><button data-a="toast.act">${esc(label)}</button>`;
+    t.classList.remove('hidden');
+    ui.toastAct = fn;
+  }
+  function offerUpdate(apply) {
+    ui.update = apply;
+    notice('Neue Version bereit', 'Jetzt laden', apply);
+    if (S && $('#view') && route().top === 'einstellungen') render();
+  }
+
+  function start() {
+    shell();
     render();
     refreshWeather();
+    if (ui.update) notice('Neue Version bereit', 'Jetzt laden', ui.update);
+  }
+  async function boot() {
+    S = load(); applyTheme(); loadWx();
+    if (WEB) {
+      Lock.init({ appName: 'Chris OS', grace: 60, onReset: wipeDevice }).then(r => { ui.lockOk = r.supported; if (S && $('#view') && route().top === 'einstellungen') render(); });
+      PWA.init({ onUpdate: offerUpdate });
+    }
+    if (!S) { welcome(); return; }
+    await Photos.loadAll();
+    start();
   }
   window.HaltungDebug = { get state() { return S; }, render, E, H: window.Health, migrate };
   boot();

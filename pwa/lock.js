@@ -51,17 +51,17 @@
     if (document.getElementById('lock-style')) return;
     const s = document.createElement('style');
     s.id = 'lock-style';
-    s.textContent = `#lock{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg,#F4F1EB);color:var(--ink,#23211E);font-family:Archivo,"Segoe UI",Roboto,system-ui,-apple-system,sans-serif}
+    s.textContent = `#lock{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--paper,#F1F2EE);color:var(--ink,#1B2331);font-family:Archivo,"Segoe UI",Roboto,system-ui,-apple-system,sans-serif}
 #lock[hidden]{display:none}
 #lock .lock-in{width:100%;max-width:340px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
-#lock .lock-mark{width:76px;height:76px;border-radius:24px;display:grid;place-items:center;background:var(--chip,#ECE7DE);color:var(--denim,#3E5C8A)}
+#lock .lock-mark{width:76px;height:76px;border-radius:24px;display:grid;place-items:center;background:var(--denim-wash,#E4EAF4);color:var(--denim,#2F4E85)}
 #lock .lock-mark svg{width:44px;height:44px}
 #lock h1{margin:6px 0 0;font-size:24px}
-#lock p{margin:0;color:var(--ink2,#57534C);font-size:15px;line-height:1.45}
-#lock button{font:inherit;font-size:16px;border-radius:14px;padding:13px 18px;width:100%;cursor:pointer;border:1px solid var(--line,#E5DFD4);background:var(--card,#fff);color:inherit}
-#lock button.go{background:var(--denim,#3E5C8A);border-color:transparent;color:#fff;font-weight:600}
+#lock p{margin:0;color:var(--ink-2,#485163);font-size:15px;line-height:1.45}
+#lock button{font:inherit;font-size:16px;border-radius:14px;padding:13px 18px;width:100%;cursor:pointer;border:1px solid var(--line,#DCDFD8);background:var(--surface,#fff);color:inherit}
+#lock button.go{background:var(--denim,#2F4E85);border-color:transparent;color:var(--denim-ink,#fff);font-weight:600}
 #lock button.danger{background:#A3302F;border-color:transparent;color:#fff;font-weight:600}
-#lock button.quiet{border:0;background:none;color:var(--muted,#8B867D);font-size:14px;padding:8px;width:auto}
+#lock button.quiet{border:0;background:none;color:var(--muted,#646C7B);font-size:14px;padding:8px;width:auto}
 #lock.covered .lock-in{visibility:hidden}
 html.is-locked body>*:not(#lock){visibility:hidden}`;
     document.head.appendChild(s);

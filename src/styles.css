@@ -700,3 +700,18 @@ button.fig-name:focus-visible { outline: 2px solid var(--denim); outline-offset:
   .fig-sw { forced-color-adjust: none; }
   .fig-swap, button.fig-name { forced-color-adjust: auto; }
 }
+
+/* ---------- Welcome (no data on this device yet) and lock ---------- */
+html.is-locked body > *:not(#lock) { visibility: hidden; }
+.welcome { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom)); }
+.welcome-in { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+.welcome-mark { width: 84px; height: 84px; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-pop); }
+.welcome-mark svg { display: block; width: 100%; height: 100%; }
+.welcome-title { margin: 8px 0 0; font-size: 30px; font-stretch: 82%; font-weight: 720; letter-spacing: -.01em; }
+.welcome-lead { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.5; }
+.welcome-btn { width: 100%; height: 52px; font-size: 16px; margin-top: 6px; cursor: pointer; }
+.welcome-btn:focus-within { outline: 2px solid var(--denim); outline-offset: 3px; }
+.welcome-msg { margin: 0; min-height: 1.4em; font-size: 14.5px; color: var(--ink-2); }
+.welcome-msg.err { color: var(--rust); font-weight: 560; }
+.welcome-steps { margin: 4px 0 0; padding: 16px 18px 16px 36px; text-align: left; background: var(--surface); border-radius: var(--r-l); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); font-size: 14.5px; line-height: 1.5; display: grid; gap: 6px; width: 100%; }
+.welcome-foot { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
