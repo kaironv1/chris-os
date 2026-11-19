@@ -43,6 +43,6 @@
     return `${toggle}<div class="fig-wrap${opts.big ? ' big' : ''}"><div class="fig-stage">${FIG.svg(o, { attr })}</div><ul class="fig-list" aria-label="Teile des Outfits">${FIG.parts(o).map(p => figRow(o, d, p)).join('')}</ul></div>`;
   }
   Object.assign(A, {
-    'o.view': el => { S.settings.outfitView = el.dataset.v === 'teile' ? 'teile' : 'figur'; save(); render(); }
+    'o.view': el => { S.settings.outfitView = el.dataset.v === 'teile' ? 'teile' : 'figur'; save(true); render(); }
   });
   // ---------- Ende Ankleide-Figur ----------

@@ -1,11 +1,13 @@
 /* Chris OS, Sperre per Passkey: Fingerabdruck, Gesicht oder Geräte-PIN über den Plattform-Authentifikator.
    Läuft nur in der gehosteten Version (HTTPS). Die Sperre schützt die Oberfläche vor fremden Blicken.
    Die Daten selbst sind damit noch nicht verschlüsselt; das kommt später über die PRF-Erweiterung.
-   Nutzung: Lock.init({ appName, grace, onUnlock, onReset }), Lock.enable(), Lock.disable(), Lock.status(). */
+   Nutzung: Lock.init({ appName, grace, method, onUnlock, onReset }), Lock.enable(), Lock.disable(), Lock.status().
+   method: wie die Bestätigung heißt, „Fingerabdruck“ (Vorgabe) oder am Windows-PC „Windows Hello“. */
 (function (root) {
   'use strict';
   const KEY = 'chrisos.lock';
-  const cfg = { appName: 'Chris OS', grace: 60, onUnlock: null, onReset: null };
+  const cfg = { appName: 'Chris OS', grace: 60, method: 'Fingerabdruck', onUnlock: null, onReset: null };
+  const how = () => cfg.method === 'Fingerabdruck' ? 'Entsperre mit deinem Fingerabdruck.' : 'Entsperre mit ' + cfg.method + '.';
   let mode = 'open', hiddenAt = 0, busy = false, el = null;
 
   const b64u = buf => btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(buf)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -74,13 +76,15 @@ html.is-locked body>*:not(#lock){visibility:hidden}`;
     document.documentElement.classList.add('is-locked');
   }
   function home() {
-    el.innerHTML = `<div class="lock-in"><div class="lock-mark">${ICON}</div><h1></h1><p class="lock-msg">Entsperre mit deinem Fingerabdruck.</p><button type="button" class="go" data-l="go">Entsperren</button><button type="button" class="quiet" data-l="help">Kein Zugriff mehr?</button></div>`;
+    el.innerHTML = `<div class="lock-in"><div class="lock-mark">${ICON}</div><h1></h1><p class="lock-msg"></p><button type="button" class="go" data-l="go">Entsperren</button><button type="button" class="quiet" data-l="help">Kein Zugriff mehr?</button></div>`;
     el.querySelector('h1').textContent = cfg.appName;
+    msg(how());
     el.querySelector('[data-l="go"]').addEventListener('click', unlock);
     el.querySelector('[data-l="help"]').addEventListener('click', help);
   }
   function help() {
-    el.innerHTML = `<div class="lock-in"><h1>Neu einrichten?</h1><p class="lock-msg">Ohne Fingerabdruck kommst du nicht mehr an die Daten auf diesem Gerät. Du kannst sie hier löschen und danach dein Backup einspielen.</p><button type="button" class="danger" data-l="wipe">Daten auf diesem Gerät löschen</button><button type="button" data-l="back">Zurück</button></div>`;
+    el.innerHTML = `<div class="lock-in"><h1>Neu einrichten?</h1><p class="lock-msg"></p><button type="button" class="danger" data-l="wipe">Daten auf diesem Gerät löschen</button><button type="button" data-l="back">Zurück</button></div>`;
+    msg('Ohne ' + cfg.method + ' kommst du nicht mehr an die Daten auf diesem Gerät. Du kannst sie hier löschen und danach dein Backup einspielen.');
     el.querySelector('[data-l="wipe"]').addEventListener('click', wipe);
     el.querySelector('[data-l="back"]').addEventListener('click', home);
   }

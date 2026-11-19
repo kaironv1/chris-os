@@ -3,9 +3,16 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.4';
+  const VERSION = '2.5';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
+  // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
+  // phone by default, the other one gets the data per backup. HELLO: on Windows the lock asks for Windows Hello.
+  const UA = navigator.userAgent || '';
+  const DEVICE = /Android|iPhone|iPad|iPod|Mobile/i.test(UA) || (navigator.userAgentData && navigator.userAgentData.mobile) ? 'handy' : 'pc';
+  const DEV_NAME = { handy: 'Handy', pc: 'PC' };
+  const devOf = v => (v === 'handy' || v === 'pc') ? v : null;
+  const HELLO = /Windows/i.test(UA);
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const uid = p => (p || 'x') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -147,10 +154,33 @@
     h.record = h.record || {};
     return changed;
   }
-  function save() {
+  // quiet: no change of the data itself (backup, hint closed, view switched), so changedAt stays
+  function save(quiet) {
     ver++; ui.memo = {};
+    if (!quiet && S.meta) S.meta.changedAt = new Date().toISOString();
     try { localStorage.setItem(KEY, JSON.stringify(S)); }
     catch (e) { toast('Speichern fehlgeschlagen: Browser-Speicher voll? Bitte ein Backup anlegen.'); }
+  }
+
+  // ---------- Data state across devices ----------
+  // meta.changedAt: last change; meta.savedAt: last backup saved; meta.restored: { at, exported, from } of the
+  // last backup loaded on this device. Timestamps are ISO strings (UTC) and compare as text.
+  const pad2 = n => String(n).padStart(2, '0');
+  const dayOf = t => E.iso(new Date(t));
+  const latest = (...ts) => ts.filter(Boolean).sort().pop() || null;
+  function stamp(t) {
+    const d = new Date(t);
+    if (!t || isNaN(d)) return '';
+    const n = E.diffDays(E.iso(d), E.today());
+    return (n === 0 ? 'heute' : n === 1 ? 'gestern' : E.fmtShort(E.iso(d))) + ', ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+  const backupLabel = (from, at) => 'Backup' + (devOf(from) ? ' vom ' + DEV_NAME[from] : '') + (at ? ' (' + stamp(at) + ')' : '');
+  const mainDevice = () => devOf(S && S.settings.mainDevice) || 'handy';
+  const isMain = () => DEVICE === mainDevice();
+  // Changes on this device that are in no backup yet
+  function unsaved() {
+    const m = S.meta, r = m.restored || {};
+    return !!m.changedAt && m.changedAt > (latest(m.savedAt, r.at, r.exported) || '');
   }
   const item = id => S.wardrobe.items.find(i => i.id === id);
   const exById = id => S.training.exercises[id];
@@ -370,11 +400,22 @@
     return `<div class="week" aria-label="Diese Woche">${cells.join('')}</div>`;
   }
   function backupNote() {
-    const lb = S.meta.lastBackup;
-    const age = lb ? E.diffDays(lb, E.today()) : E.diffDays(S.meta.setup || E.today(), E.today());
-    if (!lb && S.meta.dismissed.welcome !== true) {
+    const m = S.meta, lb = m.lastBackup, r = m.restored;
+    const age = lb ? E.diffDays(lb, E.today()) : E.diffDays(m.setup || E.today(), E.today());
+    if (!lb && m.dismissed.welcome !== true) {
       return `<div class="note info" style="margin-bottom:20px">${ic('info')}<div class="grow"><b>Deine Daten bleiben ${WEB ? 'auf diesem Gerät' : 'in diesem Browser auf deinem PC'}.</b> Speichere ab und zu ein Backup (Einstellungen), dann ist nichts verloren, falls Browserdaten gelöscht werden.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button><button class="icon-btn" data-a="dismiss" data-k="welcome" aria-label="Hinweis schließen">${ic('x')}</button></div>`;
     }
+    // Second device (K39): its data came per backup from the main device
+    if (r && !isMain()) {
+      const main = DEV_NAME[mainDevice()];
+      if (unsaved()) return `<div class="note" style="margin-bottom:20px" data-note="device">${ic('alert')}<div class="grow">Du hast hier etwas geändert, das am ${main} noch fehlt (zuletzt ${stamp(m.changedAt)}). Speichere ein Backup und spiel es am ${main} ein.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button></div>`;
+      if (r.exported && E.diffDays(dayOf(r.exported), E.today()) >= 1) {
+        const src = devOf(r.from) && r.from !== DEVICE ? 'Daten vom ' + DEV_NAME[r.from] + ', Stand: ' : 'Datenstand: ';
+        return `<div class="note info" style="margin-bottom:20px" data-note="device">${ic('info')}<div class="grow">${src}${stamp(r.exported)}. Spiel vor neuen Einträgen ein frisches Backup vom ${main} ein.</div><label class="btn sm quiet">${ic('upload')}Backup einspielen<input type="file" accept=".json,application/json" data-c="backup.import" class="sr"></label></div>`;
+      }
+      return '';
+    }
+    if (m.changedAt && !unsaved()) return '';
     if (age >= 14) return `<div class="note" style="margin-bottom:20px">${ic('alert')}<div class="grow">${lb ? 'Dein letztes Backup ist ' + age + ' Tage alt.' : 'Du hast noch kein Backup gespeichert.'} Ein Klick genügt.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button></div>`;
     return '';
   }
@@ -872,7 +913,8 @@
   function viewSettings() {
     const s = S.settings;
     const dayOpts = [['ho', 'Homeoffice'], ['buero', 'Büro'], ['frei', 'Frei']];
-    const lb = S.meta.lastBackup;
+    const lb = S.meta.lastBackup, rs = S.meta.restored;
+    const lbText = S.meta.savedAt ? 'Letztes Backup: ' + stamp(S.meta.savedAt) + '.' : lb ? 'Letztes Backup: ' + E.fmtDate(lb) + '.' : 'Noch kein Backup gespeichert.';
     return `<div class="page"><header class="page-head"><div><h1 class="page-title">Einstellungen</h1></div></header>
       <div class="two-col">
         <div class="panel"><h2 class="sec-title" style="margin-bottom:6px">Darstellung und Woche</h2><div class="settings-list">
@@ -898,26 +940,27 @@
         <div><div><span class="lbl">Erinnerungen auf dem Handy</span><p class="hint">Termine, Vorsorge, Medikamente und Pflege lassen sich als Kalender-Datei speichern. Öffne sie mit Outlook oder importiere sie in den Google Kalender, dann erinnert dich dein Handy auch ohne diese App.</p></div></div>
       </div></div>
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:6px">Daten</h2><div class="settings-list">
-        <div><div><span class="lbl">Backup speichern</span><p class="hint">Eine Datei mit allem, inklusive Fotos. ${lb ? 'Letztes Backup: ' + E.fmtDate(lb) + '.' : 'Noch kein Backup gespeichert.'}</p></div><button class="btn sm" data-a="backup.export">${ic('download')}Backup speichern</button></div>
-        <div><div><span class="lbl">Backup laden</span><p class="hint">Ersetzt alle Daten in dieser App durch das Backup.</p></div><label class="btn sm quiet">${ic('upload')}Datei wählen<input type="file" accept=".json,application/json" data-c="backup.import" class="sr"></label></div>
+        <div><div><span class="lbl">Hauptgerät</span><p class="hint">Hier ist dein ${DEV_NAME[DEVICE]}. Eingetragen wird am Hauptgerät; das andere Gerät bekommt die Daten per Backup, direkt per Kabel oder Quick Share.</p></div>${seg('Hauptgerät', [['handy', 'Handy'], ['pc', 'PC']], mainDevice(), { a: 'main.dev' })}</div>
+        <div><div><span class="lbl">Backup speichern</span><p class="hint">Eine Datei mit allem, inklusive Fotos. ${lbText}</p></div><button class="btn sm" data-a="backup.export">${ic('download')}Backup speichern</button></div>
+        <div><div><span class="lbl">Backup laden</span><p class="hint">Ersetzt alle Daten auf diesem Gerät durch das Backup.${rs ? ' Zuletzt eingespielt: ' + esc(backupLabel(rs.from, rs.exported)) + '.' : ''}</p></div><label class="btn sm quiet">${ic('upload')}Datei wählen<input type="file" accept=".json,application/json" data-c="backup.import" class="sr"></label></div>
         <div><div><span class="lbl">Kleiderliste importieren</span><p class="hint">Excel (.xlsx), CSV oder Text in deinem bisherigen Format. Neue Teile kommen dazu, bekannte Nummern werden aktualisiert.</p></div><div class="row"><button class="btn sm quiet" data-a="import.open">${ic('upload')}Importieren</button><button class="btn sm ghost" data-a="csv.template">CSV-Vorlage</button></div></div>
         <div><div><span class="lbl">Alles zurücksetzen</span><p class="hint">${seedEl() ? 'Löscht deine Einträge und Fotos und lädt die Startdaten neu.' : 'Löscht alle Daten und Fotos auf diesem Gerät. Danach kannst du ein Backup einspielen.'}</p></div><button class="btn sm danger" data-a="reset">Zurücksetzen</button></div>
       </div></div>
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Handy-Version mit Fingerabdruck-Sperre, Start ohne Startdaten mit „Backup einspielen“. Davor in 2.3: Ankleide-Figur am Outfit-Vorschlag.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Handy als Hauptgerät, Datenstand und Warnung vor dem Überschreiben beim Einspielen, Sperre mit Windows Hello am PC. Davor in 2.4: Handy-Version mit Fingerabdruck-Sperre.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
   function lockPanel() {
     if (!WEB) return '';
     const on = !!(window.Lock && Lock.status().enabled), ok = ui.lockOk;
-    const hint = on ? 'An. Beim Öffnen und nach einer Minute im Hintergrund fragt die App nach Fingerabdruck, Gesicht oder Geräte-PIN.'
-      : ok === false ? 'Dieses Gerät bietet hier keine Bestätigung per Fingerabdruck, Gesicht oder PIN an. Am Handy klappt es in Chrome, sobald eine Displaysperre eingerichtet ist.'
-      : 'Aus. Schützt die App vor fremden Blicken, auch wenn dein Handy entsperrt in anderen Händen ist.';
+    const hint = on ? 'An. Beim Öffnen und nach einer Minute im Hintergrund fragt die App nach ' + (HELLO ? 'Windows Hello (Gesicht, Fingerabdruck oder PIN).' : 'Fingerabdruck, Gesicht oder Geräte-PIN.')
+      : ok === false ? (HELLO ? 'Dieser PC bietet hier kein Windows Hello an. Richte in Windows unter Einstellungen, Konten, Anmeldeoptionen eine PIN ein, dann klappt es.' : 'Dieses Gerät bietet hier keine Bestätigung per Fingerabdruck, Gesicht oder PIN an. Am Handy klappt es in Chrome, sobald eine Displaysperre eingerichtet ist.')
+      : (HELLO ? 'Aus. Schützt die App vor fremden Blicken, wenn jemand an deinen entsperrten PC kommt.' : 'Aus. Schützt die App vor fremden Blicken, auch wenn dein Handy entsperrt in anderen Händen ist.');
     return `<div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:6px">Sperre und Updates</h2><div class="settings-list">
-        <div><div><span class="lbl">Fingerabdruck-Sperre</span><p class="hint">${hint}</p></div>${on ? '<div class="row"><button class="btn sm quiet" data-a="lock.now">Jetzt sperren</button><button class="btn sm ghost" data-a="lock.off">Ausschalten</button></div>' : `<button class="btn sm" data-a="lock.on"${ok === false ? ' disabled' : ''}>Einrichten</button>`}</div>
+        <div><div><span class="lbl">${lockName()}</span><p class="hint">${hint}</p></div>${on ? '<div class="row"><button class="btn sm quiet" data-a="lock.now">Jetzt sperren</button><button class="btn sm ghost" data-a="lock.off">Ausschalten</button></div>' : `<button class="btn sm" data-a="lock.on"${ok === false ? ' disabled' : ''}>Einrichten</button>`}</div>
         ${on ? '<div><div><span class="lbl">Kein Zugriff mehr?</span><p class="hint">Auf dem Sperrbildschirm „Kein Zugriff mehr?“ wählen. Dann löschst du die Daten auf diesem Gerät und spielst dein Backup neu ein.</p></div></div>' : ''}
         <div><div><span class="lbl">App-Version</span><p class="hint">${ui.update ? 'Eine neue Version ist bereit.' : 'Version ' + VERSION + '. Neue Versionen kündigt die App an, du lädst sie auf Knopfdruck.'}</p></div>${ui.update ? '<button class="btn sm" data-a="app.update">Jetzt laden</button>' : ''}</div>
       </div></div>`;
@@ -1114,8 +1157,11 @@
   async function exportBackup() {
     const photos = {};
     try { for (const [id, blob] of await Photos.all()) photos[id] = await blobToDataURL(blob); } catch (e) { /* no photos */ }
-    S.meta.lastBackup = E.today(); save();
-    download('chris-os-backup-' + E.today() + '.json', JSON.stringify({ app: 'haltung', version: S.version || 2, exported: new Date().toISOString(), state: S, photos }));
+    const now = new Date(), at = now.toISOString();
+    S.meta.lastBackup = E.today(); S.meta.savedAt = at; save(true);
+    // Time and device in the name: on the other device the newest file is easy to find in Downloads
+    const name = 'chris-os-backup-' + E.today() + '-' + pad2(now.getHours()) + pad2(now.getMinutes()) + '-' + DEVICE + '.json';
+    download(name, JSON.stringify({ app: 'haltung', version: S.version || 2, exported: at, device: DEVICE, state: S, photos }));
     render(); toast('Backup gespeichert. Leg die Datei an einen sicheren Ort.');
   }
   async function readBackup(file) {
@@ -1126,17 +1172,30 @@
   }
   async function applyBackup(data) {
     S = data.state; migrate(S);
+    S.meta.restored = { at: new Date().toISOString(), exported: data.exported || null, from: devOf(data.device) };
     await Photos.clear();
     for (const [id, u] of Object.entries(data.photos || {})) { try { await Photos.put(id, dataURLToBlob(u)); } catch (e) { /* skip */ } }
-    save(); applyTheme();
+    save(true); applyTheme();
+  }
+  // Before replacing: warn if the backup is older than the data here, or if changes made here are missing in it.
+  // Changes made here count from the last import on. The backup holds them only if its device loaded a backup
+  // saved after them (its meta.restored); for older backups without that, only changes since the last backup count.
+  function backupRisk(data) {
+    const m = S.meta, r = m.restored || {}, inR = (data.state.meta && data.state.meta.restored) || {};
+    const here = latest(m.savedAt, r.exported);
+    if (data.exported && here && data.exported < here) return 'Achtung: Es ist älter als der Stand auf diesem Gerät (' + stamp(here) + ').';
+    const local = m.changedAt && m.changedAt > (latest(r.at, r.exported) || '') ? m.changedAt : null;
+    const lost = local && (inR.exported ? inR.exported < local : unsaved());
+    return lost ? 'Achtung: Änderungen von hier fehlen darin und gehen verloren (zuletzt geändert ' + stamp(local) + ').' : '';
   }
   async function importBackup(file) {
     const r = await readBackup(file);
     if (r.err) { toast(r.err); return; }
-    const data = r.data;
-    confirmDlg('Backup laden?', 'Alle aktuellen Daten werden durch das Backup vom ' + (data.exported ? E.fmtDate(data.exported.slice(0, 10)) : 'unbekannten Datum') + ' ersetzt.', 'Backup laden', async () => {
+    const data = r.data, warn = backupRisk(data);
+    const text = 'Das ' + backupLabel(data.device, data.exported) + ' ersetzt alle Daten auf diesem Gerät.' + (warn ? ' ' + warn : '');
+    confirmDlg(warn ? 'Trotzdem laden?' : 'Backup laden?', text, warn ? 'Trotzdem laden' : 'Backup laden', async () => {
       await applyBackup(data); render(); toast('Backup geladen');
-    });
+    }, !!warn);
   }
 
   // ---------- Session helpers ----------
@@ -1190,7 +1249,7 @@
     'dlg.close': () => closeDialog(),
     'confirm.ok': async () => { const fn = ui.confirm; ui.confirm = null; closeDialog(); if (fn) await fn(); },
     'toast.undo': () => { const u = ui.undo; ui.undo = null; $('#toast').classList.add('hidden'); if (u) { u(); save(); render(); } },
-    'dismiss': el => { S.meta.dismissed[el.dataset.k] = true; save(); render(); },
+    'dismiss': el => { S.meta.dismissed[el.dataset.k] = true; save(true); render(); },
     // outfit
     'occ': el => { ui.occ[el.dataset.d] = el.dataset.v; render(); },
     'oday': el => { ui.oday = el.dataset.v; render(); },
@@ -1273,7 +1332,8 @@
     'care.done': el => { const id = el.dataset.id, prev = S.grooming.last[id]; S.grooming.last[id] = el.dataset.d; save(); render(); const t = S.grooming.tasks.find(x => x.id === id); toast(t.name + ' erledigt', () => { if (prev) S.grooming.last[id] = prev; else delete S.grooming.last[id]; }); },
     'shop': el => { const p = S.grooming.products.find(x => x.id === el.dataset.id); p.have = !p.have; save(); render(); },
     // settings
-    'theme': el => { S.settings.theme = el.dataset.v; save(); applyTheme(); render(); },
+    'theme': el => { S.settings.theme = el.dataset.v; save(true); applyTheme(); render(); },
+    'main.dev': el => { S.settings.mainDevice = devOf(el.dataset.v) || 'handy'; save(); render(); },
     'backup.export': () => exportBackup(),
     'reset': () => seedEl()
       ? confirmDlg('Alles zurücksetzen?', 'Trainings, Pflege-Einträge, Bewertungen und Fotos werden gelöscht. Speichere vorher ein Backup, wenn du etwas behalten willst.', 'Alles löschen', async () => { localStorage.removeItem(KEY); await Photos.clear(); S = load(); save(); applyTheme(); location.hash = '#/heute'; render(); toast('Zurückgesetzt'); }, true)
@@ -1394,11 +1454,12 @@
         <label class="btn welcome-btn">${ic('upload')}Backup einspielen<input type="file" accept=".json,application/json" class="sr" id="welcome-file"></label>
         <p class="welcome-msg${msg ? ' err' : ''}" role="status" aria-live="polite">${esc(msg || '')}</p>
         <ol class="welcome-steps">
-          <li>Auf dem bisherigen Gerät in Chris OS: Einstellungen, Daten, „Backup speichern“.</li>
+          <li>${DEVICE === 'pc' ? 'Am Handy in Chris OS: Mehr, Daten, „Backup speichern“.' : 'Am PC in Chris OS: Einstellungen, Daten, „Backup speichern“.'}</li>
           <li>Die Datei per Kabel oder Quick Share auf dieses Gerät holen, nicht über die Cloud.</li>
-          <li>Hier auf „Backup einspielen“ tippen und die Datei wählen.</li>
+          <li>Hier auf „Backup einspielen“ ${DEVICE === 'pc' ? 'klicken' : 'tippen'} und die Datei wählen.</li>
         </ol>
-        <p class="welcome-foot">Deine Daten bleiben auf diesem Gerät. Ohne Konto, ohne Cloud.</p>
+        ${installHint()}
+        <p class="welcome-foot">Ein Konto oder eine Anmeldung gibt es nicht. Deine Daten bleiben auf diesem Gerät, ohne Cloud.</p>
       </div>`;
     $('#welcome-file').addEventListener('change', async e => {
       const f = e.target.files[0];
@@ -1422,20 +1483,28 @@
     try { if (Photos.db) { Photos.db.close(); Photos.db = null; } } catch (e) { /* already closed */ }
     await new Promise(res => { try { const r = indexedDB.deleteDatabase('haltung-fotos'); r.onsuccess = r.onerror = r.onblocked = () => res(); } catch (e) { res(); } });
   }
+  // Web version in a browser tab: how to install it as an app (K40: also on the PC)
+  function installHint() {
+    let app = false;
+    try { app = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { /* old browser */ }
+    if (!WEB || app) return '';
+    return `<p class="welcome-tip">${DEVICE === 'pc' ? 'Als App installieren: in Chrome oder Edge über das Symbol rechts in der Adressleiste.' : 'Als App installieren: in Chrome Menü ⋮, „Zum Startbildschirm hinzufügen“.'}</p>`;
+  }
+  const lockName = () => HELLO ? 'Sperre mit Windows Hello' : 'Fingerabdruck-Sperre';
   function lockErr(e) {
     if (e && e.message === 'unsupported') return 'Dieses Gerät unterstützt die Sperre hier nicht.';
     if (e && e.name === 'NotAllowedError') return 'Abgebrochen. Versuch es noch einmal, wenn du so weit bist.';
     return 'Das hat nicht geklappt. Versuch es noch einmal.';
   }
   async function lockSetup() {
-    try { await Lock.enable(); render(); toast('Sperre eingerichtet. Ab jetzt fragt die App nach deinem Fingerabdruck.'); }
+    try { await Lock.enable(); render(); toast('Sperre eingerichtet. Ab jetzt fragt die App nach ' + (HELLO ? 'Windows Hello.' : 'deinem Fingerabdruck.')); }
     catch (e) { toast(lockErr(e)); }
   }
   async function offerLock() {
     if (!WEB || Lock.status().enabled) return;
     if (ui.lockOk == null) ui.lockOk = await Lock.supported();
     if (!ui.lockOk) return;
-    openDialog(`${dlgHead('Fingerabdruck-Sperre einrichten?')}<p class="how-text">Dann fragt die App beim Öffnen und nach einer Minute im Hintergrund nach deinem Fingerabdruck, Gesicht oder der Geräte-PIN. Die Daten bleiben dabei auf diesem Gerät.</p><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Später</button><button class="btn" data-a="lock.setup">Einrichten</button></div>`);
+    openDialog(`${dlgHead(lockName() + ' einrichten?')}<p class="how-text">Dann fragt die App beim Öffnen und nach einer Minute im Hintergrund nach ${HELLO ? 'Windows Hello, also Gesicht, Fingerabdruck oder PIN' : 'deinem Fingerabdruck, Gesicht oder der Geräte-PIN'}. Die Daten bleiben dabei auf diesem Gerät.</p><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Später</button><button class="btn" data-a="lock.setup">Einrichten</button></div>`);
   }
   function notice(msg, label, fn) {
     const t = $('#toast');
@@ -1460,7 +1529,7 @@
   async function boot() {
     S = load(); applyTheme(); loadWx();
     if (WEB) {
-      Lock.init({ appName: 'Chris OS', grace: 60, onReset: wipeDevice }).then(r => { ui.lockOk = r.supported; if (S && $('#view') && route().top === 'einstellungen') render(); });
+      Lock.init({ appName: 'Chris OS', grace: 60, method: HELLO ? 'Windows Hello' : 'Fingerabdruck', onReset: wipeDevice }).then(r => { ui.lockOk = r.supported; if (S && $('#view') && route().top === 'einstellungen') render(); });
       PWA.init({ onUpdate: offerUpdate });
     }
     if (!S) { welcome(); return; }
