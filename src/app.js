@@ -373,7 +373,7 @@
     const lb = S.meta.lastBackup;
     const age = lb ? E.diffDays(lb, E.today()) : E.diffDays(S.meta.setup || E.today(), E.today());
     if (!lb && S.meta.dismissed.welcome !== true) {
-      return `<div class="note info" style="margin-bottom:20px">${ic('info')}<div class="grow"><b>Deine Daten bleiben in diesem Browser auf deinem PC.</b> Speichere ab und zu ein Backup (Einstellungen), dann ist nichts verloren, falls Browserdaten gelöscht werden.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button><button class="icon-btn" data-a="dismiss" data-k="welcome" aria-label="Hinweis schließen">${ic('x')}</button></div>`;
+      return `<div class="note info" style="margin-bottom:20px">${ic('info')}<div class="grow"><b>Deine Daten bleiben ${WEB ? 'auf diesem Gerät' : 'in diesem Browser auf deinem PC'}.</b> Speichere ab und zu ein Backup (Einstellungen), dann ist nichts verloren, falls Browserdaten gelöscht werden.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button><button class="icon-btn" data-a="dismiss" data-k="welcome" aria-label="Hinweis schließen">${ic('x')}</button></div>`;
     }
     if (age >= 14) return `<div class="note" style="margin-bottom:20px">${ic('alert')}<div class="grow">${lb ? 'Dein letztes Backup ist ' + age + ' Tage alt.' : 'Du hast noch kein Backup gespeichert.'} Ein Klick genügt.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button></div>`;
     return '';
