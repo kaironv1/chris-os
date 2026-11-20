@@ -14,7 +14,7 @@
   const hday = d => (S.health.days || {})[d] || null;
   function hEdit(d) {
     const D = S.health.days; if (!D[d]) D[d] = { sym: {}, meas: [], f: {} };
-    const x = D[d]; x.sym = x.sym || {}; x.meas = x.meas || []; x.f = x.f || {}; x.t = Date.now();
+    const x = D[d]; x.sym = x.sym || {}; x.meas = x.meas || []; x.f = x.f || {}; x.t = Date.now(); ui.savedPulse = true;
     if (d === E.today() && WX && WX.home && !x.wx) { const w = E.dayWeather(WX.home, d); if (w) x.wx = { tMin: Math.round(w.tMin), tMax: Math.round(w.tMax) }; }
     return x;
   }
@@ -82,23 +82,49 @@
     if (!w.prevent || !w.prevent.length) return '';
     return `<div class="warn-mini wp-calm">${ic('moon')}<div><b>Vorbeugen:</b> ${w.prevent.map(p => esc(p.text) + '. ' + esc(p.tip)).join(' ')}</div></div>`;
   }
+  // Visible autosave: every tap saves at once; the badge shows when, and pulses right after a change
+  function savedBadge(ts) {
+    const just = ui.savedPulse; ui.savedPulse = false;
+    const day = E.iso(new Date(ts));
+    return `<span class="saved${just ? ' just' : ''}">${ic('check')}Gespeichert ${day === E.today() ? fmtTime(ts) : 'am ' + E.fmtShort(day)}</span>`;
+  }
+  // Last check-in change made today: today's entry, or yesterday's mood entered this morning
+  const savedToday = (d, x, yx) => Math.max(x.t || 0, yx && yx.t && E.iso(new Date(yx.t)) === d ? yx.t : 0);
+  const BREATH = ['frisch', 'geht so', 'schlecht'];
+  function checkinSum(d, x, yx, early) {
+    if (!H.hasData(x)) {
+      if (savedToday(d, x, yx)) return 'Gestern eingetragen, heute noch offen';
+      return early ? 'Schlaf und Anzeichen, dauert 10 Sekunden' : 'Noch nicht eingetragen, dauert 10 Sekunden';
+    }
+    const sym = Object.keys(x.sym || {}).filter(k => x.sym[k] && !k.startsWith('bm:')).map(k => H.symLabel(k) + ' ' + H.INT[x.sym[k]]);
+    const bm = Object.keys(x.sym || {}).filter(k => x.sym[k] && k.startsWith('bm:')).length;
+    const parts = [];
+    if (x.sleepH != null) parts.push('Schlaf ' + n0(x.sleepH) + ' h');
+    if (sym.length) parts.push(sym.join(', ')); else if (x.none && !bm) parts.push('nichts gespürt');
+    if (bm) parts.push(bm === 1 ? '1 Schmerzstelle' : bm + ' Schmerzstellen');
+    if (x.breath != null) parts.push('Atem ' + BREATH[x.breath]);
+    if (x.mood != null) parts.push('Befinden ' + x.mood + ' von 5');
+    return esc(parts.join(', '));
+  }
   function checkinToday(d) {
     const x = hday(d) || { sym: {}, meas: [], f: {} };
     const w = H.warning(S, d);
-    const done = H.hasData(x);
     const early = new Date().getHours() < 11 && d === E.today();
     const yd = E.addDays(d, -1), yx = hday(yd);
+    const ts = savedToday(d, x, yx);
     const moodRow = early
-      ? ((!yx || yx.mood == null) ? `<div class="hrow"><span class="hlbl">Gestern insgesamt</span>${scaleCtl(yd, 'mood', null, 'schlecht', 'sehr gut')}</div>` : '')
+      ? ((!yx || yx.mood == null || E.iso(new Date(yx.t || 0)) === d) ? `<div class="hrow"><span class="hlbl">Gestern insgesamt</span>${scaleCtl(yd, 'mood', yx ? yx.mood : null, 'schlecht', 'sehr gut')}</div>` : '')
       : `<div class="hrow"><span class="hlbl">Befinden heute</span>${scaleCtl(d, 'mood', x.mood, 'schlecht', 'sehr gut')}</div>`;
-    return `<div class="sec-head"><h2 class="sec-title">Wie geht’s dir?</h2><span class="sec-meta">${done ? 'gespeichert ' + fmtTime(x.t || Date.now()) : '10 Sekunden'}</span></div>
+    const meta = ts ? savedBadge(ts) : `<span class="fold-badge due">offen</span>`;
+    return fold('checkin', 'Wie geht’s dir?', checkinSum(d, x, yx, early), meta, () => `
       <div class="hrow stack"><span class="hlbl">Schlaf letzte Nacht</span>${sleepCtl(d, x.sleepH)}</div>
       <div class="hrow stack"><span class="hlbl">Spürst du was?</span><div class="schips">${H.QUICK.map(k => symChip(d, k, x.sym[k])).join('')}<button class="chip" data-a="hc.none" data-d="${d}" aria-pressed="${!!x.none}">Nichts</button></div></div>
       <div class="hrow"><span class="hlbl">Atem</span><div>${breathCtl(d, x.breath)}${hungerChip(d, x)}</div></div>
       ${moodRow}
       ${early ? '<p class="small muted" style="margin-top:6px">Wie der Tag insgesamt war, trägst du ab Mittag oder abends ein.</p>' : ''}
       ${w.level !== 'ruhig' ? `<div class="warn-mini wp-${WARN_CLS[w.level]}">${ic('alert')}<div><b>${esc(H.LEVEL[w.level])}:</b> ${esc(warnReasons(w).slice(0, 2).join(', '))}. <a href="#/gesundheit/muster">Was jetzt hilft</a></div></div>` : preventNote(w)}
-      <a class="link-btn small" href="#/gesundheit" style="display:inline-block;margin-top:10px">Mehr eintragen: Stress, Maßnahmen, Körperkarte, Notiz</a>`;
+      <p class="autosave">${ic('check')}Jede Angabe speichert sich sofort, ohne Knopf.</p>
+      <a class="link-btn small" href="#/gesundheit" style="display:inline-block;margin-top:6px">Mehr eintragen: Stress, Maßnahmen, Körperkarte, Notiz</a>`);
   }
 
   // ---------- Heute: reminders (care, check-ups, appointments, meds) ----------
@@ -120,7 +146,13 @@
     const n = meds.filter(x => !x.done).length + care.length + vs.length + appts.length + fu.length;
     const wx = WX && WX.home ? E.dayWeather(WX.home, d) : null;
     const uv = wx && wx.uv != null ? Math.round(wx.uv) : null;
-    let html = `<div class="sec-head"><h2 class="sec-title">Erinnerungen</h2><span class="sec-meta">${n ? n + ' offen' : 'nichts offen'}</span></div>`;
+    const open = [...meds.filter(x => !x.done).map(x => x.m.name + ' ' + x.t), ...appts.map(a => docName(a.doc) + ' ' + E.fmtRel(a.date)), ...care.map(x => x.t.name), ...vs.map(x => x.v.name), ...fu.map(f => f.text)];
+    const sum = (uv != null && uv >= 3 ? 'UV-Index ' + uv + ', Sonnenschutz. ' : '') + (open.length ? open.slice(0, 3).join(', ') + (open.length > 3 ? ' und ' + (open.length - 3) + ' mehr' : '') : 'Heute steht nichts an');
+    const meta = n ? `<span class="fold-badge due">${n} offen</span>` : `<span class="fold-badge">nichts offen</span>`;
+    return fold('reminders', 'Erinnerungen', esc(sum), meta, () => remindersBody(d, meds, care, vs, appts, fu, n, uv));
+  }
+  function remindersBody(d, meds, care, vs, appts, fu, n, uv) {
+    let html = '';
     if (uv != null && uv >= 3) html += `<div class="warn-mini wp-warn" style="margin:2px 0 6px">${ic('sun')}<div><b>UV-Index ${uv}:</b> Sonnenschutz auf Gesicht, Ohren und Kopf.</div></div>`;
     if (meds.length) html += `<h3 class="mini-h">Medikamente</h3><ul class="checklist">${meds.map(x => `<li class="${x.done ? 'done' : ''}"><button class="check" data-a="med.take" data-id="${x.m.id}" data-t="${x.t}" data-d="${d}" aria-pressed="${x.done}" aria-label="${esc(x.m.name)} um ${x.t}">${ic('check')}</button><div class="check-body"><div class="check-name">${esc(x.m.name)} <span class="muted num">${x.t}</span></div><div class="check-meta">${esc([x.m.dose, x.m.note].filter(Boolean).join(', '))}</div></div></li>`).join('')}</ul>`;
     if (appts.length) html += `<h3 class="mini-h">Termine</h3><ul class="checklist">${appts.map(a => `<li><span class="check" aria-hidden="true" style="box-shadow:none;color:var(--denim)">${ic('doc')}</span><div class="check-body"><div class="check-name">${esc(docName(a.doc))}</div><div class="check-meta">${E.fmtRel(a.date)}${a.time ? ', ' + a.time + ' Uhr' : ''}${a.reason ? ', ' + esc(a.reason) : ''}</div></div></li>`).join('')}</ul>`;
@@ -152,7 +184,7 @@
     const x = hday(d) || { sym: {}, meas: [], f: {} };
     const groups = [...new Set(H.SYMPTOMS.map(s => s.g))];
     const custom = Object.keys(x.sym || {}).filter(k => k.startsWith('c:'));
-    const daySel = `<div class="row wrap" style="gap:10px;margin-bottom:16px">${seg('Tag', [[E.addDays(t, -2), E.WD_LONG[E.weekday(E.addDays(t, -2))]], [E.addDays(t, -1), 'Gestern'], [t, 'Heute']], d, { a: 'hc.date' })}<span class="small muted grow">${H.hasData(x) ? 'Gespeichert um ' + fmtTime(x.t || Date.now()) + '. Jede Eingabe wird sofort gespeichert.' : 'Jede Eingabe wird sofort gespeichert.'}</span><button class="btn sm ghost" data-a="ics.checkin">${ic('cal')}Tägliche Erinnerung</button></div>`;
+    const daySel = `<div class="row wrap" style="gap:10px;margin-bottom:16px">${seg('Tag', [[E.addDays(t, -2), E.WD_LONG[E.weekday(E.addDays(t, -2))]], [E.addDays(t, -1), 'Gestern'], [t, 'Heute']], d, { a: 'hc.date' })}<span class="small muted grow">${x.t ? savedBadge(x.t) + ' ' : ''}Jede Angabe speichert sich sofort, ohne Knopf.</span><button class="btn sm ghost" data-a="ics.checkin">${ic('cal')}Tägliche Erinnerung</button></div>`;
     const left = `<div class="panel"><h2 class="sec-title" style="margin-bottom:10px">Allgemein</h2>
         <div class="hrow"><span class="hlbl">Befinden</span>${scaleCtl(d, 'mood', x.mood, 'schlecht', 'sehr gut')}</div>
         <div class="hrow"><span class="hlbl">Energie</span>${scaleCtl(d, 'energy', x.energy, 'leer', 'voll da')}</div>
@@ -340,7 +372,7 @@
           ${due.length ? `<ul class="checklist">${due.map(x => `<li class="${x.done ? 'done' : ''}"><button class="check" data-a="med.take" data-id="${x.m.id}" data-t="${x.t}" data-d="${t}" aria-pressed="${x.done}" aria-label="${esc(x.m.name)} um ${x.t}">${ic('check')}</button><div class="check-body"><div class="check-name">${esc(x.m.name)} <span class="muted num">${x.t}</span></div><div class="check-meta">${esc([x.m.dose, x.m.note].filter(Boolean).join(', '))}</div></div></li>`).join('')}</ul>` : '<p class="small ink2">Heute ist nichts einzunehmen.</p>'}</div>
       </div><div>
         <div class="panel"><h2 class="sec-title" style="margin-bottom:8px">Aktuell</h2>${act.length ? `<ul class="checklist">${act.map(m => `<li><span class="check" aria-hidden="true" style="box-shadow:none;color:var(--denim)">${ic('pill')}</span><div class="check-body"><div class="check-name">${esc(m.name)}${m.dose ? ' <span class="muted">' + esc(m.dose) + '</span>' : ''}</div><div class="check-meta">${m.times.join(', ')} Uhr. ${medRange(m)}${m.by ? '. Verordnet von ' + esc(docName(m.by)) : ''}${m.note ? '. ' + esc(capF(m.note)) : ''}</div>
-            <div class="row wrap" style="margin-top:6px;gap:4px"><button class="btn sm quiet" data-a="ics.med" data-id="${m.id}">${ic('cal')}Erinnerungen in den Kalender</button><button class="btn sm ghost" data-a="med.edit" data-id="${m.id}">Bearbeiten</button><button class="btn sm ghost" data-a="med.stop" data-id="${m.id}">Beenden</button></div></div></li>`).join('')}</ul>` : '<p class="small ink2">Keine Medikamente eingetragen. Leg eins an, wenn du etwas über einen Zeitraum nehmen musst: mit Einnahmezeiten, Laufzeit und Kalender-Erinnerungen.</p>'}</div>
+            <div class="row wrap" style="margin-top:6px;gap:4px"><button class="btn sm quiet" data-a="ics.med" data-id="${m.id}">${ic('cal')}Erinnerungen in den Kalender</button><button class="btn sm ghost" data-a="med.edit" data-id="${m.id}">Bearbeiten</button><button class="btn sm ghost" data-a="med.stop" data-id="${m.id}">Beenden</button></div></div></li>`).join('')}</ul>` : '<p class="small ink2">Keine Medikamente eingetragen. Leg eins an, wenn du etwas über einen Zeitraum nehmen oder auftragen musst, etwa eine Creme: mit Zeiten, Laufzeit und Kalender-Erinnerungen.</p>'}</div>
         ${old.length ? `<details class="panel" style="margin-top:16px"><summary style="cursor:pointer;font-weight:620">Frühere Medikamente (${old.length})</summary><ul class="checklist" style="margin-top:8px">${old.map(m => `<li><div class="check-body"><div class="check-name">${esc(m.name)}</div><div class="check-meta">${medRange(m)}</div></div><button class="icon-btn" data-a="med.del" data-id="${m.id}" aria-label="Eintrag löschen">${ic('trash')}</button></li>`).join('')}</ul></details>` : ''}
       </div></div>`;
   }
@@ -505,8 +537,8 @@
     const T = [['07:00', 'morgens'], ['08:00', 'morgens'], ['12:00', 'mittags'], ['18:00', 'abends'], ['20:00', 'abends'], ['22:00', 'zur Nacht']];
     openDialog(`${dlgHead(id ? m.name : 'Medikament eintragen')}<form class="form-grid" id="med-form" onsubmit="return false">
       <label class="field"><span>Name</span><input name="name" value="${esc(m.name)}" ${id ? '' : 'autofocus'}></label>
-      <label class="field"><span>Dosis wie verordnet</span><input name="dose" value="${esc(m.dose)}" placeholder="z. B. 1 Tablette"></label>
-      <div class="field full"><span>Einnahmezeiten</span><div class="schips">${T.map(([v, l]) => `<label class="chip"><input type="checkbox" name="time" value="${v}"${m.times.includes(v) ? ' checked' : ''} style="accent-color:var(--denim)"> ${v} ${l}</label>`).join('')}<input type="time" name="time2" class="inline-num" style="width:auto;padding:0 8px" value="${m.times.find(x => !T.some(([v]) => v === x)) || ''}" aria-label="Andere Uhrzeit"></div></div>
+      <label class="field"><span>Dosis wie verordnet</span><input name="dose" value="${esc(m.dose)}" placeholder="z. B. 1 Tablette oder dünn auftragen"></label>
+      <div class="field full"><span>Zeiten</span><div class="schips">${T.map(([v, l]) => `<label class="chip"><input type="checkbox" name="time" value="${v}"${m.times.includes(v) ? ' checked' : ''} style="accent-color:var(--denim)"> ${v} ${l}</label>`).join('')}<input type="time" name="time2" class="inline-num" style="width:auto;padding:0 8px" value="${m.times.find(x => !T.some(([v]) => v === x)) || ''}" aria-label="Andere Uhrzeit"></div></div>
       <label class="field"><span>Ab</span><input type="date" name="start" value="${m.start}"></label>
       <label class="field"><span>Dauer in Tagen</span><input type="number" min="1" name="days" value="${days}" placeholder="leer = dauerhaft"></label>
       <label class="field full"><span>Hinweis</span><input name="note" value="${esc(m.note)}" placeholder="z. B. nach dem Essen"></label>
@@ -739,7 +771,7 @@
       const f = new FormData($('#med-form'));
       const name = String(f.get('name') || '').trim(); if (!name) { toast('Bitte einen Namen eintragen.'); return; }
       const times = [...f.getAll('time'), f.get('time2')].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).sort();
-      if (!times.length) { toast('Bitte mindestens eine Einnahmezeit wählen.'); return; }
+      if (!times.length) { toast('Bitte mindestens eine Zeit wählen.'); return; }
       const start = f.get('start') || E.today(), days = +f.get('days');
       const data = { name, dose: String(f.get('dose') || '').trim(), times, start, end: days ? E.addDays(start, days - 1) : null, note: String(f.get('note') || '').trim(), by: f.get('by') || '' };
       if (ui.medId) Object.assign(S.health.meds.find(m => m.id === ui.medId), data); else S.health.meds.push(Object.assign({ id: uid('med'), stopped: null }, data));

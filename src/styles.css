@@ -134,6 +134,7 @@ main { margin-left: var(--rail); padding: 34px 40px 120px; }
 
 /* ---------- Layout grids ---------- */
 .today-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr); gap: 22px; align-items: start; }
+.today-grid > * { min-width: 0; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
 .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 
@@ -219,6 +220,40 @@ details.how[open] summary { margin-bottom: 6px; }
 .meter > i { display: block; height: 100%; border-radius: 4px; background: var(--c1); }
 .meter.olive { background: var(--olive-wash); }
 .meter.olive > i { background: var(--c2); }
+/* ---------- Heute: tiles that fold ---------- */
+.ledger > section.fsec { padding: 0; }
+.fold-h { margin: 0; font: inherit; }
+.fold-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px 20px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 0; }
+.fold-head:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.fold-head:focus-visible { outline-offset: -3px; }
+.ledger > section:first-child .fold-head { border-radius: var(--r-l) var(--r-l) 0 0; }
+.fold-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.fold-title { font-size: 19px; font-stretch: 82%; font-weight: 640; line-height: 1.2; }
+.fold-sum { font-size: 14px; line-height: 1.35; color: var(--ink-2); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+.fold.open .fold-sum { display: none; }
+.fold-meta { flex: none; display: flex; align-items: center; }
+.fold-chev { flex: none; display: flex; color: var(--muted); }
+.fold-chev svg { width: 18px; height: 18px; transform: rotate(90deg); transition: transform .2s ease; }
+.fold.open .fold-chev svg { transform: rotate(-90deg); }
+.fold-body { padding: 0 20px 18px; }
+.fold-body > .mini-h:first-child, .fold-body > .warn-mini:first-child { margin-top: 0; }
+.fold-badge { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.fold-badge.due { background: var(--cognac-wash); color: var(--cognac); }
+.fold-sw { display: flex; gap: 3px; }
+.fold-sw i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+.fold-sw i.open { background: transparent !important; box-shadow: none; border: 1.5px dashed var(--muted); }
+.board.board-fold { padding: 0; }
+.board-fold .fold-head { padding: 18px 22px; border-radius: var(--r-l); }
+.board-fold .fold.open .fold-head { border-radius: var(--r-l) var(--r-l) 0 0; }
+.board-fold .fold-title { font-size: 21px; font-stretch: 80%; }
+.board-fold .fold-body { padding: 0 22px 18px; }
+.board-occ { justify-content: flex-start; }
+.saved { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px 0 7px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--olive-wash); color: var(--olive); white-space: nowrap; }
+.saved svg { width: 14px; height: 14px; }
+.saved.just { animation: saved-pulse 1.4s ease-out; }
+@keyframes saved-pulse { 0% { transform: scale(1.08); box-shadow: 0 0 0 0 color-mix(in srgb, var(--olive) 50%, transparent); } 100% { transform: scale(1); box-shadow: 0 0 0 10px transparent; } }
+.autosave { display: flex; align-items: center; gap: 6px; margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+.autosave svg { width: 14px; height: 14px; color: var(--olive); }
 .goal-row { display: grid; grid-template-columns: 92px 1fr auto; gap: 12px; align-items: center; font-size: 14px; }
 .goal-row + .goal-row { margin-top: 8px; }
 
@@ -309,6 +344,9 @@ details.how[open] summary { margin-bottom: 6px; }
 .ex-dose { text-align: right; font-variant-numeric: tabular-nums; font-stretch: 85%; font-weight: 600; white-space: nowrap; }
 .ex-next { text-align: right; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .ex-next.up { color: var(--olive); font-weight: 600; }
+.ex-next.guess { color: var(--cognac); }
+.ex-list li.has-edit { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+.ex-edit { color: var(--muted); }
 .ss-bar { border-left: 2px solid var(--line-strong); padding-left: 10px; }
 .focus-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
 .focus-haltung { background: var(--c2); }
@@ -396,6 +434,9 @@ details.table-view summary { font-size: 13px; color: var(--denim); cursor: point
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--denim); box-shadow: 0 0 0 3px var(--denim-wash); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
 .form-grid .full { grid-column: 1 / -1; }
+.brand-row p { margin: 0 0 8px; }
+.brand-row + .brand-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.form-grid .hint { margin: -4px 0 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .toggle { display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .toggle input { width: 20px; height: 20px; accent-color: var(--denim); }
 .settings-list > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
@@ -435,7 +476,7 @@ dialog.sheet::backdrop { background: rgba(12, 16, 24, .42); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
-  .today-grid { grid-template-columns: 1fr; }
+  .today-grid { grid-template-columns: minmax(0, 1fr); }
   .three-col { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 960px) {
@@ -465,6 +506,11 @@ dialog.sheet::backdrop { background: rgba(12, 16, 24, .42); }
   .page-head { gap: 16px; }
   .board { padding: 16px 14px 14px; }
   .ledger > section { padding: 16px; }
+  .fold-head { padding: 14px 16px; }
+  .fold-body { padding: 0 16px 16px; }
+  .board-fold .fold-head { padding: 16px 14px; }
+  .board-fold .fold-body { padding: 0 14px 14px; }
+  .fold-title, .board-fold .fold-title { font-size: 18px; }
   .photo-box { grid-template-columns: 110px 1fr; }
   .note { flex-wrap: wrap; }
   .note .grow { flex-basis: calc(100% - 64px); }

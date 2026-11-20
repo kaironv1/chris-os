@@ -4,6 +4,7 @@ Persönliche App für Heute, Training, Gesundheit, Pflege und Outfit (früher �
 
 ## Stand
 
+- Version 2.6 (20.11.2026): Heute mit einklappbaren Kacheln (Outfit, Wie geht’s dir, Erinnerungen, Training). Sie starten zu, zeigen eine Zeile Zusammenfassung und merken sich für die Sitzung, was offen ist; Eiweiß bleibt offen. Check-in mit sichtbarem „Gespeichert …“, das nach jeder Angabe kurz aufleuchtet, auch für „Gestern insgesamt“. Im Gym-Plan lassen sich Gerät oder Ort und Startgewicht je Übung anpassen (K8). Der Kleiderschrank erkennt ähnlich geschriebene Marken und gleicht sie auf Wunsch an (K5). Marken stehen in Liste und Figur einheitlich so, wie sie eingetragen sind.
 - Version 2.5 (19.11.2026): Zwei Geräte. Handy als Hauptgerät, PC ebenfalls über die Web-Adresse (K39, K40). Die App merkt sich den Datenstand (letzte Änderung, letztes Backup, zuletzt eingespieltes Backup mit Gerät und Uhrzeit), warnt vor dem Einspielen, wenn dabei Änderungen verloren gingen oder das Backup älter ist, und zeigt am Zweitgerät, wenn sein Stand alt ist oder dort Einträge stehen, die am Hauptgerät noch fehlen. Backup-Dateien tragen Uhrzeit und Gerät im Namen. Am Windows-PC heißt die Sperre „Sperre mit Windows Hello“.
 - Version 2.4 (19.11.2026): Handy-Version als PWA auf Vercel mit Fingerabdruck-Sperre (Passkey), offline und Update auf Knopfdruck. Ohne Startdaten: Auf einem Gerät ohne Daten startet die App mit „Backup einspielen“, am PC wie am Handy (K38). Der öffentliche Code ist ohne Kommentare und ohne persönliche Sätze (K37).
 - Version 2.3: Ankleide-Figur am Outfit-Vorschlag mit Teile-Liste und Marke.
@@ -59,6 +60,7 @@ python3 tests/v2_migrate.py  # Migration aus 1.1
 python3 tests/test_pwa.py    # Handy-Version mit CSP: Begrüßung, Backup-Import, Sperre, Fehlversuch, Daten löschen, offline, Update
 python3 tests/pc_start.py    # PC-Datei ohne Startdaten (nach test_pwa.py, nutzt dessen Backup)
 python3 tests/zwei_geraete.py # Handy (Android) und PC (Windows) im Wechsel: Datenstand, Hinweise, Warnungen, Windows Hello (nach test_pwa.py)
+python3 tests/v26.py         # Heute-Kacheln auf und zu, Speichern sichtbar, Übung anpassen, Marken angleichen
 python3 dev/figur-vorschau/build_preview.py && python3 dev/figur-vorschau/tests/test_preview.py
 ```
 
@@ -74,6 +76,9 @@ Ziel bei jedem Test: keine Konsolenfehler. `test_pwa.py` liefert den Web-Build �
 
 - localStorage `haltung.v1` (Zustand `version: 4`; der Schlüssel bleibt trotz neuem Namen), `haltung.wetter`; IndexedDB `haltung-fotos`.
 - Ansicht am Outfit-Vorschlag in `settings.outfitView` (`figur` oder `teile`, leer heißt Figur).
+- Offene Heute-Kacheln in sessionStorage `chrisos.open` (nur für die Sitzung, Standard: alle zu). Die Tests über `run.setup()` öffnen alle Kacheln per Init-Skript; `setup(..., unfold=False)` prüft den Standard.
+- Übungen in `training.exercises`: `where` (Gerät oder Ort) und `start` (Startgewicht) sind in der App änderbar; Speichern löscht `estimate`.
+- Als verschieden markierte Marken in `meta.dismissed['brand:<schlüssel>']`.
 - Backup-Datei `chris-os-backup-<Datum>-<Uhrzeit>-<handy|pc>.json`, intern `app: 'haltung'`, dazu `exported` (Zeitpunkt) und `device` (Gerät).
 - Datenstand in `meta`: `changedAt` (letzte Änderung; `save(true)` zählt nicht, etwa beim Backup oder Ein- und Ausblenden), `savedAt` (letztes Backup), `restored` mit `at`, `exported` und `from` (zuletzt eingespieltes Backup). Hauptgerät in `settings.mainDevice` (`handy` oder `pc`, leer heißt Handy). Das Gerät selbst erkennt die App am Browser (Android oder iPhone heißt Handy).
 - Sperre: Passkey-ID in localStorage `chrisos.lock`. „Kein Zugriff mehr?“ löscht `haltung.v1`, `haltung.wetter` und die Foto-Datenbank.

@@ -23,7 +23,13 @@
   const roleOf = it => (it && (it.role || ROLE[it.cat])) || '';
   const txt = it => (it ? [it.label, it.cat, it.notes, [].concat(it.material || []).join(' '), it.texture, it.patternNote].filter(Boolean).join(' ') : '').toLowerCase();
   const capF = s => { s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); };
-  const named = it => capF(it.label || it.cat) + (it.brand ? ' von ' + it.brand : '');
+  // Same rule as brandOf in app.js: as written, only an all-lowercase brand gets capitals
+  const brandText = raw => {
+    const b = String(raw || '').trim().replace(/\s+/g, ' ');
+    if (!b || b !== b.toLowerCase()) return b;
+    return b.split(' ').map((w, i) => (i && /^(und|and|of|de|la|le|les|du|van|von|der|die|das|y|e|et|&)$/.test(w)) || !/^[a-zäöü]/.test(w) ? w : w[0].toUpperCase() + w.slice(1)).join(' ');
+  };
+  const named = it => capF(it.label || it.cat) + (it.brand ? ' von ' + brandText(it.brand) : '');
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
   // ---------- Zahlen und Farben ----------

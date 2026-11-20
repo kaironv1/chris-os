@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.5';
+  const VERSION = '2.6';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -20,7 +20,7 @@
   const n0 = (n, d) => E.fmtNum(n, d == null ? 1 : d);
   const minText = m => m < 1 ? 'unter 1 Minute' : m === 1 ? '1 Minute' : m + ' Minuten';
   let S, WX = null, ver = 0;
-  const ui = { occ: {}, pick: {}, oday: 'heute', wf: 'alle', ws: '', lf: 'alle', prog: null, slot: null, memo: {} };
+  const ui = { occ: {}, pick: {}, oday: 'heute', wf: 'alle', ws: '', lf: 'alle', prog: null, slot: null, memo: {}, open: null };
 
   // ---------- Icons ----------
   const IC = {
@@ -272,7 +272,13 @@
     return u ? `<img src="${u}" alt="${esc(capF(it.label))}" loading="lazy">` : G.svg(it, opts);
   }
   // Brand as written by Chris, but all-lowercase words get a capital (e.g. "nordwerk studio" -> "Nordwerk Studio")
-  const brandOf = it => String((it && it.brand) || '').trim().split(/\s+/).map(w => w && w === w.toLowerCase() && /^[a-zäöü]/.test(w) && w !== '&' ? w[0].toUpperCase() + w.slice(1) : w).join(' ');
+  // Brand as written; only an all-lowercase brand gets capitals, small words like „und“ stay small (same rule in figure.js)
+  const SMALL_WORD = /^(und|and|of|de|la|le|les|du|van|von|der|die|das|y|e|et|&)$/;
+  const brandOf = it => {
+    const b = String((it && it.brand) || '').trim().replace(/\s+/g, ' ');
+    if (!b || b !== b.toLowerCase()) return b;
+    return b.split(' ').map((w, i) => (i && SMALL_WORD.test(w)) || !/^[a-zäöü]/.test(w) ? w : w[0].toUpperCase() + w.slice(1)).join(' ');
+  };
   function subLines(it) {
     if (it.status === 'wunsch') return [brandOf(it) || 'Wunschliste', 'noch nicht gekauft'];
     const lines = [brandOf(it) || 'Marke offen'];
@@ -320,6 +326,18 @@
   function wxIcon(code) { return ic(E.WMO(code).k); }
   function round(t) { return Math.round(t) + '°'; }
 
+  // ---------- Heute: tiles that fold (closed by default, remembered for the session) ----------
+  const FOLD_KEY = 'chrisos.open';
+  function foldOpen(k) {
+    if (!ui.open) { try { ui.open = JSON.parse(sessionStorage.getItem(FOLD_KEY) || '{}') || {}; } catch (e) { ui.open = {}; } }
+    return !!ui.open[k];
+  }
+  // sum and meta are HTML (already escaped); body is only built when the tile is open
+  function fold(k, title, sum, meta, body) {
+    const open = foldOpen(k);
+    return `<div class="fold${open ? ' open' : ''}" data-fold="${k}"><h2 class="fold-h"><button class="fold-head" data-a="fold" data-k="${k}" aria-expanded="${open}" aria-controls="fold-${k}"><span class="fold-main"><span class="fold-title">${esc(title)}</span><span class="fold-sum">${sum}</span></span>${meta ? `<span class="fold-meta">${meta}</span>` : ''}<span class="fold-chev" aria-hidden="true">${ic('chev')}</span></button></h2><div class="fold-body" id="fold-${k}"${open ? '' : ' hidden'}>${open ? body() : ''}</div></div>`;
+  }
+
   // ---------- Outfit board ----------
   function board(d, opts) {
     opts = opts || {};
@@ -328,6 +346,20 @@
     const worn = wornOn(d);
     const isToday = d === E.today();
     const title = opts.title || (isToday ? 'Outfit für heute' : 'Outfit für ' + (E.diffDays(E.today(), d) === 1 ? 'morgen' : E.fmtLong(d)));
+    const occs = Object.entries(E.OCC).map(([k, v]) => [k, v.label]);
+    if (opts.fold) {
+      const o = worn ? E.fromIds(S, worn.items, ctx) : res.fav;
+      const pieces = o ? [o.outer, ...o.tops.slice().reverse(), o.bottom, o.shoes].filter(Boolean) : [];
+      const sum = !o ? 'Gerade keine passende Kombination' : (worn ? 'Getragen: ' : esc(E.OCC[occ].label) + ': ') + esc(pieces.map(i => capF(i.label)).join(', '));
+      const meta = pieces.length ? `<span class="fold-sw" aria-hidden="true">${pieces.map(i => `<i${i.unknownColor ? ' class="open"' : ''} style="background:${esc(i.hex || '#8C877F')}"></i>`).join('')}</span>` : '';
+      return `<section class="board board-fold" aria-label="${esc(title)}">${fold('outfit', title, sum, meta, () => `${worn ? '' : `<div class="board-head board-occ">${seg('Anlass', occs, occ, { a: 'occ', d })}</div>`}${boardBody(d, opts, occ, ctx, res, worn, isToday)}`)}</section>`;
+    }
+    return `<section class="board" aria-label="${esc(title)}">
+      <div class="board-head"><h2 class="board-title">${esc(title)}</h2>${worn ? '' : seg('Anlass', occs, occ, { a: 'occ', d })}</div>
+      ${boardBody(d, opts, occ, ctx, res, worn, isToday)}
+    </section>`;
+  }
+  function boardBody(d, opts, occ, ctx, res, worn, isToday) {
     let body = '';
     if (worn) {
       const o = E.fromIds(S, worn.items, ctx);
@@ -352,11 +384,7 @@
         </div>
         ${res.alts.length ? `<div class="alts">${res.alts.map((a, i) => `<button class="alt" data-a="pick" data-d="${d}" data-k="${esc(a.key)}" aria-label="Alternative ${i + 1} übernehmen"><div class="alt-label"><span>Alternative ${i + 1}</span><span>übernehmen</span></div>${layout(a, { small: true })}<p class="alt-items">${itemsLine(a)}</p></button>`).join('')}</div>` : ''}`;
     }
-    const occs = Object.entries(E.OCC).map(([k, v]) => [k, v.label]);
-    return `<section class="board" aria-label="${esc(title)}">
-      <div class="board-head"><h2 class="board-title">${esc(title)}</h2>${worn ? '' : seg('Anlass', occs, occ, { a: 'occ', d })}</div>
-      ${body}
-    </section>`;
+    return body;
   }
 
   function healthOutfitHint(d, ctx, o) {
@@ -430,11 +458,11 @@
       </header>
       ${backupNote()}
       <div class="today-grid">
-        <div>${board(d)}</div>
+        <div>${board(d, { fold: true })}</div>
         <div class="ledger">
-          <section>${checkinToday(d)}</section>
-          <section>${remindersToday(d)}</section>
-          <section>${trainingToday(d)}</section>
+          <section class="fsec">${checkinToday(d)}</section>
+          <section class="fsec">${remindersToday(d)}</section>
+          <section class="fsec">${trainingToday(d)}</section>
           <section>${proteinToday(d)}</section>
         </div>
       </div>
@@ -454,20 +482,25 @@
     const stretched = S.training.routineLog.some(r => r.date === d && (r.id === 'haltung' || r.id === 'dehnen'));
     const w = H.warning(S, d);
     const when = new Date().getHours() < 14 ? 'morgen' : 'abend';
-    let main, hint = '';
+    let main, hint = '', sum;
     if (act) {
       const min = Math.round((Date.now() - act.start) / 60000);
+      sum = esc(act.name) + ' läuft seit ' + minText(min);
       main = `<a class="btn block" href="#/training/session">${ic('play')}Training fortsetzen</a><p class="small muted" style="margin-top:6px">${esc(act.name)} läuft seit ${minText(min)}.</p>`;
     } else if (w.level === 'schonen' || w.level === 'arzt') {
+      sum = 'Heute kein Krafttraining, sanftes Dehnen geht';
       hint = `<div class="warn-mini wp-stop" style="margin-bottom:10px">${ic('alert')}<div><b>Heute kein Krafttraining.</b> Dein Körper braucht die Energie gerade für die Abwehr. Sanftes Dehnen geht, wenn du dich danach fühlst.</div></div>`;
       main = `<button class="btn quiet block" data-a="pl.quick" data-k="${when}">${ic('stretch')}Sanft dehnen, 10 Minuten</button>`;
     } else if (w.level === 'achtung') {
+      sum = 'Heute lieber locker: Dehnen oder kurzes Heimtraining';
       hint = `<div class="warn-mini wp-warn" style="margin-bottom:10px">${ic('alert')}<div><b>Erste Anzeichen:</b> Heute lieber locker. Dehnen oder ein kurzes Heimtraining statt schwerer Gewichte.</div></div>`;
       main = `<button class="btn block" data-a="pl.quick" data-k="${when}">${ic('stretch')}Dehnen, 10 Minuten</button><button class="btn quiet block" style="margin-top:8px" data-a="session.start" data-plan="${np.id}">${ic('play')}Trotzdem ${esc(np.name)}</button>`;
     } else {
+      sum = 'Als Nächstes: ' + esc(np.name) + ', ca. ' + np.minutes + ' Minuten';
       main = `<button class="btn block" data-a="session.start" data-plan="${np.id}">${ic('play')}${esc(np.name)} starten</button><p class="small muted" style="margin-top:6px">Ca. ${np.minutes} Minuten. ${last ? 'Letztes Training: ' + esc(last.name) + ' ' + E.fmtRel(last.date) + '.' : 'Dein erstes Training mit dem neuen Plan.'}</p>`;
     }
-    return `<div class="sec-head"><h2 class="sec-title">Training</h2><span class="sec-meta">KW ${E.isoWeek(d)}</span></div>
+    const meta = `<span class="fold-badge" title="Krafttraining diese Woche">Kraft ${wc.gym} von ${g.gym}</span>`;
+    return fold('training', 'Training', sum, meta, () => `<h3 class="mini-h" style="margin-top:0">Diese Woche, KW ${E.isoWeek(d)}</h3>
       <div style="margin-bottom:14px">${goalRow('Kraft', wc.gym, g.gym)}${goalRow('Laufen', wc.run, g.run, 'olive')}${goalRow('Dehnen', wc.routine, g.routine)}</div>
       ${hint}${main}
       <div class="row wrap" style="margin-top:10px">
@@ -475,7 +508,7 @@
         ${w.level === 'ruhig' || act ? `<button class="btn sm quiet" data-a="pl.quick" data-k="${when}">${stretched ? ic('check') : ic('stretch')}${stretched ? 'Gedehnt' : 'Dehnen, 10 Min.'}</button>` : ''}
         <button class="btn sm quiet" data-a="run.open">${ic('run')}Lauf eintragen</button>
         ${t === 'buero' ? `<button class="btn sm quiet" data-a="pl.preset" data-k="buero">Büro-Pause${breaks ? ' (' + breaks + '× heute)' : ''}</button>` : ''}
-      </div>`;
+      </div>`);
   }
   function dueText(du) {
     if (du.state === 'unknown') return 'Datum fehlt';
@@ -525,8 +558,10 @@
       const lis = p.items.map(it => {
         const ex = exById(it.ex); const sg = E.suggestion(S, ex);
         const ssStart = it.ss && it.ss !== prevSs; prevSs = it.ss;
-        return `<li${it.ss ? ' class="ss-bar"' : ''}><div><div class="ex-name"><span class="focus-dot focus-${ex.focus}" aria-hidden="true"></span>${esc(ex.name)}${it.optional ? ' <span class="tag">optional</span>' : ''}${ssStart ? ' <span class="tag denim">Supersatz</span>' : ''}</div><div class="ex-where">${esc(ex.where)}</div></div>
-          <div><div class="ex-dose">${doseText(ex)}</div><div class="ex-next${sg.state === 'up' ? ' up' : ''}">${ex.type === 'time' ? 'nächstes Mal ' + sg.reps + ' s' : (sg.state === 'up' ? 'nächstes Mal ' : '') + kgText(sg.kg, ex)}</div></div></li>`;
+        const guess = sg.state === 'start' && ex.estimate && ex.type !== 'time';
+        return `<li class="has-edit${it.ss ? ' ss-bar' : ''}"><div><div class="ex-name"><span class="focus-dot focus-${ex.focus}" aria-hidden="true"></span>${esc(ex.name)}${it.optional ? ' <span class="tag">optional</span>' : ''}${ssStart ? ' <span class="tag denim">Supersatz</span>' : ''}</div><div class="ex-where">${esc(ex.where)}</div></div>
+          <div><div class="ex-dose">${doseText(ex)}</div><div class="ex-next${sg.state === 'up' ? ' up' : ''}">${ex.type === 'time' ? 'nächstes Mal ' + sg.reps + ' s' : (sg.state === 'up' ? 'nächstes Mal ' : '') + kgText(sg.kg, ex)}</div>${guess ? '<div class="ex-next guess">geschätzt</div>' : ''}</div>
+          <button class="icon-btn ex-edit" data-a="ex.edit" data-id="${ex.id}" aria-label="${esc(ex.name)} anpassen" title="Gerät und Startgewicht">${ic('edit')}</button></li>`;
       }).join('');
       return `<article class="plan-card"><div class="row" style="align-items:flex-start"><div class="grow"><h2 class="plan-name">${esc(p.name)}</h2><p class="plan-focus">${esc(p.focus)}, ca. ${p.minutes} Minuten</p></div>${p.id === next && !act ? '<span class="tag olive">als Nächstes</span>' : ''}</div>
         <ul class="ex-list">${lis}</ul>
@@ -795,6 +830,27 @@
         </ul></details>`;
   }
   const GROUPS = [['alle', 'Alle'], ['Oberteile', 'Oberteile'], ['Strick', 'Strick'], ['Hosen', 'Hosen'], ['Schuhe', 'Schuhe'], ['Jacken', 'Jacken'], ['Accessoires', 'Accessoires'], ['wunsch', 'Wunschliste'], ['waesche', 'In der Wäsche'], ['offen', 'Angaben fehlen'], ['aus', 'Aussortiert']];
+  // Brands written in several ways (case, spaces, trailing s): offer to write them the same (K5)
+  const brandKey = b => String(b || '').toLowerCase().replace(/[^a-z0-9äöüß]/g, '').replace(/s$/, '');
+  function brandVariants() {
+    const g = {};
+    for (const i of S.wardrobe.items) {
+      const b = String(i.brand || '').trim().replace(/\s+/g, ' ');
+      if (!b) continue;
+      const k = brandKey(b);
+      g[k] = g[k] || {}; g[k][b] = (g[k][b] || 0) + 1;
+    }
+    return Object.entries(g).filter(([k, v]) => Object.keys(v).length > 1 && !S.meta.dismissed['brand:' + k]);
+  }
+  function brandNote() {
+    const vs = brandVariants();
+    if (!vs.length) return '';
+    const pl = n => n + (n === 1 ? ' Teil' : ' Teile');
+    return `<div class="note info brand-note" style="margin-bottom:14px">${ic('info')}<div class="grow">${vs.map(([k, v]) => {
+      const names = Object.entries(v).sort((a, b) => b[1] - a[1]);
+      return `<div class="brand-row"><p>Ähnliche Marken: ${names.map(([b, n]) => '„' + esc(b) + '“ (' + pl(n) + ')').join(' und ')}. Ist das dieselbe Marke?</p><div class="row wrap">${names.map(([b]) => `<button class="btn sm quiet" data-a="brand.unify" data-k="${esc(k)}" data-v="${esc(b)}">Alle als „${esc(b)}“</button>`).join('')}<button class="btn sm ghost" data-a="dismiss" data-k="brand:${esc(k)}">Sind verschiedene</button></div></div>`;
+    }).join('')}</div></div>`;
+  }
   function viewWardrobe() {
     const f = ui.wf, q = ui.ws.trim().toLowerCase();
     let items = S.wardrobe.items.slice();
@@ -814,6 +870,7 @@
         <button class="btn sm quiet" data-a="import.open">${ic('upload')}Liste importieren</button>
         ${laundry ? `<button class="btn sm quiet" data-a="laundry.reset">${ic('wash')}Wäsche erledigt (${laundry})</button>` : ''}
         <span class="grow"></span><input class="search" type="search" placeholder="Suchen: Farbe, Marke, Nr." value="${esc(ui.ws)}" data-i="ws" aria-label="Kleiderschrank durchsuchen"></div>
+      ${brandNote()}
       <div class="filters">${GROUPS.map(([k, l]) => { const n = count(k); return (n || k === 'alle' || k === f) ? `<button class="chip" data-a="wf" data-v="${k}" aria-pressed="${k === f}">${l} <span class="num" style="opacity:.7">${n}</span></button>` : ''; }).join('')}</div>
       ${items.length ? `<div class="wgrid">${items.map(i => `<button class="wcard${i.laundry ? ' laundry' : ''}${i.status === 'wunsch' ? ' wish' : ''}" data-a="item.edit" data-id="${i.id}"><div class="g-art">${art(i)}</div><div class="wcard-name">${esc(capF(i.label))}</div><div class="wcard-sub">${esc(sub(i))}</div><div class="wcard-tags">${i.laundry ? '<span class="tag cognac">Wäsche</span>' : ''}${i.incomplete ? '<span class="tag">Angaben fehlen</span>' : ''}${Photos.url(i.id) ? '' : ''}</div></button>`).join('')}</div>` : `<div class="empty">Keine Teile in dieser Auswahl.</div>`}`;
   }
@@ -949,7 +1006,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Handy als Hauptgerät, Datenstand und Warnung vor dem Überschreiben beim Einspielen, Sperre mit Windows Hello am PC. Davor in 2.4: Handy-Version mit Fingerabdruck-Sperre.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Heute mit einklappbaren Kacheln, sichtbares Speichern beim Check-in, Gerät und Startgewicht je Übung selbst anpassen. Davor in 2.5: Handy als Hauptgerät, Datenstand und Warnung beim Einspielen.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1008,6 +1065,19 @@
   }
   function openDialog(html) { const d = $('#dlg'); d.innerHTML = `<div class="sheet-inner">${html}</div>`; if (!d.open) d.showModal(); const f = d.querySelector('[autofocus]'); if (f) f.focus(); return d; }
   function closeDialog() { const d = $('#dlg'); if (d.open) d.close(); }
+  // Gym-Plan: device or place and start weight per exercise (K8: Chris enters them himself)
+  function exDialog(id) {
+    const ex = exById(id); if (!ex) return;
+    const sg = E.suggestion(S, ex), time = ex.type === 'time';
+    const unit = ex.unit === 'kg je Hand' ? 'kg je Hand' : 'kg';
+    const info = sg.state !== 'start' ? 'Du hast die Übung schon eingetragen; die App rechnet mit deinen letzten Werten weiter.'
+      : ex.estimate ? 'Noch geschätzt. Trag das Gewicht ein, mit dem ' + ex.repMax + ' saubere Wiederholungen gerade noch gehen.'
+      : 'Gilt, bis du die Übung zum ersten Mal einträgst.';
+    openDialog(`${dlgHead(ex.name)}<form class="form-grid" id="ex-form" onsubmit="return false">
+      <label class="field full"><span>Gerät oder Ort</span><input name="where" value="${esc(ex.where || '')}" placeholder="z. B. 711 #12 oder Kabelzug, Brusthöhe"></label>
+      ${time ? '' : `<label class="field"><span>Startgewicht in ${unit}</span><input name="start" type="number" inputmode="decimal" min="0" step="${ex.inc && ex.inc < 1 ? 0.25 : 0.5}" value="${ex.start != null ? ex.start : ''}"></label><p class="hint full">${esc(info)}</p>`}</form>
+      <div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="ex.save" data-id="${esc(id)}">Speichern</button></div>`);
+  }
   const dlgHead = t => `<div class="sheet-head"><h2 class="sheet-title">${esc(t)}</h2><button class="icon-btn" data-a="dlg.close" aria-label="Schließen">${ic('x')}</button></div>`;
   function confirmDlg(title, text, okLabel, fn, danger) {
     ui.confirm = fn;
@@ -1250,6 +1320,21 @@
     'confirm.ok': async () => { const fn = ui.confirm; ui.confirm = null; closeDialog(); if (fn) await fn(); },
     'toast.undo': () => { const u = ui.undo; ui.undo = null; $('#toast').classList.add('hidden'); if (u) { u(); save(); render(); } },
     'dismiss': el => { S.meta.dismissed[el.dataset.k] = true; save(true); render(); },
+    'brand.unify': el => {
+      const k = el.dataset.k, b = el.dataset.v;
+      const its = S.wardrobe.items.filter(i => i.brand && brandKey(i.brand) === k);
+      its.forEach(i => { i.brand = b; });
+      save(); render(); toast('Marke angeglichen: ' + its.length + (its.length === 1 ? ' Teil' : ' Teile') + ' heißen jetzt „' + b + '“.');
+    },
+    'ex.edit': el => exDialog(el.dataset.id),
+    'ex.save': el => {
+      const ex = exById(el.dataset.id), f = new FormData($('#ex-form'));
+      const where = String(f.get('where') || '').trim(); if (where) ex.where = where;
+      const raw = String(f.get('start') == null ? '' : f.get('start')).replace(',', '.').trim();
+      if (raw !== '') { const v = parseFloat(raw); if (!isFinite(v) || v < 0) { toast('Bitte ein Gewicht ab 0 eintragen.'); return; } ex.start = v; ex.estimate = false; }
+      save(); closeDialog(); render(); toast('Übung gespeichert');
+    },
+    'fold': el => { const k = el.dataset.k; ui.open[k] = !foldOpen(k); try { sessionStorage.setItem(FOLD_KEY, JSON.stringify(ui.open)); } catch (e) { /* storage blocked */ } render(); },
     // outfit
     'occ': el => { ui.occ[el.dataset.d] = el.dataset.v; render(); },
     'oday': el => { ui.oday = el.dataset.v; render(); },
