@@ -13,7 +13,8 @@ KEYS = ['outfit', 'checkin', 'reminders', 'training']
 
 
 async def state(pg):
-    return await pg.evaluate("[...document.querySelectorAll('[data-fold]')].map(f => [f.dataset.fold, f.querySelector('.fold-head').getAttribute('aria-expanded'), !f.querySelector('.fold-body').hidden, f.querySelector('.fold-sum').textContent])")
+    # Ohne den Wochenrückblick (2.8), der montags bis mittwochs dazukommt
+    return await pg.evaluate("[...document.querySelectorAll('[data-fold]')].filter(f => f.dataset.fold !== 'review').map(f => [f.dataset.fold, f.querySelector('.fold-head').getAttribute('aria-expanded'), !f.querySelector('.fold-body').hidden, f.querySelector('.fold-sum').textContent])")
 
 
 async def toggle(pg, k):

@@ -4,6 +4,7 @@ Persönliche App für Heute, Training, Gesundheit, Pflege und Outfit (früher �
 
 ## Stand
 
+- Version 2.8 (20.11.2026): Wochenrückblick auf Heute, montags bis mittwochs, einklappbar und ausblendbar: Schlaf, Beschwerden, Training, Eiweiß und Outfit-Tage der Vorwoche gegen die Woche davor, ein Satz je Bereich, dazu ein Hinweis aus den Verläufen. Wetter, Pollen und Luftqualität je Tag für den Wohnort von Open-Meteo (Air Quality API mit Pollen aus CAMS, Forecast mit past_days, ältere Tage aus dem Archiv), leise gespeichert in `S.env`; Pollen ab mäßig und schlechte Luft stehen oben auf Heute. Unter Gesundheit, Verläufe ein Panel „Wetter, Pollen und Luft“ auf derselben Zeitachse wie die Beschwerden, mit Zusammenhängen; Kälte, Temperatursturz, fallender Luftdruck, Luftqualität und Pollen je Art zählen im Detail einer Beschwerde als Einflüsse.
 - Version 2.7 (20.11.2026): Ernährungsprotokoll unter Training, Ernährung. Der Nutzer tippt, was er gegessen hat („2 Eier, Brot mit Käse“, „Skyr 250 g“, „Kaffee mit Milch“); die App erkennt offline Lebensmittel, Mengen, Beilagen nach „mit“, Tippfehler und rohe Varianten aus einer Tabelle mit rund 300 Lebensmitteln und Gerichten und rechnet Kalorien, Eiweiß, Kohlenhydrate, Fett und Ballaststoffe. Eigene Lebensmittel, gemerkte Portionen und Mahlzeiten, Schnellwahl aus den eigenen Worten, CSV. Eiweiß sitzt jetzt in der Training-Kachel auf Heute (mit Eingabefeld). Unter Gesundheit, Verläufe: Kennzahlen, Beschwerden je Tag oder Woche, Schlaf und Infekt-Anzeichen auf einer Zeitachse, häufigste Beschwerden, Körperkarte nach Häufigkeit, Wochentage, Befinden, Energie und Stress, eine Beschwerde im Detail mit Zusammenhängen. Kaffee, Alkohol, Knoblauch, spätes Essen und lange Pausen aus dem Protokoll zählen für die Muster mit.
 - Version 2.6 (20.11.2026): Heute mit einklappbaren Kacheln (Outfit, Wie geht’s dir, Erinnerungen, Training). Sie starten zu, zeigen eine Zeile Zusammenfassung und merken sich für die Sitzung, was offen ist; Eiweiß bleibt offen. Check-in mit sichtbarem „Gespeichert …“, das nach jeder Angabe kurz aufleuchtet, auch für „Gestern insgesamt“. Im Gym-Plan lassen sich Gerät oder Ort und Startgewicht je Übung anpassen (K8). Der Kleiderschrank erkennt ähnlich geschriebene Marken und gleicht sie auf Wunsch an (K5). Marken stehen in Liste und Figur einheitlich so, wie sie eingetragen sind.
 - Version 2.5 (19.11.2026): Zwei Geräte. Handy als Hauptgerät, PC ebenfalls über die Web-Adresse (K39, K40). Die App merkt sich den Datenstand (letzte Änderung, letztes Backup, zuletzt eingespieltes Backup mit Gerät und Uhrzeit), warnt vor dem Einspielen, wenn dabei Änderungen verloren gingen oder das Backup älter ist, und zeigt am Zweitgerät, wenn sein Stand alt ist oder dort Einträge stehen, die am Hauptgerät noch fehlen. Backup-Dateien tragen Uhrzeit und Gerät im Namen. Am Windows-PC heißt die Sperre „Sperre mit Windows Hello“.
@@ -18,14 +19,16 @@ Persönliche App für Heute, Training, Gesundheit, Pflege und Outfit (früher �
 | `src/garments.js` | SVG-Silhouetten der Teile (`window.Garments`) |
 | `src/figure.js` | Ankleide-Figur: `Figure.svg(outfit, { attr, label, cls })`, `Figure.parts`, `Figure.named` |
 | `src/engine.js` | Datum, Wetter, Outfit-Logik (Kombinationen, Bewertung, Teile-Tausch), Training, Pflege (`window.Engine`) |
+| `src/env.js` | Wetter, Pollen und Luft je Tag: Belastungsstufen (Pollen nach MeteoSchweiz, Europäischer Luftqualitätsindex), Tageswerte aus Stundenwerten, was abgefragt wird (`need`), Adressen, Einflüsse für die Muster (`tests`), Überblick (`summary`) (`window.Env`) |
 | `src/food.js` | Ernährung: Lebensmitteltabelle (Werte je 100 g), Texterkennung `Food.parse(text, { foods, portions, meals })`, Tagessummen, Faktoren für die Muster (`window.Food`) |
 | `src/health.js` | Gesundheit: Symptome, Frühwarnung, Schlafkonto, Vorsorge, Heimtraining, Dehnen, Kalender-Dateien, Verläufe (`trend`, `symDetail`) (`window.Health`) |
-| `src/app.js` | Oberfläche, Router, Speicher, Migration, Diagramme (`SVGR` und `HOVER` je Diagrammtyp). Der Marker `/*@@UI_HEALTH@@*/` wird beim Build durch `ui-health.js`, `ui-style.js`, `ui-figure.js`, `ui-food.js` und `ui-trends.js` ersetzt |
+| `src/app.js` | Oberfläche, Router, Speicher, Migration, Diagramme (`SVGR` und `HOVER` je Diagrammtyp). Der Marker `/*@@UI_HEALTH@@*/` wird beim Build durch `ui-health.js`, `ui-style.js`, `ui-figure.js`, `ui-food.js`, `ui-trends.js` und `ui-review.js` ersetzt |
 | `src/ui-health.js` | Oberfläche Gesundheit, Heimtraining, Dehnen, Pflege-Erinnerungen |
 | `src/ui-style.js` | Outfit: einzelnes Teil tauschen, Stil-Inspiration |
 | `src/ui-figure.js` | Outfit: Umschalter Figur oder Teile, Teile-Liste mit Marke, Tausch und Auswahl an der Figur |
 | `src/ui-food.js` | Ernährung: Eingabe mit Live-Erkennung (auch in der Training-Kachel auf Heute), Tagesbilanz, Liste, Dialoge, eigene Lebensmittel und Mahlzeiten, CSV |
-| `src/ui-trends.js` | Gesundheit, Verläufe: Matrix der Beschwerden, kleine Diagramme auf einer Zeitachse, Rangliste, Körperkarte, Wochentage, Detail |
+| `src/ui-trends.js` | Gesundheit, Verläufe: Matrix der Beschwerden, kleine Diagramme auf einer Zeitachse, Rangliste, Körperkarte, Wochentage, Wetter, Pollen und Luft, Detail |
+| `src/ui-review.js` | Heute: Wochenrückblick (montags bis mittwochs) |
 | `src/styles.css` | Design (Archivo, Denimblau, Oliv, Cognac; hell und dunkel) |
 | `fonts/` | Schrift Archivo (SIL Open Font License 1.1) |
 | `build.py` | Baut `dist/haltung.html` (Tests, mit Startdaten), `dist/chris-os.html` (PC-Datei ohne Startdaten, seit K40 nur noch Reserve) und `dist/web/` (Web-App für Handy und PC, bereinigt per esbuild) |
@@ -51,7 +54,7 @@ CHRISOS_DENYLIST=/pfad/sperrliste.txt python3 build.py   # Web-Build zusätzlich
 
 ## Testen
 
-Voraussetzungen: Python 3 mit Playwright, Google Chrome unter `/usr/bin/google-chrome`, Node, esbuild. Wetter und Ortssuche (Open-Meteo) werden gemockt. Aus dem Repository-Ordner starten:
+Voraussetzungen: Python 3 mit Playwright, Google Chrome unter `/usr/bin/google-chrome`, Node, esbuild. Wetter, Pollen, Luftqualität und Ortssuche (Open-Meteo) werden gemockt (`run.env_routes` für die Umweltabfragen). Aus dem Repository-Ordner starten:
 
 ```bash
 python3 build.py
@@ -66,7 +69,9 @@ python3 tests/pc_start.py    # PC-Datei ohne Startdaten (nach test_pwa.py, nutzt
 python3 tests/zwei_geraete.py # Handy (Android) und PC (Windows) im Wechsel: Datenstand, Hinweise, Warnungen, Windows Hello (nach test_pwa.py)
 python3 tests/v26.py         # Heute-Kacheln auf und zu, Speichern sichtbar, Übung anpassen, Marken angleichen
 python3 tests/v27.py         # Eiweiß in der Training-Kachel, Ernährungsprotokoll, Verläufe unter Gesundheit
+python3 tests/v28.py         # Wochenrückblick, Wetter, Pollen und Luft je Tag, Verläufe mit Umwelt, Archiv, Störung, Web-Build unter der CSP (nach test_pwa.py)
 node tests/food_test.js      # Lebensmitteltabelle (Energie plausibel), Texterkennung, Summen, Faktoren, Verläufe
+node tests/env_test.js       # Pollen-Stufen, Luftqualität, Tageswerte, was abgefragt wird, Einflüsse, Vergleich mit Beschwerden
 python3 dev/figur-vorschau/build_preview.py && python3 dev/figur-vorschau/tests/test_preview.py
 ```
 

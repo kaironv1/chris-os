@@ -6,7 +6,7 @@ Vorher: python3 build.py. Ziel: keine Konsolenfehler und keine CSP-Verstöße.""
 import asyncio, json, pathlib, re, shutil, sys, tempfile, time
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from playwright.async_api import async_playwright
-from run import fixture
+from run import fixture, env_routes
 from serve_web import serve
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -41,6 +41,7 @@ async def routes(ctx):
         await route.fulfill(status=200, content_type='application/json', headers={'Access-Control-Allow-Origin': '*'}, body=json.dumps({'results': [{'name': 'Musterstadt', 'latitude': 50.2, 'longitude': 8.6, 'admin1': 'Hessen', 'country': 'Deutschland'}]}))
     await ctx.route('https://api.open-meteo.com/**', wx)
     await ctx.route('https://geocoding-api.open-meteo.com/**', geo)
+    await env_routes(ctx)
 
 
 async def make_backup(p):

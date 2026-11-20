@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.7';
+  const VERSION = '2.8';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -148,6 +148,8 @@
     st.wardrobe.choice = st.wardrobe.choice || {};
     const cut = E.addDays(E.today(), -7);
     Object.keys(st.wardrobe.choice).forEach(k => { if (k.slice(0, 10) < cut) delete st.wardrobe.choice[k]; });
+    // Closed weekly reviews (2.8) are only needed for the current week
+    Object.keys(st.meta.dismissed).forEach(k => { if (k.startsWith('review:') && k.slice(7) < E.addDays(E.today(), -21)) delete st.meta.dismissed[k]; });
     const h = st.health;
     ['days', 'epOut', 'intake'].forEach(k => { h[k] = h[k] || {}; });
     ['obs', 'appts', 'questions', 'meds', 'followups', 'measures', 'doctors', 'vorsorge'].forEach(k => { h[k] = h[k] || []; });
@@ -157,6 +159,9 @@
     ['log', 'portions'].forEach(k => { nu[k] = nu[k] || {}; });
     ['foods', 'meals'].forEach(k => { nu[k] = nu[k] || []; });
     st.training.protein = st.training.protein || {};
+    // Weather, pollen and air quality per day (2.8): structure only, the app fetches the values itself
+    st.env = st.env || {};
+    st.env.days = st.env.days || {};
     return changed;
   }
   // quiet: no change of the data itself (backup, hint closed, view switched), so changedAt stays
@@ -252,6 +257,60 @@
       ui.wxError = false; ui.memo = {};
       render();
     } catch (e) { ui.wxError = true; if (!WX) render(); }
+  }
+
+  // ---------- Weather, pollen and air quality per day (2.8) ----------
+  // For the home location, so the Verläufe can compare complaints with them. Past days come along once
+  // (up to 92 days per past_days, older days with check-ins from the archives). Saved quietly: the values can
+  // be fetched again at any time and are no entry of Chris, so the data state for the backup stays untouched.
+  const EV = window.Env;
+  let envBusy = false;
+  const envKey = h => (+h.lat).toFixed(2) + ',' + (+h.lon).toFixed(2);
+  function envFirst() {
+    const ds = Object.keys(S.health.days || {}).filter(d => H.hasData(S.health.days[d])).sort();
+    return ds.length ? E.addDays(ds[0], -1) : null;
+  }
+  async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function refreshEnv() {
+    const h = S && S.settings.home;
+    if (!h || !EV || envBusy) return;
+    const env = S.env, t = E.today(), now = Date.now(), lk = envKey(h);
+    // Another home: the old values belong to another place, so they are fetched anew
+    if (env.loc && env.loc !== lk) { env.days = {}; env.at = 0; env.gapTry = null; }
+    const N = EV.need(env, envFirst(), t, now);
+    // An older gap the archives could not fill is tried again after a week at the earliest
+    const gap = N.gap && !(env.gapTry && env.gapTry.k === N.gap.join('/') && now - env.gapTry.at < 7 * 864e5) ? N.gap : null;
+    if (!N.past && !gap) return;
+    // After a failed try, wait ten minutes before the next one
+    if (ui.envFail && now - ui.envFail < 10 * 60e3) return;
+    envBusy = true;
+    try {
+      const loc = { lat: h.lat, lon: h.lon }, jobs = [];
+      if (N.past) jobs.push(['wx', { past: N.past }], ['aq', { past: N.past }]);
+      if (gap) jobs.push(['wx', { start: gap[0], end: gap[1] }], ['aq', { start: gap[0], end: gap[1] }]);
+      const res = await Promise.allSettled(jobs.map(([k, q]) => getJSON(EV.url(k, loc, q)).then(j => EV.daily(j, k, t))));
+      let got = 0;
+      res.forEach(r => { if (r.status === 'fulfilled') got += EV.merge(env, r.value); });
+      ui.envFail = res.every(r => r.status === 'fulfilled') ? 0 : now;
+      if (gap) env.gapTry = { k: gap.join('/'), at: now };
+      if (got) {
+        env.loc = lk;
+        if (N.past && res.slice(0, 2).every(r => r.status === 'fulfilled')) env.at = now;
+      }
+      if (!got && !gap) return;
+      save(true);
+      const r = route();
+      if (got && (r.top === 'heute' || (r.top === 'gesundheit' && r.sub === 'verlauf'))) render();
+    } finally { envBusy = false; }
+  }
+  // Pollen from moderate on and poor air for the header on Heute
+  function envLine(d) {
+    const x = S.env && S.env.days[d];
+    if (!x || !EV) return '';
+    const parts = [], P = EV.pollen(x), b = EV.aqiBand(x.aq);
+    if (P && P.max >= 2) parts.push('Pollen: ' + EV.polText(x, 2));
+    if (b && b.i >= 3) parts.push('Luft ' + b.l);
+    return parts.length ? `<span class="wx env-line">${ic('free')}<span class="small ink2">${esc(parts.join(', '))}</span></span>` : '';
   }
 
   // ---------- Outfit helpers ----------
@@ -458,10 +517,11 @@
     const d = E.today();
     return `<div class="page">
       <header class="page-head">
-        <div><h1 class="page-title">${E.fmtLong(d)}</h1><div class="page-sub">${dayPill(d)}${warnPill(d)}${wxLine(d)}</div></div>
+        <div><h1 class="page-title">${E.fmtLong(d)}</h1><div class="page-sub">${dayPill(d)}${warnPill(d)}${wxLine(d)}${envLine(d)}</div></div>
         ${weekStrip(d)}
       </header>
       ${backupNote()}
+      ${reviewToday(d)}
       <div class="today-grid">
         <div>${board(d, { fold: true })}</div>
         <div class="ledger">
@@ -1010,8 +1070,8 @@
       </div></div>
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
-        <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Ernährungsprotokoll, das Lebensmittel und Mengen aus deinem Text erkennt, Eiweiß in der Training-Kachel und Verläufe deiner Beschwerden unter Gesundheit. Davor in 2.6: einklappbare Kacheln auf Heute und sichtbares Speichern beim Check-in.</p></div>
+        <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Wochenrückblick montags auf Heute, dazu Wetter, Pollen und Luftqualität je Tag in den Verläufen unter Gesundheit, verglichen mit deinen Beschwerden. Davor in 2.7: Ernährungsprotokoll, Eiweiß in der Training-Kachel und Verläufe deiner Beschwerden.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1269,7 +1329,7 @@
     const data = r.data, warn = backupRisk(data);
     const text = 'Das ' + backupLabel(data.device, data.exported) + ' ersetzt alle Daten auf diesem Gerät.' + (warn ? ' ' + warn : '');
     confirmDlg(warn ? 'Trotzdem laden?' : 'Backup laden?', text, warn ? 'Trotzdem laden' : 'Backup laden', async () => {
-      await applyBackup(data); render(); toast('Backup geladen');
+      await applyBackup(data); render(); refreshEnv(); toast('Backup geladen');
     }, !!warn);
   }
 
@@ -1447,7 +1507,7 @@
         box.innerHTML = res.length ? `<ul class="checklist">${res.map((x, i) => `<li><div class="check-body"><div class="check-name">${esc(x.name)}</div><div class="check-meta">${esc([x.admin1, x.country].filter(Boolean).join(', '))}</div></div><button class="btn sm quiet" data-a="loc.pick" data-i="${i}">Übernehmen</button></li>`).join('')}</ul>` : '<p class="small">Kein Ort gefunden.</p>';
       } catch (e) { box.innerHTML = '<p class="small">Die Ortssuche braucht eine Internetverbindung.</p>'; }
     },
-    'loc.pick': el => { const x = ui.locRes[+el.dataset.i]; S.settings[ui.locWhich] = { name: x.name + (x.admin1 ? ' (' + x.admin1 + ')' : ''), lat: +x.latitude.toFixed(4), lon: +x.longitude.toFixed(4) }; save(); closeDialog(); refreshWeather(true); render(); toast('Ort gespeichert'); }
+    'loc.pick': el => { const x = ui.locRes[+el.dataset.i]; S.settings[ui.locWhich] = { name: x.name + (x.admin1 ? ' (' + x.admin1 + ')' : ''), lat: +x.latitude.toFixed(4), lon: +x.longitude.toFixed(4) }; save(); closeDialog(); refreshWeather(true); refreshEnv(); render(); toast('Ort gespeichert'); }
   };
   const C = {
     'temp.set': el => { const v = el.value.trim(); if (v === '') delete S.wardrobe.tempOverride[el.dataset.d]; else S.wardrobe.tempOverride[el.dataset.d] = +v.replace(',', '.'); save(); render(); },
@@ -1530,7 +1590,7 @@
     let rz = null; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(wireCharts, 150); });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); });
     setInterval(() => { const c = document.querySelector('[data-clock]'); if (c) c.textContent = minText(+clockText()); badges(); }, 15000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); render(); } });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); refreshEnv(); render(); } });
   }
   // ---------- Welcome: no data on this device yet ----------
   const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#3E5C8A"/><path d="M341 171A120 120 0 1 0 341 341" fill="none" stroke="#F4F1EB" stroke-width="58" stroke-linecap="round"/><circle cx="364" cy="256" r="31" fill="#D39A6A"/></svg>';
@@ -1614,6 +1674,7 @@
     shell();
     render();
     refreshWeather();
+    refreshEnv();
     if (ui.update) notice('Neue Version bereit', 'Jetzt laden', ui.update);
   }
   async function boot() {

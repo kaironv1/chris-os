@@ -409,7 +409,7 @@ details.how[open] summary { margin-bottom: 6px; }
 .tip .k { display: inline-block; width: 12px; height: 2px; border-radius: 1px; vertical-align: middle; margin-right: 6px; }
 .legend { display: flex; gap: 16px; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
 .legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-details.table-view { margin-top: 8px; }
+details.table-view { margin-top: 8px; max-width: 100%; overflow-x: auto; }
 details.table-view summary { font-size: 13px; color: var(--denim); cursor: pointer; font-weight: 560; }
 .tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
 .tbl th, .tbl td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
@@ -860,3 +860,25 @@ html.is-locked body > *:not(#lock) { visibility: hidden; }
 .stats2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .wdt { display: flex; color: var(--muted); }
 .wdt svg { width: 15px; height: 15px; }
+
+/* ---------- Wochenrückblick, Wetter, Pollen und Luft (2.8) ---------- */
+.review { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); margin-bottom: 22px; }
+.review .fold-head { border-radius: var(--r-l); }
+.review .fold.open .fold-head { border-radius: var(--r-l) var(--r-l) 0 0; }
+.rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.rv-list li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14.5px; line-height: 1.45; }
+.rv-list li:first-child { border-top: 0; padding-top: 2px; }
+.rv-k { font-weight: 640; color: var(--ink); }
+.rv-t { color: var(--ink-2); }
+.rv-hint { display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); }
+.rv-hint svg { width: 18px; height: 18px; flex: none; color: var(--denim); margin-top: 1px; }
+.env-line svg { width: 18px; height: 18px; color: var(--olive); }
+.tr-env-sum { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+.tr-src { line-height: 1.45; }
+@media (max-width: 560px) {
+  .rv-list li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+@media (max-width: 560px) {
+  .tbl { font-size: 12.5px; }
+  .tbl th, .tbl td { padding: 5px 6px; }
+}

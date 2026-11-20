@@ -94,6 +94,8 @@
 
   // ---------- Factors from the nutrition log ----------
   const foodLib = () => root.Food || (typeof require !== 'undefined' ? require('./food.js') : null);
+  // Weather, pollen and air quality per day (2.8)
+  const envLib = () => root.Env || (typeof require !== 'undefined' ? require('./env.js') : null);
   function nutriF(S, d) { const L = S.nutrition && S.nutrition.log && S.nutrition.log[d]; if (!L || !L.length) return {}; const F = foodLib(); return F ? F.factors(L) : {}; }
   // A check-in day with the factors from the nutrition log filled in; what was entered by hand wins
   function dayF(S, d) {
@@ -377,16 +379,20 @@
       ['Jemand im Umfeld krank', d => !!F(d).umfeld],
       ['Ausgekühlt oder gefroren', d => !!F(d).kalt]
     ];
+    // Weather, pollen and air at home, from the stored values per day (2.8)
+    const EV = envLib(), envD = (S.env && S.env.days) || {};
+    if (EV && S.env) EV.tests(S.env).forEach(t => tests.push([t[0], t[1], true]));
     const factors = [];
-    for (const [label, fn] of tests) {
+    for (const [label, fn, env] of tests) {
       let pn = 0, pk = 0, bn = 0, bk = 0;
       on.forEach(d => { const v = fn(d); if (v == null) return; pk++; if (v) pn++; });
       off.forEach(d => { const v = fn(d); if (v == null) return; bk++; if (v) bn++; });
-      if (pk >= 3 && bk >= 5) { const p = pn / pk, b = bn / bk; if (p > b) factors.push({ label, p, b, pn, pk, lift: b > 0 ? p / b : 9 }); }
+      if (pk >= 3 && bk >= 5) { const p = pn / pk, b = bn / bk; if (p > b) factors.push({ label, p, b, pn, pk, lift: b > 0 ? p / b : 9, env: !!env }); }
     }
+    const tm = ds => mean(ds.map(d => (envD[d] && envD[d].tm != null ? envD[d].tm : null)));
     const wd = [1, 2, 3, 4, 5, 6, 0].map(w => ({ w, n: on.filter(d => E.weekday(d) === w).length, of: logged.filter(d => E.weekday(d) === w).length }));
     return { key, label: symLabel(key), n: on.length, of: logged.length, runs, longest: Math.max(0, ...runs), lv, avgInt: mean(on.map(d => Math.min(3, days[d].sym[key]))), last: on[on.length - 1] || null,
-      sleep: cmp('sleepH'), mood: cmp('mood'), sleepQ: cmp('sleepQ'), energy: cmp('energy'), wd, factors: factors.filter(f => f.p >= 0.3 && f.lift >= 1.3).sort((a, b) => b.lift - a.lift) };
+      sleep: cmp('sleepH'), mood: cmp('mood'), sleepQ: cmp('sleepQ'), energy: cmp('energy'), temp: { with: tm(on), without: tm(off) }, wd, factors: factors.filter(f => f.p >= 0.3 && f.lift >= 1.3).sort((a, b) => b.lift - a.lift) };
   }
 
   // ---------- Home workout ----------

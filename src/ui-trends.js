@@ -78,7 +78,7 @@
     return `<div class="chart st" data-chart="stack" data-id="${id}" tabindex="0" role="img" aria-label="${esc(opt.label)}. Mit den Pfeiltasten durch die Tage gehen."><div class="tip" style="display:none"></div></div>` + tableHtml(head, rows.reverse());
   }
   SVGR.stack = (c, W) => {
-    const { cols, panels, opt } = c, n = cols.length, L = 34, R = 6, LH = 18, GP = 14, B = 20;
+    const { cols, panels, opt } = c, n = cols.length, L = 34, R = 6, LH = 22, GP = 14, B = 20;
     const slot = (W - L - R) / n, X = i => L + (i + 0.5) * slot;
     let y = 0, g = '';
     panels.forEach(pn => {
@@ -91,6 +91,10 @@
       if (pn.kind === 'bar') {
         const bw = Math.max(1, Math.min(12, slot - (slot >= 5 ? 2 : 0.6)));
         pn.vals.forEach((v, i) => { if (v == null || v <= lo) return; const yy = Y(v), hh = bot - yy, r = Math.min(3, bw / 2, hh); g += `<path d="M${(X(i) - bw / 2).toFixed(2)} ${bot} V${(yy + r).toFixed(2)} Q${(X(i) - bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) - bw / 2 + r).toFixed(2)} ${yy.toFixed(2)} H${(X(i) + bw / 2 - r).toFixed(2)} Q${(X(i) + bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) + bw / 2).toFixed(2)} ${(yy + r).toFixed(2)} V${bot} Z" fill="${pn.color}"/>`; });
+      } else if (pn.kind === 'range') {
+        // Floating bar from the lowest to the highest value (temperature of a day)
+        const bw = Math.max(1.5, Math.min(10, slot - (slot >= 5 ? 2 : 0.6)));
+        pn.vals.forEach((v, i) => { if (!v) return; const y1 = Y(v[1]), hh = Math.max(2, Y(v[0]) - y1), r = Math.min(3, bw / 2, hh / 2); g += `<rect x="${(X(i) - bw / 2).toFixed(2)}" y="${y1.toFixed(2)}" width="${bw.toFixed(2)}" height="${hh.toFixed(2)}" rx="${r.toFixed(1)}" fill="${pn.color}"/>`; });
       } else if (pn.kind === 'area') {
         let seg = [];
         const flush = () => {
@@ -208,8 +212,59 @@
       <div class="two-col" style="margin-top:22px">${stack}${rank}</div>
       <div class="two-col" style="margin-top:22px">${body}${week}</div>
       ${mood}
+      ${envPanel(T, from, t, cols, daily, unitW, bands)}
       ${detailPanel(T, from, t, cols)}
       <p class="small muted" style="margin-top:16px">Zusammenhänge sind Hinweise aus deinen Einträgen, keine Beweise. Je regelmäßiger du eincheckst, desto genauer werden sie.</p>`;
+  }
+  // ---------- Wetter, Pollen und Luft (2.8) ----------
+  const ENV_SRC = 'Quellen: Wetter von Open-Meteo.com; Pollen und Luftqualität von Open-Meteo.com aus „CAMS European air quality forecasts, ENSEMBLE data“ des Copernicus Atmosphere Monitoring Service (CAMS); ältere Wettertage aus ERA5, erzeugt mit Informationen des Copernicus Climate Change Service. Pollen als Tagesmittel, Stufen nach MeteoSchweiz.';
+  function envPanel(T, from, t, cols, daily, unitW, bands) {
+    const ED = (S.env && S.env.days) || {}, EV = window.Env;
+    // Check-in days without values (for example after loading a backup): fetch them in the background
+    if (S.settings.home && T.logged.some(d => !EV.complete(ED[d]))) setTimeout(refreshEnv, 0);
+    const head = `<div class="sec-head"><h2 class="sec-title">Wetter, Pollen und Luft</h2><span class="sec-meta">${S.settings.home ? 'an deinem Wohnort, ' : ''}je ${unitW}</span></div>`;
+    const any = cols.some(c => c.days.some(d => ED[d] && (ED[d].tm != null || ED[d].aq != null)));
+    if (!any) return `<div class="panel tr-env" style="margin-top:22px">${head}<p class="small ink2">${S.settings.home ? 'Wetter, Pollen und Luftqualität lädt die App beim nächsten Start mit Internet, auch für die vergangenen Tage. Danach vergleicht sie hier deine Beschwerden damit.' : 'Für den Vergleich mit Wetter, Pollen und Luft braucht die App deinen Wohnort. Trag ihn in den Einstellungen ein.'}</p></div>`;
+    const agg = (fn, how) => cols.map(col => { const v = col.days.map(d => (ED[d] ? fn(ED[d]) : null)).filter(x => x != null); if (!v.length) return null; return how === 'max' ? Math.max(...v) : v.reduce((s, x) => s + x, 0) / v.length; });
+    const symN = colVals(cols, x => Object.keys(x.sym || {}).filter(k => x.sym[k]).length);
+    const tn = agg(x => x.tn), tx = agg(x => x.tx), temp = cols.map((c, i) => (tn[i] != null && tx[i] != null ? [tn[i], tx[i]] : null)), tV = temp.filter(Boolean);
+    const pres = agg(x => x.p), pV = pres.filter(v => v != null);
+    const polV = agg(x => { const P = EV.pollen(x); return P ? P.max : null; }, 'max');
+    const aqV = agg(x => x.aq), aV = aqV.filter(v => v != null);
+    const polTips = cols.map(col => {
+      const xs = col.days.map(d => ED[d]).filter(x => x && x.pol);
+      if (!xs.length) return 'kein Wert';
+      if (col.days.length === 1) return EV.polText(xs[0]) || 'keine';
+      const best = {};
+      xs.forEach(x => { const P = EV.pollen(x); if (P) P.list.forEach(q => { best[q.l] = Math.max(best[q.l] || 0, q.k); }); });
+      const e = Object.entries(best).sort((a, b) => b[1] - a[1]);
+      return e.length ? 'bis ' + e.map(([l, k]) => l + ' ' + EV.LEVEL[k]).join(', ') : 'keine';
+    });
+    const step5 = (v, up) => (up ? Math.ceil(v / 5) : Math.floor(v / 5)) * 5;
+    const panels = [{ label: 'Beschwerden', kind: 'bar', vals: symN, min: 0, max: Math.max(2, ...symN.filter(v => v != null).map(v => Math.ceil(v))), color: 'var(--h2)', h: 44,
+      fmt: (v, ax) => ax ? n0(v, 0) : !v ? 'keine' : daily ? pl2(Math.round(v), 'Beschwerde', 'Beschwerden') : n0(v) + ' je Tag', note: daily ? 'Anzahl am Tag' : 'im Schnitt je Tag' }];
+    if (tV.length) { const lo = step5(Math.min(...tV.map(v => v[0]))), hi = step5(Math.max(...tV.map(v => v[1])), true); panels.push({ label: 'Temperatur', kind: 'range', vals: temp, min: lo, max: hi > lo ? hi : lo + 5, color: 'var(--c1)', h: 60, fmt: (v, ax) => ax ? n0(v, 0) + '°' : n0(v[0], 0) + ' bis ' + n0(v[1], 0) + ' °C', note: daily ? 'tiefster bis höchster Wert' : 'Schnitt der Tiefst- und Höchstwerte' }); }
+    if (pV.length) { const lo = step5(Math.min(...pV)), hi = step5(Math.max(...pV), true); panels.push({ label: 'Luftdruck', kind: 'dots', vals: pres, mean: pres, min: lo, max: hi > lo ? hi : lo + 5, color: 'var(--c1)', h: 46, fmt: (v, ax) => Math.round(v) + (ax ? '' : ' hPa'), note: 'hPa auf Meereshöhe, Tagesmittel' }); }
+    if (polV.some(v => v > 0)) panels.push({ label: 'Pollen', kind: 'bar', vals: polV, min: 0, max: 4, color: 'var(--c2)', h: 44, tips: polTips, fmt: (v, ax) => ax ? n0(v, 0) : EV.LEVEL[Math.round(v)], note: 'höchste Stufe, 0 keine bis 4 sehr stark' });
+    if (aV.length) panels.push({ label: 'Luftqualität', kind: 'bar', vals: aqV, min: 0, max: Math.max(60, Math.ceil(Math.max(...aV) / 20) * 20), goal: 40, color: 'var(--c1)', h: 44, fmt: (v, ax) => ax ? n0(v, 0) : n0(v, 0) + ', ' + EV.aqiBand(v).l, note: 'Europäischer Index, Linie: ab 40 mäßig' });
+    // The range in words, then what coincides with the complaints
+    const s = EV.summary(S.env, from, t), lines = [];
+    if (s.tn != null) lines.push('Temperatur von ' + n0(s.tn, 0) + ' bis ' + n0(s.tx, 0) + ' °C' + (s.sturz ? ', ' + pl2(s.sturz, 'Temperatursturz', 'Temperaturstürze') + ' um 5 Grad oder mehr' : '') + (s.druck ? ', an ' + pl2(s.druck, 'Tag', 'Tagen') + ' fiel der Luftdruck um 5 hPa oder mehr' : '') + '.');
+    const mod = s.polList.filter(q => q.mod);
+    lines.push(mod.length ? 'Pollen mäßig oder stärker: ' + mod.map(q => q.l + ' an ' + pl2(q.mod, 'Tag', 'Tagen')).join(', ') + '.' : s.polList.length ? 'Pollen nur schwach: ' + s.polList.map(q => q.l).join(', ') + '.' : 'Kein Pollenflug in diesem Zeitraum.');
+    if (s.aq != null) lines.push('Luftqualität im Schnitt ' + EV.aqiBand(s.aq).l + ' (Index ' + s.aq + ')' + (s.aqBad ? ', an ' + pl2(s.aqBad, 'Tag', 'Tagen') + ' mäßig oder schlechter' : '') + '.');
+    const links = [];
+    T.top.slice(0, 8).forEach(c => { H.symDetail(S, c.key, from, t).factors.filter(f => f.env).forEach(f => links.push({ c, f })); });
+    links.sort((a, b) => b.f.lift - a.f.lift || b.f.pk - a.f.pk);
+    const linkHtml = links.length ? `<ul class="checklist">${links.slice(0, 4).map(({ c, f }) => `<li><div class="check-body"><div class="row" style="align-items:baseline"><div class="check-name grow">${esc(c.label)}: ${esc(f.label)}</div>${f.lift >= 1.8 && f.pk >= 4 ? '<span class="tag cognac">auffällig</span>' : ''}</div><div class="check-meta">an ${f.pn} von ${f.pk} Tagen mit ${esc(c.label)}, sonst an ${Math.round(f.b * 100)} % der Tage</div></div></li>`).join('')}</ul>`
+      : `<p class="small ink2">${T.logged.length >= 21 ? 'Bisher fällt keine deiner Beschwerden mit Wetter, Pollen oder Luft zusammen.' : 'Ab etwa drei Wochen Check-ins vergleicht die App hier deine Beschwerden mit Wetter, Pollen und Luft.'}</p>`;
+    return `<div class="panel tr-env" style="margin-top:22px">${head}
+      ${stackChart('trenv', cols, panels, { label: 'Beschwerden, Wetter, Pollen und Luft je ' + unitW, bands })}
+      ${bands.length ? `<div class="legend"><span><span class="sw st-band-sw"></span>Infekt-Episode</span></div>` : ''}
+      <div class="two-col tr-env-cols" style="margin-top:14px">
+        <div><h3 class="mini-h">Im Zeitraum</h3><ul class="tr-env-sum">${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>
+        <div><h3 class="mini-h">Mit deinen Beschwerden</h3>${linkHtml}</div></div>
+      <p class="small muted tr-src" style="margin-top:12px">${esc(ENV_SRC)}</p></div>`;
   }
   // One complaint in detail: when, how long, how strong, and what tends to come with it
   function detailPanel(T, from, t, cols) {
@@ -218,7 +273,7 @@
     if (!ui.trSym || !keys.includes(ui.trSym)) ui.trSym = keys[0];
     const X = H.symDetail(S, ui.trSym, from, t);
     const cmp = (label, c, f) => (c.with != null && c.without != null ? `<li><span>${label}</span><span class="num">${f(c.with)} <span class="muted">damit</span>, ${f(c.without)} <span class="muted">ohne</span></span></li>` : '');
-    const cmps = [cmp('Schlaf', X.sleep, v => n0(v) + ' h'), cmp('Schlafqualität', X.sleepQ, v => n0(v)), cmp('Befinden', X.mood, v => n0(v)), cmp('Energie', X.energy, v => n0(v))].join('');
+    const cmps = [cmp('Schlaf', X.sleep, v => n0(v) + ' h'), cmp('Schlafqualität', X.sleepQ, v => n0(v)), cmp('Befinden', X.mood, v => n0(v)), cmp('Energie', X.energy, v => n0(v)), cmp('Tagestemperatur', X.temp, v => n0(v) + ' °C')].join('');
     const fs = X.factors.slice(0, 4).map(f => `<li><div class="check-body"><div class="row" style="align-items:baseline"><div class="check-name grow">${esc(f.label)}</div>${f.lift >= 1.8 && f.pk >= 4 ? '<span class="tag cognac">auffällig</span>' : ''}</div><div class="check-meta">an ${f.pn} von ${f.pk} Tagen mit ${esc(X.label)}, sonst an ${Math.round(f.b * 100)} % der Tage</div></div></li>`).join('');
     const strong = X.lv[3] ? ', ' + pl2(X.lv[3], 'Tag', 'Tage') + ' stark' : '';
     return `<div class="panel" style="margin-top:22px"><div class="sec-head"><h2 class="sec-title">Eine Beschwerde genauer</h2><span class="sec-meta">${esc(X.label)}</span></div>
@@ -230,7 +285,7 @@
       <div style="margin-top:14px">${matrixChart('trdet', [symRow(X.key, X.label, cols)], cols, { label: X.label + ' im Verlauf', noLabels: true })}</div>
       <div class="two-col tr-det" style="margin-top:10px">
         <div><h3 class="mini-h">Im Vergleich zu Tagen ohne</h3>${cmps ? `<ul class="cmp">${cmps}</ul>` : '<p class="small ink2">Braucht Angaben zu Schlaf oder Befinden an Tagen mit und ohne.</p>'}</div>
-        <div><h3 class="mini-h">Was damit zusammenfällt</h3>${fs ? `<ul class="checklist">${fs}</ul>` : `<p class="small ink2">${X.n >= 3 ? 'Bisher fällt nichts Bestimmtes zusammen.' : 'Braucht mindestens drei Tage mit dieser Beschwerde.'} Die App vergleicht Schlaf, Stress, Kaffee, Alkohol, spätes Essen, Training und Bürotage mit den Tagen ohne.</p>`}</div></div></div>`;
+        <div><h3 class="mini-h">Was damit zusammenfällt</h3>${fs ? `<ul class="checklist">${fs}</ul>` : `<p class="small ink2">${X.n >= 3 ? 'Bisher fällt nichts Bestimmtes zusammen.' : 'Braucht mindestens drei Tage mit dieser Beschwerde.'} Die App vergleicht Schlaf, Stress, Kaffee, Alkohol, spätes Essen, Training, Bürotage, Wetter, Pollen und Luft mit den Tagen ohne.</p>`}</div></div></div>`;
   }
 
   Object.assign(A, {
