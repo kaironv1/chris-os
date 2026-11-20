@@ -379,9 +379,9 @@
       ['Jemand im Umfeld krank', d => !!F(d).umfeld],
       ['Ausgekühlt oder gefroren', d => !!F(d).kalt]
     ];
-    // Weather, pollen and air at home, from the stored values per day (2.8)
+    // Weather, pollen and air at home, from the stored values per day (2.8); pollen only of the own types (2.9)
     const EV = envLib(), envD = (S.env && S.env.days) || {};
-    if (EV && S.env) EV.tests(S.env).forEach(t => tests.push([t[0], t[1], true]));
+    if (EV && S.env) EV.tests(S.env, EV.sel(S)).forEach(t => tests.push([t[0], t[1], true]));
     const factors = [];
     for (const [label, fn, env] of tests) {
       let pn = 0, pk = 0, bn = 0, bk = 0;

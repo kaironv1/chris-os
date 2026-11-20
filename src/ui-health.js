@@ -116,11 +116,13 @@
       ? ((!yx || yx.mood == null || E.iso(new Date(yx.t || 0)) === d) ? `<div class="hrow"><span class="hlbl">Gestern insgesamt</span>${scaleCtl(yd, 'mood', yx ? yx.mood : null, 'schlecht', 'sehr gut')}</div>` : '')
       : `<div class="hrow"><span class="hlbl">Befinden heute</span>${scaleCtl(d, 'mood', x.mood, 'schlecht', 'sehr gut')}</div>`;
     const meta = ts ? savedBadge(ts) : `<span class="fold-badge due">offen</span>`;
-    return fold('checkin', 'Wie geht’s dir?', checkinSum(d, x, yx, early), meta, () => `
+    const xs = expSum();
+    return fold('checkin', 'Wie geht’s dir?', checkinSum(d, x, yx, early) + (xs ? esc(', ' + xs) : ''), meta, () => `
       <div class="hrow stack"><span class="hlbl">Schlaf letzte Nacht</span>${sleepCtl(d, x.sleepH)}</div>
       <div class="hrow stack"><span class="hlbl">Spürst du was?</span><div class="schips">${H.QUICK.map(k => symChip(d, k, x.sym[k])).join('')}<button class="chip" data-a="hc.none" data-d="${d}" aria-pressed="${!!x.none}">Nichts</button></div></div>
       <div class="hrow"><span class="hlbl">Atem</span><div>${breathCtl(d, x.breath)}${hungerChip(d, x)}</div></div>
       ${moodRow}
+      ${expRow()}
       ${early ? '<p class="small muted" style="margin-top:6px">Wie der Tag insgesamt war, trägst du ab Mittag oder abends ein.</p>' : ''}
       ${w.level !== 'ruhig' ? `<div class="warn-mini wp-${WARN_CLS[w.level]}">${ic('alert')}<div><b>${esc(H.LEVEL[w.level])}:</b> ${esc(warnReasons(w).slice(0, 2).join(', '))}. <a href="#/gesundheit/muster">Was jetzt hilft</a></div></div>` : preventNote(w)}
       <p class="autosave">${ic('check')}Jede Angabe speichert sich sofort, ohne Knopf.</p>
@@ -167,11 +169,12 @@
 
   // ---------- Gesundheit: view ----------
   function viewHealth(sub) {
-    const tabs = `<nav class="tabs" aria-label="Gesundheit">${[['', 'Check-in'], ['verlauf', 'Verläufe'], ['muster', 'Muster'], ['aerzte', 'Ärzte und Vorsorge'], ['medikamente', 'Medikamente'], ['bericht', 'Bericht für den Arzt']].map(([k, l]) => `<a href="#/gesundheit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
+    const tabs = `<nav class="tabs" aria-label="Gesundheit">${[['', 'Check-in'], ['verlauf', 'Verläufe'], ['muster', 'Muster'], ['experimente', 'Experimente'], ['aerzte', 'Ärzte und Vorsorge'], ['medikamente', 'Medikamente'], ['bericht', 'Bericht für den Arzt']].map(([k, l]) => `<a href="#/gesundheit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
     const head = `<header class="page-head"><div><h1 class="page-title">Gesundheit</h1><p class="page-sub">Kurz eintragen, wie es dir geht. Die App erkennt deine Muster und bereitet Arzttermine vor.</p></div>${warnPill(E.today())}</header>`;
     let body;
     if (sub === 'muster') body = viewPatterns();
     else if (sub === 'verlauf') body = viewTrends();
+    else if (sub === 'experimente') body = viewExperiments();
     else if (sub === 'aerzte') body = viewDoctors();
     else if (sub === 'medikamente') body = viewMeds();
     else if (sub === 'bericht') body = viewReport();
@@ -194,6 +197,7 @@
         <div class="hrow"><span class="hlbl">Schlafqualität</span>${scaleCtl(d, 'sleepQ', x.sleepQ, 'unruhig', 'erholsam')}</div>
         <div class="hrow"><span class="hlbl">Atem</span><div>${breathCtl(d, x.breath)}${hungerChip(d, x)}</div></div>
         <div class="hrow"><span class="hlbl">Temperatur</span><span class="row" style="gap:8px"><input type="text" inputmode="decimal" class="inline-num" value="${x.temp == null ? '' : n0(x.temp)}" placeholder="°C" data-c="hc.temp" data-d="${d}" aria-label="Körpertemperatur in Grad Celsius"><span class="small muted">nur wenn gemessen</span></span></div>
+        ${expDayRow(d)}
       </div>
       <div class="panel" style="margin-top:16px"><div class="sec-head"><h2 class="sec-title">Beschwerden</h2><button class="chip" data-a="hc.none" data-d="${d}" aria-pressed="${!!x.none}">Keine Beschwerden</button></div>
         <p class="small muted" style="margin:-4px 0 10px">Tippen: leicht, mittel, stark, wieder aus.</p>
@@ -248,7 +252,7 @@
         ${w.personal && w.personal.n >= 3 ? `<p class="small muted" style="margin-top:4px">Deine Bilanz bei ähnlichen ersten Anzeichen: ${w.personal.n - w.personal.conv} von ${w.personal.n} Mal abgewendet.</p>` : ''}
         ${w.tips.length ? `<ul class="tips">${w.tips.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
         ${w.prevent && w.prevent.length ? `<ul class="tips">${w.prevent.map(p => `<li>${esc(p.text)}. ${esc(p.tip)}</li>`).join('')}</ul>` : ''}
-        ${(S.health.profile || {}).triggers && S.health.profile.triggers.includes('schlaf') ? `<div class="row wrap" style="margin-top:12px;gap:8px"><span class="small ink2">Dein häufigster Auslöser ist Schlafmangel. Schlafkonto der letzten Nächte: ${w.sleep && w.sleep.nights ? (w.sleep.debt > 0 ? '−' + n0(w.sleep.debt) + ' h' : 'ausgeglichen') : 'noch keine Einträge'}.</span><button class="btn sm quiet" data-a="ics.bed">${ic('moon')}Bettzeit-Erinnerung in den Kalender</button></div>` : ''}
+        ${(S.health.profile || {}).triggers && S.health.profile.triggers.includes('schlaf') ? `<div class="row wrap" style="margin-top:12px;gap:8px"><span class="small ink2">Dein häufigster Auslöser ist Schlafmangel. Schlafkonto der letzten Nächte: ${w.sleep && w.sleep.nights ? (w.sleep.debt > 0 ? '−' + n0(w.sleep.debt) + ' h' : 'ausgeglichen') : 'noch keine Einträge'}.</span><button class="btn sm quiet" data-a="ics.bed">${ic('moon')}Bettzeit-Erinnerung in den Kalender</button>${expActive() ? '' : `<button class="btn sm quiet" data-a="exp.new" data-k="bett">Als Experiment testen</button>`}</div>` : ''}
         ${w.level === 'achtung' ? '<p class="small muted" style="margin-top:8px">Faustregel: Beschwerden nur oberhalb des Halses, also Nase oder leichtes Halskratzen, vertragen oft lockere Bewegung. Fieber, Gliederschmerzen oder Husten heißen Pause.</p>' : ''}
       </div></div></div>`;
     const epHtml = eps.length ? `<ul class="checklist">${eps.slice(0, 12).map(e => `<li><span class="check" aria-hidden="true" style="box-shadow:none;color:var(--cognac)">${ic('health')}</span><div class="check-body"><div class="check-name">${E.fmtShort(e.start)}${e.end !== e.start ? ' bis ' + E.fmtShort(e.end) : ''}, ${e.length} ${e.length === 1 ? 'Tag' : 'Tage'}</div>
@@ -303,7 +307,7 @@
     let status = 'Markiere „Bei Hunger aufgefallen“, wenn du ihn bemerkst. Dann prüft die App deinen Verdacht.';
     if (f && f.nWith >= 3) status = f.diff >= 0.25 ? 'Bestätigt sich bisher: an Hunger-Tagen ist dein Atem im Schnitt ' + breathWord(f.avgWith) + ', sonst ' + breathWord(f.avgWithout) + '.' : 'Bisher kein klarer Zusammenhang mit Hunger. Bleib beim Markieren.';
     return `<div class="hunch"><h3 class="mini-h">Dein Verdacht: Mundgeruch bei Hunger</h3><p class="small ink2">${esc(status)}</p>
-      <ul class="tips small"><li>Nicht zu lange ohne Essen: kleine Snacks wie Apfel oder Nüsse, dazu Wasser.</li><li>Zuckerfreier Kaugummi regt den Speichel an, wenn der Magen knurrt.</li><li>Bei Zungenbelag: Zungenschaber nutzen und beim Zahnarzt ansprechen. Die professionelle Zahnreinigung lässt sich gut mit der nächsten Kontrolle verbinden${zahnNext()}.</li></ul></div>`;
+      <ul class="tips small"><li>Nicht zu lange ohne Essen: kleine Snacks wie Apfel oder Nüsse, dazu Wasser.</li><li>Zuckerfreier Kaugummi regt den Speichel an, wenn der Magen knurrt.</li><li>Bei Zungenbelag: Zungenschaber nutzen und beim Zahnarzt ansprechen. Die professionelle Zahnreinigung lässt sich gut mit der nächsten Kontrolle verbinden${zahnNext()}.</li></ul>${expActive() ? '' : '<button class="link-btn small" data-a="exp.new" data-k="fruehstueck">Als Experiment testen: zwei Wochen morgens etwas essen</button>'}</div>`;
   }
   const breathWord = v => v < 0.5 ? 'frisch' : v < 1.3 ? 'mittel' : 'schlecht';
 
@@ -472,6 +476,7 @@
       ${sec('Zusammenfassung', `<p>${pl(D.days, 'Tag', 'Tage')} erfasst, an ${pl(D.rows.length, 'Tag', 'Tagen')} mit Beschwerden.${D.top.length ? ' Häufigste Beschwerden: ' + esc(D.top.slice(0, 6).map(x => x.label + ' (' + x.n + '×, meist ' + H.INT[Math.round(x.sum / x.n)] + ')').join(', ')) + '.' : ''}${D.eps.length ? ' ' + pl(D.eps.length, 'Infekt-Episode', 'Infekt-Episoden') + '.' : ''}</p>`)}
       ${sec('Infekt-Episoden', D.eps.length ? `<table><tr><th>Zeitraum</th><th>Erste Anzeichen</th><th>Maßnahmen früh</th><th>Verlauf</th></tr>${D.eps.map(e => `<tr><td>${E.fmtShort(e.start)}${e.end !== e.start ? ' bis ' + E.fmtShort(e.end) : ''} (${e.length} T.)</td><td>${esc(e.first.map(H.symLabel).join(', '))}</td><td>${esc(e.early.map(id => (S.health.measures.find(m => m.id === id) || { l: id }).l).join(', '))}</td><td>${esc(H.OUTCOME[e.outcome])}${e.fever ? ', Fieber' : ''}</td></tr>`).join('')}</table>` : '')}
       ${sec('Tage mit Beschwerden', D.rows.length ? `<table><tr><th>Datum</th><th>Beschwerden</th><th>Weitere Angaben</th><th>Maßnahmen</th><th>Notiz</th></tr>${D.rows.map(r => `<tr><td>${E.fmtShort(r.d)}${r.d.slice(0, 4)}</td><td>${esc(r.syms.join(', ') || 'keine')}</td><td>${esc(r.extra.join(', '))}</td><td>${esc(r.meas.join(', '))}</td><td>${esc(r.note)}</td></tr>`).join('')}</table>` : '<p>Keine Beschwerden im Zeitraum.</p>')}
+      ${sec('Selbstexperimente', expReport(D))}
       ${sec('Mundgeruch', (['alle', 'allg', 'zahn', 'hno'].includes(D.fach) && br.rated) ? `<p>${br.rated} Tage bewertet: frisch ${br.dist[0]}, geht so ${br.dist[1]}, schlecht ${br.dist[2]}.${br.factors.filter(f => f.diff >= 0.4).length ? ' Fällt zusammen mit: ' + esc(br.factors.filter(f => f.diff >= 0.4).map(f => f.label).join(', ')) + '.' : ''}</p>` : '')}
       ${sec('Beobachtungen', D.obs.length ? D.obs.map(o => `<div class="obs">${R.photos && ui.repPhotos && ui.repPhotos['obs:' + o.id] ? `<img src="${ui.repPhotos['obs:' + o.id]}" alt="">` : ''}<div><b>${E.fmtDate(o.date)}</b>${o.region && H.regById(o.region) ? ', ' + esc(H.regById(o.region).l) : ''}<br>${esc(o.text)}</div></div>`).join('') : '')}
       ${sec('Frühere Arztgespräche', D.talks.length ? D.talks.map(a => `<p><b>${E.fmtDate(a.date)}, ${esc(docName(a.doc))}</b>${a.reason ? ': ' + esc(a.reason) : ''}<br>${a.talk ? 'Besprochen: ' + esc(a.talk) + '<br>' : ''}${a.next ? 'Empfehlung: ' + esc(a.next) : ''}</p>`).join('') : '')}

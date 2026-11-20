@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.8';
+  const VERSION = '2.9';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -152,7 +152,7 @@
     Object.keys(st.meta.dismissed).forEach(k => { if (k.startsWith('review:') && k.slice(7) < E.addDays(E.today(), -21)) delete st.meta.dismissed[k]; });
     const h = st.health;
     ['days', 'epOut', 'intake'].forEach(k => { h[k] = h[k] || {}; });
-    ['obs', 'appts', 'questions', 'meds', 'followups', 'measures', 'doctors', 'vorsorge'].forEach(k => { h[k] = h[k] || []; });
+    ['obs', 'appts', 'questions', 'meds', 'followups', 'measures', 'doctors', 'vorsorge', 'exps'].forEach(k => { h[k] = h[k] || []; });
     h.record = h.record || {};
     // Nutrition log (2.7): structure only
     const nu = st.nutrition = st.nutrition || {};
@@ -303,12 +303,12 @@
       if (got && (r.top === 'heute' || (r.top === 'gesundheit' && r.sub === 'verlauf'))) render();
     } finally { envBusy = false; }
   }
-  // Pollen from moderate on and poor air for the header on Heute
+  // Pollen from moderate on and poor air for the header on Heute; only the own pollen types, if chosen (2.9, K48)
   function envLine(d) {
     const x = S.env && S.env.days[d];
     if (!x || !EV) return '';
-    const parts = [], P = EV.pollen(x), b = EV.aqiBand(x.aq);
-    if (P && P.max >= 2) parts.push('Pollen: ' + EV.polText(x, 2));
+    const sel = EV.sel(S), parts = [], P = EV.pollen(x, sel), b = EV.aqiBand(x.aq);
+    if (P && P.max >= 2) parts.push('Pollen: ' + EV.polText(x, 2, sel));
     if (b && b.i >= 3) parts.push('Luft ' + b.l);
     return parts.length ? `<span class="wx env-line">${ic('free')}<span class="small ink2">${esc(parts.join(', '))}</span></span>` : '';
   }
@@ -1058,6 +1058,7 @@
         <div style="display:block"><label class="field"><span>Allergien und Unverträglichkeiten</span><input value="${esc(S.health.record.allergies || '')}" data-c="rec.set" data-k="allergies" placeholder="keine bekannt"></label></div>
         <div style="display:block"><label class="field"><span>Vorerkrankungen</span><input value="${esc(S.health.record.conditions || '')}" data-c="rec.set" data-k="conditions" placeholder="optional"></label></div>
         <div style="display:block"><label class="field"><span>Nahrungsergänzung</span><input value="${esc(S.health.record.supplements || '')}" data-c="rec.set" data-k="supplements" placeholder="optional"></label><p class="hint" style="margin-top:6px">Steht nur im Bericht für den Arzt und bleibt in diesem Browser.</p></div>
+        <div style="display:block"><span class="lbl">Pollen, auf die du reagierst</span><p class="hint" style="margin-bottom:8px">Oben auf Heute erscheint ein Hinweis, sobald eine dieser Arten mäßig oder stärker fliegt; die Verläufe vergleichen deine Beschwerden nur mit ihnen. Hasel und Esche liefert der Wetterdienst nicht.</p>${polChips('in-settings')}</div>
         <div><div><span class="lbl">Gesundheitsdaten als Tabelle</span><p class="hint">Alle Check-ins als CSV, z. B. für Excel.</p></div><button class="btn sm quiet" data-a="rep.csv">${ic('download')}CSV speichern</button></div>
         <div><div><span class="lbl">Erinnerungen auf dem Handy</span><p class="hint">Termine, Vorsorge, Medikamente und Pflege lassen sich als Kalender-Datei speichern. Öffne sie mit Outlook oder importiere sie in den Google Kalender, dann erinnert dich dein Handy auch ohne diese App.</p></div></div>
       </div></div>
@@ -1071,7 +1072,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Wochenrückblick montags auf Heute, dazu Wetter, Pollen und Luftqualität je Tag in den Verläufen unter Gesundheit, verglichen mit deinen Beschwerden. Davor in 2.7: Ernährungsprotokoll, Eiweiß in der Training-Kachel und Verläufe deiner Beschwerden.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Selbstexperimente unter Gesundheit. Du hältst dich ein paar Tage an eine Regel, die App vergleicht danach Schlaf, Befinden und Beschwerden mit den Tagen davor. Dazu wählst du die Pollen, auf die du reagierst. Davor in 2.8: Wochenrückblick montags auf Heute, Wetter, Pollen und Luftqualität je Tag in den Verläufen.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js

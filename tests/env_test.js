@@ -136,4 +136,39 @@ const S2 = JSON.parse(JSON.stringify(S)); delete S2.env;
 ok(!H.symDetail(S2, 'augen', from, t0).factors.some(f => f.env), 'ohne S.env');
 eq(H.symDetail(S2, 'augen', from, t0).temp, { with: null, without: null });
 
+// 11. Eigene Pollenarten (2.9, K48): aus dem Text der Allergien, gewählt in der App, leere Wahl heißt alle
+eq(Env.fromText('Gräserpollen (leicht)'), ['gr']);
+eq(Env.fromText('Birken- und Gräserpollen'), ['bi', 'gr']);
+eq(Env.fromText('Gras, Erle, Beifuß, Ambrosia'), ['er', 'gr', 'bf', 'am']);
+eq(Env.fromText('Ragweed'), ['am']);
+eq([Env.fromText('Hausstaub (leicht)'), Env.fromText('Erlebnis'), Env.fromText('Grasmilben'), Env.fromText(''), Env.fromText(null)], [[], [], [], [], []], 'nur ganze Wörter');
+const Sx = { health: { profile: {}, record: { allergies: 'Heuschnupfen, Gräserpollen' } } };
+eq([Env.sel(Sx), Env.selSource(Sx)], [['gr'], 'bericht']);
+Sx.health.profile.pollen = ['gr', 'bi'];
+eq([Env.sel(Sx), Env.selSource(Sx)], [['bi', 'gr'], 'eigen'], 'Reihenfolge wie in der Tabelle');
+Sx.health.profile.pollen = [];
+eq([Env.sel(Sx), Env.selSource(Sx)], [null, 'alle'], 'leere Wahl: alle Arten, ohne Bericht');
+eq([Env.sel({ health: { profile: {}, record: {} } }), Env.selSource({ health: { profile: {} } }), Env.sel(null)], [null, null, null]);
+eq(Env.sel({ health: { profile: { pollen: ['xx'] } } }), null, 'unbekannte Art');
+const dd = { pol: { er: 0, bi: 120, gr: 30, bf: 0, am: 0 } };
+eq(Env.polText(dd, 2, ['gr']), 'Gräser mäßig');
+eq(Env.pollen(dd, ['gr']).max, 2);
+eq(Env.pollen(dd, ['am']), { max: 0, list: [] }, 'Art fliegt nicht');
+eq(Env.rest(['gr']), ['er', 'bi', 'bf', 'am']);
+eq(Env.rest(null), []);
+eq(Env.tests({ days: {} }, ['gr']).map(t => t[0]).filter(l => l.includes('pollen')), ['Gräserpollen mäßig oder stärker']);
+eq(Env.tests({ days: {} }).filter(t => t[0].includes('pollen')).length, 5, 'ohne Wahl alle fünf');
+// Überblick mit Wahl: eigene Arten, andere mit mäßigen Tagen getrennt
+const envS = { days: { '2026-06-01': { tm: 18, pol: { bi: 120, gr: 30 } }, '2026-06-02': { tm: 18, pol: { bi: 80, gr: 10 } }, '2026-06-03': { tm: 18, pol: { bi: 5, gr: 2 } } } };
+const sg = Env.summary(envS, '2026-06-01', '2026-06-03', ['gr']);
+eq(sg.polList.map(q => [q.l, q.n, q.mod]), [['Gräser', 3, 1]]);
+eq(sg.other.map(q => [q.l, q.mod]), [['Birke', 2]]);
+eq(sg.polDays, 1);
+eq(Env.summary(envS, '2026-06-01', '2026-06-03').other, [], 'ohne Wahl keine anderen');
+// symDetail vergleicht nur die eigenen Arten: Birke fällt weg, wenn nur Gräser gewählt sind
+const S3 = JSON.parse(JSON.stringify(S)); S3.health.profile.pollen = ['gr'];
+ok(!H.symDetail(S3, 'augen', from, t0).factors.some(f => f.label.startsWith('Birkenpollen')), 'Birke nicht gewählt');
+S3.health.profile.pollen = ['bi'];
+ok(H.symDetail(S3, 'augen', from, t0).factors.some(f => f.label.startsWith('Birkenpollen')), 'Birke gewählt');
+
 console.log('env_test: ' + n + ' Prüfungen bestanden');

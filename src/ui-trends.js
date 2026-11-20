@@ -88,9 +88,13 @@
       g += `<line class="gridline" x1="${L}" x2="${W - R}" y1="${Y(hi)}" y2="${Y(hi)}"/><text class="axis" x="${L - 6}" y="${Y(hi) + 4}" text-anchor="end">${esc(pn.fmt(hi, true))}</text>`;
       g += `<line class="baseline" x1="${L}" x2="${W - R}" y1="${bot}" y2="${bot}"/><text class="axis" x="${L - 6}" y="${bot + 4}" text-anchor="end">${esc(pn.fmt(lo, true))}</text>`;
       if (pn.goal != null) g += `<line class="goal" x1="${L}" x2="${W - R}" y1="${Y(pn.goal)}" y2="${Y(pn.goal)}"/>`;
+      // Mean levels for parts of the axis (2.9, experiments): a horizontal line per part, e.g. before and during
+      const lvl = (pn.levels || []).filter(lv => lv.v != null && lv.i1 >= lv.i0).map(lv => { const yy = Y(lv.v).toFixed(2); return `<line class="st-lvl" x1="${(X(lv.i0) - slot / 2 + 1).toFixed(2)}" x2="${(X(lv.i1) + slot / 2 - 1).toFixed(2)}" y1="${yy}" y2="${yy}" stroke="${lv.color || pn.color}" stroke-width="2" stroke-linecap="round"/>`; }).join('');
+      const colAt = i => (pn.colors && pn.colors[i]) || pn.color;
       if (pn.kind === 'bar') {
         const bw = Math.max(1, Math.min(12, slot - (slot >= 5 ? 2 : 0.6)));
-        pn.vals.forEach((v, i) => { if (v == null || v <= lo) return; const yy = Y(v), hh = bot - yy, r = Math.min(3, bw / 2, hh); g += `<path d="M${(X(i) - bw / 2).toFixed(2)} ${bot} V${(yy + r).toFixed(2)} Q${(X(i) - bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) - bw / 2 + r).toFixed(2)} ${yy.toFixed(2)} H${(X(i) + bw / 2 - r).toFixed(2)} Q${(X(i) + bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) + bw / 2).toFixed(2)} ${(yy + r).toFixed(2)} V${bot} Z" fill="${pn.color}"/>`; });
+        pn.vals.forEach((v, i) => { if (v == null || v <= lo) return; const yy = Y(v), hh = bot - yy, r = Math.min(3, bw / 2, hh); g += `<path d="M${(X(i) - bw / 2).toFixed(2)} ${bot} V${(yy + r).toFixed(2)} Q${(X(i) - bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) - bw / 2 + r).toFixed(2)} ${yy.toFixed(2)} H${(X(i) + bw / 2 - r).toFixed(2)} Q${(X(i) + bw / 2).toFixed(2)} ${yy.toFixed(2)} ${(X(i) + bw / 2).toFixed(2)} ${(yy + r).toFixed(2)} V${bot} Z" fill="${colAt(i)}"/>`; });
+        g += lvl;
       } else if (pn.kind === 'range') {
         // Floating bar from the lowest to the highest value (temperature of a day)
         const bw = Math.max(1.5, Math.min(10, slot - (slot >= 5 ? 2 : 0.6)));
@@ -108,7 +112,16 @@
         };
         pn.vals.forEach((v, i) => { if (v == null) flush(); else seg.push(i); }); flush();
       } else {
-        pn.vals.forEach((v, i) => { if (v != null) g += `<circle cx="${X(i).toFixed(2)}" cy="${Y(v).toFixed(2)}" r="${n > 60 ? 1.8 : 2.6}" fill="${pn.color}" opacity=".45"/>`; });
+        // r: bigger dots with a surface ring (experiments); hollow: a ring instead of a dot (rule not kept)
+        const r0 = pn.r ? Math.max(2.2, Math.min(pn.r, slot / 2 - 0.6)) : (n > 60 ? 1.8 : 2.6);
+        g += lvl;
+        pn.vals.forEach((v, i) => {
+          if (v == null) return;
+          const cx = X(i).toFixed(2), cy = Y(v).toFixed(2);
+          g += pn.hollow && pn.hollow[i] ? `<circle cx="${cx}" cy="${cy}" r="${(r0 - 0.75).toFixed(2)}" fill="var(--surface)" stroke="${colAt(i)}" stroke-width="1.5"/>`
+            : pn.r ? `<circle cx="${cx}" cy="${cy}" r="${r0.toFixed(2)}" fill="${colAt(i)}" stroke="var(--surface)" stroke-width="1.5"/>`
+            : `<circle cx="${cx}" cy="${cy}" r="${r0}" fill="${colAt(i)}" opacity=".45"/>`;
+        });
         let d = '', on = false;
         (pn.mean || []).forEach((v, i) => { if (v == null) { on = false; return; } d += (on ? 'L' : 'M') + X(i).toFixed(2) + ' ' + Y(v).toFixed(2) + ' '; on = true; });
         if (d) g += `<path d="${d}" fill="none" stroke="${pn.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
@@ -117,7 +130,7 @@
     });
     const H0 = y - GP;
     let bands = '';
-    (opt.bands || []).forEach(b => { const x0 = X(b.i0) - slot / 2, x1 = X(b.i1) + slot / 2; bands += `<rect class="st-band" x="${x0.toFixed(1)}" y="${LH - 4}" width="${Math.max(2, x1 - x0).toFixed(1)}" height="${(H0 - LH + 4).toFixed(1)}" rx="3"/>`; });
+    (opt.bands || []).forEach(b => { const x0 = X(b.i0) - slot / 2, x1 = X(b.i1) + slot / 2; bands += `<rect class="st-band${b.cls ? ' ' + b.cls : ''}" x="${x0.toFixed(1)}" y="${LH - 4}" width="${Math.max(2, x1 - x0).toFixed(1)}" height="${(H0 - LH + 4).toFixed(1)}" rx="3"/>`; });
     let last = -99, ax = '';
     cols.forEach((col, i) => { if (col.label && X(i) - last > 34) { ax += `<text class="axis" x="${X(i).toFixed(1)}" y="${H0 + 15}" text-anchor="middle">${esc(col.label)}</text>`; last = X(i); } });
     c.pos = cols.map((col, i) => ({ x: X(i), y: LH, t: [col.tip].concat(panels.map(pn => pn.label + ': ' + (pn.tips ? pn.tips[i] : (pn.vals[i] == null ? 'kein Eintrag' : pn.fmt(pn.vals[i]))))) }));
@@ -218,25 +231,33 @@
   }
   // ---------- Wetter, Pollen und Luft (2.8) ----------
   const ENV_SRC = 'Quellen: Wetter von Open-Meteo.com; Pollen und Luftqualität von Open-Meteo.com aus „CAMS European air quality forecasts, ENSEMBLE data“ des Copernicus Atmosphere Monitoring Service (CAMS); ältere Wettertage aus ERA5, erzeugt mit Informationen des Copernicus Climate Change Service. Pollen als Tagesmittel, Stufen nach MeteoSchweiz.';
+  // The pollen types Chris reacts to (2.9, K48): Heute names only these, the Verläufe put them first
+  function polChips(cls) {
+    const EV = window.Env, sel = EV.sel(S) || [], src = EV.selSource(S);
+    const hint = src === 'bericht' ? 'Aus deinen Angaben zu Allergien übernommen. Tippe an, um es zu ändern.' : sel.length ? 'Oben auf Heute stehen nur diese Arten, in den Verläufen stehen sie vorn.' : 'Ohne Auswahl zählen alle Arten.';
+    return `<div class="pol-sel${cls ? ' ' + cls : ''}"><span class="pol-l">Deine Pollen</span><div class="schips" role="group" aria-label="Pollen, auf die du reagierst">${EV.POLLEN.map(p => `<button class="chip" data-a="pol.sel" data-k="${p.id}" aria-pressed="${sel.includes(p.id)}">${esc(p.l)}</button>`).join('')}</div><span class="small muted pol-hint">${esc(hint)}</span></div>`;
+  }
   function envPanel(T, from, t, cols, daily, unitW, bands) {
     const ED = (S.env && S.env.days) || {}, EV = window.Env;
     // Check-in days without values (for example after loading a backup): fetch them in the background
     if (S.settings.home && T.logged.some(d => !EV.complete(ED[d]))) setTimeout(refreshEnv, 0);
     const head = `<div class="sec-head"><h2 class="sec-title">Wetter, Pollen und Luft</h2><span class="sec-meta">${S.settings.home ? 'an deinem Wohnort, ' : ''}je ${unitW}</span></div>`;
     const any = cols.some(c => c.days.some(d => ED[d] && (ED[d].tm != null || ED[d].aq != null)));
-    if (!any) return `<div class="panel tr-env" style="margin-top:22px">${head}<p class="small ink2">${S.settings.home ? 'Wetter, Pollen und Luftqualität lädt die App beim nächsten Start mit Internet, auch für die vergangenen Tage. Danach vergleicht sie hier deine Beschwerden damit.' : 'Für den Vergleich mit Wetter, Pollen und Luft braucht die App deinen Wohnort. Trag ihn in den Einstellungen ein.'}</p></div>`;
+    if (!any) return `<div class="panel tr-env" style="margin-top:22px">${head}<p class="small ink2">${S.settings.home ? 'Wetter, Pollen und Luftqualität lädt die App beim nächsten Start mit Internet, auch für die vergangenen Tage. Danach vergleicht sie hier deine Beschwerden damit.' : 'Für den Vergleich mit Wetter, Pollen und Luft braucht die App deinen Wohnort. Trag ihn in den Einstellungen ein.'}</p>${polChips()}</div>`;
+    const sel = EV.sel(S), others = EV.rest(sel);
+    const selL = sel ? (sel.length === 1 ? EV.POLLEN.find(p => p.id === sel[0]).pl : 'Deine Pollen') : 'Pollen';
     const agg = (fn, how) => cols.map(col => { const v = col.days.map(d => (ED[d] ? fn(ED[d]) : null)).filter(x => x != null); if (!v.length) return null; return how === 'max' ? Math.max(...v) : v.reduce((s, x) => s + x, 0) / v.length; });
     const symN = colVals(cols, x => Object.keys(x.sym || {}).filter(k => x.sym[k]).length);
     const tn = agg(x => x.tn), tx = agg(x => x.tx), temp = cols.map((c, i) => (tn[i] != null && tx[i] != null ? [tn[i], tx[i]] : null)), tV = temp.filter(Boolean);
     const pres = agg(x => x.p), pV = pres.filter(v => v != null);
-    const polV = agg(x => { const P = EV.pollen(x); return P ? P.max : null; }, 'max');
+    const polV = agg(x => { const P = EV.pollen(x, sel); return P ? P.max : null; }, 'max');
     const aqV = agg(x => x.aq), aV = aqV.filter(v => v != null);
     const polTips = cols.map(col => {
       const xs = col.days.map(d => ED[d]).filter(x => x && x.pol);
       if (!xs.length) return 'kein Wert';
-      if (col.days.length === 1) return EV.polText(xs[0]) || 'keine';
+      if (col.days.length === 1) { const o = others.length ? EV.polText(xs[0], 2, others) : ''; return (EV.polText(xs[0], 1, sel) || 'keine') + (o ? '; andere: ' + o : ''); }
       const best = {};
-      xs.forEach(x => { const P = EV.pollen(x); if (P) P.list.forEach(q => { best[q.l] = Math.max(best[q.l] || 0, q.k); }); });
+      xs.forEach(x => { const P = EV.pollen(x, sel); if (P) P.list.forEach(q => { best[q.l] = Math.max(best[q.l] || 0, q.k); }); });
       const e = Object.entries(best).sort((a, b) => b[1] - a[1]);
       return e.length ? 'bis ' + e.map(([l, k]) => l + ' ' + EV.LEVEL[k]).join(', ') : 'keine';
     });
@@ -245,13 +266,20 @@
       fmt: (v, ax) => ax ? n0(v, 0) : !v ? 'keine' : daily ? pl2(Math.round(v), 'Beschwerde', 'Beschwerden') : n0(v) + ' je Tag', note: daily ? 'Anzahl am Tag' : 'im Schnitt je Tag' }];
     if (tV.length) { const lo = step5(Math.min(...tV.map(v => v[0]))), hi = step5(Math.max(...tV.map(v => v[1])), true); panels.push({ label: 'Temperatur', kind: 'range', vals: temp, min: lo, max: hi > lo ? hi : lo + 5, color: 'var(--c1)', h: 60, fmt: (v, ax) => ax ? n0(v, 0) + '°' : n0(v[0], 0) + ' bis ' + n0(v[1], 0) + ' °C', note: daily ? 'tiefster bis höchster Wert' : 'Schnitt der Tiefst- und Höchstwerte' }); }
     if (pV.length) { const lo = step5(Math.min(...pV)), hi = step5(Math.max(...pV), true); panels.push({ label: 'Luftdruck', kind: 'dots', vals: pres, mean: pres, min: lo, max: hi > lo ? hi : lo + 5, color: 'var(--c1)', h: 46, fmt: (v, ax) => Math.round(v) + (ax ? '' : ' hPa'), note: 'hPa auf Meereshöhe, Tagesmittel' }); }
-    if (polV.some(v => v > 0)) panels.push({ label: 'Pollen', kind: 'bar', vals: polV, min: 0, max: 4, color: 'var(--c2)', h: 44, tips: polTips, fmt: (v, ax) => ax ? n0(v, 0) : EV.LEVEL[Math.round(v)], note: 'höchste Stufe, 0 keine bis 4 sehr stark' });
+    if (polV.some(v => v > 0)) panels.push({ label: selL, kind: 'bar', vals: polV, min: 0, max: 4, color: 'var(--c2)', h: 44, tips: polTips, fmt: (v, ax) => ax ? n0(v, 0) : EV.LEVEL[Math.round(v)], note: sel && sel.length === 1 ? 'Stufe, 0 keine bis 4 sehr stark' : 'höchste Stufe, 0 keine bis 4 sehr stark' });
     if (aV.length) panels.push({ label: 'Luftqualität', kind: 'bar', vals: aqV, min: 0, max: Math.max(60, Math.ceil(Math.max(...aV) / 20) * 20), goal: 40, color: 'var(--c1)', h: 44, fmt: (v, ax) => ax ? n0(v, 0) : n0(v, 0) + ', ' + EV.aqiBand(v).l, note: 'Europäischer Index, Linie: ab 40 mäßig' });
     // The range in words, then what coincides with the complaints
-    const s = EV.summary(S.env, from, t), lines = [];
+    const s = EV.summary(S.env, from, t, sel), lines = [];
     if (s.tn != null) lines.push('Temperatur von ' + n0(s.tn, 0) + ' bis ' + n0(s.tx, 0) + ' °C' + (s.sturz ? ', ' + pl2(s.sturz, 'Temperatursturz', 'Temperaturstürze') + ' um 5 Grad oder mehr' : '') + (s.druck ? ', an ' + pl2(s.druck, 'Tag', 'Tagen') + ' fiel der Luftdruck um 5 hPa oder mehr' : '') + '.');
-    const mod = s.polList.filter(q => q.mod);
-    lines.push(mod.length ? 'Pollen mäßig oder stärker: ' + mod.map(q => q.l + ' an ' + pl2(q.mod, 'Tag', 'Tagen')).join(', ') + '.' : s.polList.length ? 'Pollen nur schwach: ' + s.polList.map(q => q.l).join(', ') + '.' : 'Kein Pollenflug in diesem Zeitraum.');
+    const mod = s.polList.filter(q => q.mod), byDays = L => L.map(q => q.l + ' an ' + pl2(q.mod, 'Tag', 'Tagen')).join(', ');
+    if (!sel) lines.push(mod.length ? 'Pollen mäßig oder stärker: ' + byDays(mod) + '.' : s.polList.length ? 'Pollen nur schwach: ' + s.polList.map(q => q.l).join(', ') + '.' : 'Kein Pollenflug in diesem Zeitraum.');
+    else {
+      // The own types first; the others follow in one short sentence
+      const one = sel.length === 1;
+      lines.push((mod.length ? (one ? selL + ' mäßig oder stärker an ' + pl2(mod[0].mod, 'Tag', 'Tagen') + '.' : 'Deine Pollen mäßig oder stärker: ' + byDays(mod) + '.')
+        : s.polList.length ? (one ? selL + ' nur schwach.' : 'Deine Pollen nur schwach: ' + s.polList.map(q => q.l).join(', ') + '.')
+        : (one ? 'Keine ' + selL + ' in diesem Zeitraum.' : 'Keine deiner Pollenarten in diesem Zeitraum.')) + (s.other.length ? ' Andere Arten: ' + byDays(s.other) + '.' : ''));
+    }
     if (s.aq != null) lines.push('Luftqualität im Schnitt ' + EV.aqiBand(s.aq).l + ' (Index ' + s.aq + ')' + (s.aqBad ? ', an ' + pl2(s.aqBad, 'Tag', 'Tagen') + ' mäßig oder schlechter' : '') + '.');
     const links = [];
     T.top.slice(0, 8).forEach(c => { H.symDetail(S, c.key, from, t).factors.filter(f => f.env).forEach(f => links.push({ c, f })); });
@@ -259,6 +287,7 @@
     const linkHtml = links.length ? `<ul class="checklist">${links.slice(0, 4).map(({ c, f }) => `<li><div class="check-body"><div class="row" style="align-items:baseline"><div class="check-name grow">${esc(c.label)}: ${esc(f.label)}</div>${f.lift >= 1.8 && f.pk >= 4 ? '<span class="tag cognac">auffällig</span>' : ''}</div><div class="check-meta">an ${f.pn} von ${f.pk} Tagen mit ${esc(c.label)}, sonst an ${Math.round(f.b * 100)} % der Tage</div></div></li>`).join('')}</ul>`
       : `<p class="small ink2">${T.logged.length >= 21 ? 'Bisher fällt keine deiner Beschwerden mit Wetter, Pollen oder Luft zusammen.' : 'Ab etwa drei Wochen Check-ins vergleicht die App hier deine Beschwerden mit Wetter, Pollen und Luft.'}</p>`;
     return `<div class="panel tr-env" style="margin-top:22px">${head}
+      ${polChips()}
       ${stackChart('trenv', cols, panels, { label: 'Beschwerden, Wetter, Pollen und Luft je ' + unitW, bands })}
       ${bands.length ? `<div class="legend"><span><span class="sw st-band-sw"></span>Infekt-Episode</span></div>` : ''}
       <div class="two-col tr-env-cols" style="margin-top:14px">
@@ -290,6 +319,13 @@
 
   Object.assign(A, {
     'tr.range': el => { ui.trRange = el.dataset.v; render(); },
-    'tr.sym': el => { ui.trSym = el.dataset.k; render(); }
+    'tr.sym': el => { ui.trSym = el.dataset.k; render(); },
+    // Choosing the own pollen types; the first tap takes over what came from the report and changes it
+    'pol.sel': el => {
+      const EV = window.Env, P = S.health.profile = S.health.profile || {}, cur = EV.sel(S) || [], k = el.dataset.k;
+      const next = cur.includes(k) ? cur.filter(x => x !== k) : cur.concat([k]);
+      P.pollen = EV.POLLEN.map(p => p.id).filter(id => next.includes(id));
+      save(); render();
+    }
   });
   // ---------- end Verläufe ----------
