@@ -167,10 +167,11 @@
 
   // ---------- Gesundheit: view ----------
   function viewHealth(sub) {
-    const tabs = `<nav class="tabs" aria-label="Gesundheit">${[['', 'Check-in'], ['muster', 'Muster'], ['aerzte', 'Ärzte und Vorsorge'], ['medikamente', 'Medikamente'], ['bericht', 'Bericht für den Arzt']].map(([k, l]) => `<a href="#/gesundheit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
+    const tabs = `<nav class="tabs" aria-label="Gesundheit">${[['', 'Check-in'], ['verlauf', 'Verläufe'], ['muster', 'Muster'], ['aerzte', 'Ärzte und Vorsorge'], ['medikamente', 'Medikamente'], ['bericht', 'Bericht für den Arzt']].map(([k, l]) => `<a href="#/gesundheit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
     const head = `<header class="page-head"><div><h1 class="page-title">Gesundheit</h1><p class="page-sub">Kurz eintragen, wie es dir geht. Die App erkennt deine Muster und bereitet Arzttermine vor.</p></div>${warnPill(E.today())}</header>`;
     let body;
     if (sub === 'muster') body = viewPatterns();
+    else if (sub === 'verlauf') body = viewTrends();
     else if (sub === 'aerzte') body = viewDoctors();
     else if (sub === 'medikamente') body = viewMeds();
     else if (sub === 'bericht') body = viewReport();
@@ -207,7 +208,7 @@
         <div class="hrow"><span class="hlbl">Kaffee</span><div class="schips">${kaffee}</div></div>
         <div class="hrow"><span class="hlbl">Getrunken</span><div class="schips">${wasser}</div></div>
         <div class="schips" style="margin-top:8px">${H.FACTORS.map(f => toggleChip('hc.f', d, f.id, (x.f || {})[f.id], f.l)).join('')}</div>
-        <p class="small muted" style="margin-top:8px">Deine Routine (Zungenschaber, Zahnseide, Nasenspülung) gilt als erledigt, außer du markierst sie hier als ausgelassen.</p></div>
+        <p class="small muted" style="margin-top:8px">Deine Routine (Zungenschaber, Zahnseide, Nasenspülung) gilt als erledigt, außer du markierst sie hier als ausgelassen.</p>${nutriHint(d)}</div>
       <div class="panel" style="margin-top:16px"><h2 class="sec-title" style="margin-bottom:8px">Notiz</h2><textarea class="area" rows="3" data-c="hc.note" data-i="hc.noteI" data-d="${d}" placeholder="Was dir sonst auffällt" aria-label="Notiz zum Tag">${esc(x.note || '')}</textarea>
         <div class="row wrap" style="margin-top:10px"><button class="btn sm quiet" data-a="obs.new">${ic('camera')}Beobachtung mit Foto festhalten</button><span class="small muted">z. B. Hautveränderung, Muttermal, Schwellung</span></div></div>`;
     const obs = S.health.obs.slice().sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 6);
@@ -275,7 +276,7 @@
     for (let i = 29; i >= 0; i--) { const d = E.addDays(t, -i), x = hday(d); if (x && x.mood != null) mood30.push({ x: E.fmtShort(d), y: x.mood, tip: 'Befinden ' + x.mood + ' von 5 am ' + E.fmtShort(d) }); }
     return `${warnCard}
       <div class="two-col" style="margin-top:22px">
-        <div class="panel"><div class="sec-head"><h2 class="sec-title">Infekt-Verlauf</h2><span class="sec-meta">${logged} Tage erfasst</span></div>${heatCalendar()}</div>
+        <div class="panel"><div class="sec-head"><h2 class="sec-title">Infekt-Verlauf</h2><span class="sec-meta">${logged} Tage erfasst</span></div>${heatCalendar()}<a class="link-btn small" href="#/gesundheit/verlauf">Alle Verläufe: Beschwerden, Schlaf, Wochentage</a></div>
         <div class="panel"><h2 class="sec-title" style="margin-bottom:8px">Episoden</h2>${epHtml}</div>
       </div>
       <div class="two-col" style="margin-top:22px">

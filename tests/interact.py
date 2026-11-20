@@ -24,10 +24,11 @@ async def main():
         # 2. care
         await pg.click('button[data-a="care.done"] >> nth=0'); await pg.wait_for_timeout(150)
         out.append(('care', await st(pg, '[S.grooming.last.bart, window.HaltungDebug.E.dueList(S, window.HaltungDebug.E.today()).length]')))
-        # 3. protein
-        await pg.click('button[data-a="protein.add"][data-v="30"]'); await pg.wait_for_timeout(150)
-        await pg.select_option('select[data-c="protein.food"]', '0'); await pg.wait_for_timeout(150)
-        out.append(('protein', await st(pg, 'Object.values(S.training.protein)')))
+        # 3. protein: since 2.7 inside the Training tile, typed as text and recognised
+        await pg.fill('[data-fold="training"] .nf-in', 'Magerquark, 3 Eier'); await pg.wait_for_timeout(100)
+        await pg.click('[data-fold="training"] button[data-a="nf.add"]'); await pg.wait_for_timeout(150)
+        out.append(('protein', await st(pg, 'S.nutrition.log[window.HaltungDebug.E.today()].map(e => e.name + " " + e.p + " g")')))
+        assert len(out[-1][1]) == 2, out[-1]
         # 4. training session B
         await pg.evaluate("location.hash='#/training'"); await pg.wait_for_timeout(400)
         await pg.click('button[data-a="session.start"][data-plan="B"]'); await pg.wait_for_timeout(500)

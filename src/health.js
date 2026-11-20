@@ -92,6 +92,16 @@
     return keys.map(k => symLabel(k) + (day.sym[k] ? ' ' + INT[day.sym[k]] : '')).join(', ');
   }
 
+  // ---------- Factors from the nutrition log ----------
+  const foodLib = () => root.Food || (typeof require !== 'undefined' ? require('./food.js') : null);
+  function nutriF(S, d) { const L = S.nutrition && S.nutrition.log && S.nutrition.log[d]; if (!L || !L.length) return {}; const F = foodLib(); return F ? F.factors(L) : {}; }
+  // A check-in day with the factors from the nutrition log filled in; what was entered by hand wins
+  function dayF(S, d) {
+    const x = (S.health.days || {})[d]; if (!x) return null;
+    const nf = nutriF(S, d);
+    return Object.keys(nf).length ? Object.assign({}, x, { f: Object.assign({}, nf, x.f || {}) }) : x;
+  }
+
   // ---------- Episodes ----------
   function episodes(S, today) {
     const days = S.health.days || {};
@@ -157,7 +167,7 @@
     for (const [label, fn] of tests) {
       let pn = 0, pk = 0, bn = 0, bk = 0;
       for (const d of all) {
-        const v = fn(days[d], d); if (v == null) continue;
+        const v = fn(dayF(S, d), d); if (v == null) continue;
         if (pre.has(d)) { pk++; if (v) pn++; } else if (!sick.has(d)) { bk++; if (v) bn++; }
       }
       if (pk >= 3 && bk >= 5) {
@@ -288,7 +298,7 @@
     for (const [label, fn] of tests) {
       const w = [], wo = [];
       for (const d of rated) {
-        const v = fn(days[d], days[E.addDays(d, -1)], d);
+        const v = fn(dayF(S, d), dayF(S, E.addDays(d, -1)), d);
         if (v == null) continue;
         (v ? w : wo).push(days[d].breath);
       }
@@ -299,6 +309,84 @@
     }
     const dist = [0, 0, 0]; rated.forEach(d => dist[days[d].breath]++);
     return { rated: rated.length, dist, factors: out.sort((x, y) => y.diff - x.diff) };
+  }
+
+  // ---------- Trends (Verläufe) ----------
+  const symOn = x => Object.keys((x && x.sym) || {}).filter(k => x.sym[k]);
+  const mean = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+  function datesFrom(from, to) { const out = []; for (let d = from; d <= to; d = E.addDays(d, 1)) out.push(d); return out; }
+  function trend(S, from, to) {
+    const days = S.health.days || {}, dates = datesFrom(from, to);
+    const logged = dates.filter(d => hasData(days[d]));
+    const counts = {};
+    let symDays = 0, infDays = 0;
+    for (const d of logged) {
+      const ks = symOn(days[d]);
+      if (ks.length) symDays++;
+      if (infScore(days[d]) > 0) infDays++;
+      ks.forEach(k => { const c = counts[k] || (counts[k] = { key: k, label: symLabel(k), n: 0, lv: [0, 0, 0, 0], sum: 0, last: d }); const v = Math.min(3, days[d].sym[k]); c.n++; c.lv[v]++; c.sum += v; c.last = d; });
+    }
+    const top = Object.values(counts).sort((a, b) => b.n - a.n || b.sum - a.sum || (a.label < b.label ? -1 : 1));
+    // Logged days in a row without any complaint
+    let longest = 0, run = 0, last = null;
+    for (const d of logged) {
+      if (symOn(days[d]).length) { run = 0; last = null; continue; }
+      run = last && E.diffDays(last, d) === 1 ? run + 1 : 1; last = d; longest = Math.max(longest, run);
+    }
+    let freeNow = 0, d0 = hasData(days[to]) ? to : E.addDays(to, -1);
+    while (d0 >= from && hasData(days[d0]) && !symOn(days[d0]).length) { freeNow++; d0 = E.addDays(d0, -1); }
+    const avg = {};
+    ['sleepH', 'mood', 'energy', 'stress', 'sleepQ'].forEach(k => { avg[k] = mean(logged.map(d => days[d][k])); });
+    const eps = episodes(S, to).filter(e => e.end >= from && e.start <= to);
+    // Sleep in the three nights before an infection started, compared with ordinary days
+    const near = new Set();
+    episodes(S, to).forEach(e => { e.days.forEach(x => near.add(x)); [1, 2, 3].forEach(k => near.add(E.addDays(e.start, -k))); });
+    const before = [];
+    eps.forEach(e => [1, 2, 3].forEach(k => { const x = days[E.addDays(e.start, -k)]; if (x && x.sleepH != null) before.push(x.sleepH); }));
+    const other = logged.filter(d => !near.has(d)).map(d => days[d].sleepH);
+    const sleepBefore = { n: eps.filter(e => [1, 2, 3].some(k => { const x = days[E.addDays(e.start, -k)]; return x && x.sleepH != null; })).length, before: mean(before), other: mean(other) };
+    const wd = [1, 2, 3, 4, 5, 6, 0].map(w => {
+      const ds = logged.filter(d => E.weekday(d) === w);
+      return { w, n: ds.length, sym: ds.filter(d => symOn(days[d]).length).length, sleep: mean(ds.map(d => days[d].sleepH)), mood: mean(ds.map(d => days[d].mood)) };
+    });
+    const regions = top.filter(c => c.key.startsWith('bm:')).map(c => ({ id: c.key.slice(3), n: c.n, lv: c.lv }));
+    return { from, to, dates, logged, counts, top, symDays, infDays, longest, freeNow, avg, eps, sleepBefore, wd, regions };
+  }
+  function symDetail(S, key, from, to) {
+    const days = S.health.days || {};
+    const logged = datesFrom(from, to).filter(d => hasData(days[d]));
+    const has = d => !!(days[d].sym && days[d].sym[key]);
+    const on = logged.filter(has), off = logged.filter(d => !has(d));
+    const runs = [];
+    let cur = 0, prev = null;
+    for (const d of on) { cur = prev && E.diffDays(prev, d) === 1 ? cur + 1 : 1; if (cur === 1) runs.push(1); else runs[runs.length - 1] = cur; prev = d; }
+    const lv = [0, 0, 0, 0]; on.forEach(d => { lv[Math.min(3, days[d].sym[key])]++; });
+    const cmp = k => ({ with: mean(on.map(d => days[d][k])), without: mean(off.map(d => days[d][k])) });
+    const F = d => (dayF(S, d) || {}).f || {}, P = d => dayF(S, E.addDays(d, -1));
+    const tests = [
+      ['Wenig Schlaf (unter 6,5 h)', d => days[d].sleepH != null ? days[d].sleepH < 6.5 : null],
+      ['Viel Stress', d => days[d].stress != null ? days[d].stress >= 4 : null],
+      ['Alkohol am Vortag', d => { const p = P(d); return p ? !!(p.f && p.f.alkohol) : null; }],
+      ['Spät gegessen am Vortag', d => { const p = P(d); return p ? !!(p.f && p.f.spaet) : null; }],
+      ['3 oder mehr Kaffee', d => F(d).kaffee != null ? F(d).kaffee >= 3 : null],
+      ['Wenig getrunken (unter 1,5 l)', d => F(d).wasser != null ? F(d).wasser < 1.5 : null],
+      ['Knoblauch oder Zwiebeln', d => !!F(d).knoblauch],
+      ['Lange nichts gegessen', d => !!F(d).nuechtern],
+      ['Krafttraining am Vortag', d => S.training.sessions.some(s => !s.imported && s.date === E.addDays(d, -1))],
+      ['Bürotag', d => ((S.settings && S.settings.week) || {})[E.weekday(d)] === 'buero'],
+      ['Jemand im Umfeld krank', d => !!F(d).umfeld],
+      ['Ausgekühlt oder gefroren', d => !!F(d).kalt]
+    ];
+    const factors = [];
+    for (const [label, fn] of tests) {
+      let pn = 0, pk = 0, bn = 0, bk = 0;
+      on.forEach(d => { const v = fn(d); if (v == null) return; pk++; if (v) pn++; });
+      off.forEach(d => { const v = fn(d); if (v == null) return; bk++; if (v) bn++; });
+      if (pk >= 3 && bk >= 5) { const p = pn / pk, b = bn / bk; if (p > b) factors.push({ label, p, b, pn, pk, lift: b > 0 ? p / b : 9 }); }
+    }
+    const wd = [1, 2, 3, 4, 5, 6, 0].map(w => ({ w, n: on.filter(d => E.weekday(d) === w).length, of: logged.filter(d => E.weekday(d) === w).length }));
+    return { key, label: symLabel(key), n: on.length, of: logged.length, runs, longest: Math.max(0, ...runs), lv, avgInt: mean(on.map(d => Math.min(3, days[d].sym[key]))), last: on[on.length - 1] || null,
+      sleep: cmp('sleepH'), mood: cmp('mood'), sleepQ: cmp('sleepQ'), energy: cmp('energy'), wd, factors: factors.filter(f => f.p >= 0.3 && f.lift >= 1.3).sort((a, b) => b.lift - a.lift) };
   }
 
   // ---------- Home workout ----------
@@ -427,7 +515,7 @@
   const api = { SYMPTOMS, QUICK, REGIONS, FACTORS, FACH, INT, BREATH, symById, regById, symLabel, symFach, hasData, infScore, infSyms, describe,
     episodes, OUTCOME, measureStats, onsetFactors, warning, LEVEL, breathFactors,
     HOME_SLOTS, HOME_FOCUS, homeCount, homePlan, STRETCHES, STRETCH_FOCUS, stretchPlan, presetFromRoutine, itemSec,
-    ics, vorsorgeDue, firstMondayJan, inFach, doseSec, sleepDebt, bedtime };
+    ics, vorsorgeDue, firstMondayJan, inFach, doseSec, sleepDebt, bedtime, dayF, trend, symDetail, datesFrom };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Health = api;
 })(typeof window !== 'undefined' ? window : globalThis);

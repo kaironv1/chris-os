@@ -76,9 +76,10 @@ class Device:
         await self.pg.wait_for_timeout(300)
 
     async def change(self):
-        """Eine echte Änderung über die Oberfläche: Eiweiß auf Heute eintragen."""
-        await self.go('#/heute')
-        await self.pg.click('[data-a="protein.add"] >> nth=0')
+        """Eine echte Änderung über die Oberfläche: im Ernährungsprotokoll etwas eintragen (seit 2.7)."""
+        await self.go('#/training/ernaehrung')
+        await self.pg.fill('#view .nf-in', 'Skyr mit Beeren')
+        await self.pg.click('#view button[data-a="nf.add"]')
         await self.pg.wait_for_timeout(250)
 
     async def export(self, path):
@@ -196,13 +197,13 @@ async def main():
             # 9. PC: Backup zurück ans Handy, dort ohne Warnung
             n2, p1 = await pc.export(tmp / 'p1.json')
             assert n2.endswith('-pc.json') and p1['device'] == 'pc' and p1['state']['meta']['restored']['exported'] == h1['exported'], n2
-            prot_pc = await pc.S('JSON.stringify(S.training.protein)')
+            prot_pc = await pc.S('JSON.stringify(S.nutrition.log)')
             title, text = await handy.ask_import(tmp / 'p1.json')
             assert title == 'Backup laden?' and 'Achtung' not in text and 'Backup vom PC (' in text, (title, text)
             await H.click('#dlg [data-a="confirm.ok"]')
             await until(H, "document.getElementById('toast').textContent.includes('Backup geladen')")
             assert await handy.S('S.meta.restored.from') == 'pc'
-            assert await handy.S('JSON.stringify(S.training.protein)') == prot_pc, 'Eintrag vom PC am Handy'
+            assert await handy.S('JSON.stringify(S.nutrition.log)') == prot_pc, 'Eintrag vom PC am Handy'
             print('Rückweg PC zum Handy ohne Warnung')
 
             # 10. Handy: älteres Backup wählen, Warnung

@@ -1,5 +1,5 @@
 """Version 2.6. Heute mit einklappbaren Kacheln: Outfit, Wie geht's dir, Erinnerungen und Training starten zu und zeigen
-eine Zeile Zusammenfassung; ein Tipp klappt auf und wieder zu, die Wahl gilt für die Sitzung. Eiweiß bleibt offen.
+eine Zeile Zusammenfassung; ein Tipp klappt auf und wieder zu, die Wahl gilt für die Sitzung. Seit 2.7 steckt Eiweiß in der Training-Kachel.
 Check-in: jede Angabe speichert sofort, sichtbar als „Gespeichert …“ mit kurzem Aufleuchten, auch nach dem Neuladen;
 morgens zählt auch „Gestern insgesamt“. Dazu Gerät und Startgewicht je Übung im Gym-Plan (K8) und ähnliche Marken angleichen (K5).
 Handy und PC, hell und dunkel, ohne Konsolenfehler."""
@@ -23,7 +23,7 @@ async def toggle(pg, k):
 
 async def main():
     async with async_playwright() as p:
-        # 1. Handy: alles zu, Zusammenfassungen sichtbar, Eiweiß offen
+        # 1. Handy: alles zu, Zusammenfassungen sichtbar, Eiweiß in der Training-Kachel (2.7)
         b, ctx, pg, errs = await setup(p, 390, 844, mobile=True, unfold=False)
         await pg.goto(URL); await pg.wait_for_selector('.fold-head')
         st = await state(pg)
@@ -33,7 +33,8 @@ async def main():
         assert re.search(r'^(Smart Casual|Termin|Freizeit|Abend|Getragen): ', st[0][3]), st[0][3]
         assert await pg.locator('[data-fold="outfit"] .fold-sw i').count() >= 3, 'Farbpunkte der Teile'
         assert await pg.locator('.fig-stage').count() == 0, 'Figur wird erst beim Aufklappen gebaut'
-        assert await pg.locator('button[data-a="protein.add"]').count() == 3, 'Eiweiß bleibt offen'
+        assert await pg.locator('[data-fold="training"] .fold-sum .fs-line').count() == 2, 'zweite Zeile: Eiweiß'
+        assert 'Eiweiß' in await pg.inner_text('[data-fold="training"] .fold-sum')
         assert await pg.evaluate('document.documentElement.scrollWidth') <= 390, 'nichts ragt seitlich heraus'
         await pg.screenshot(path=str(SHOT / 'k_handy_zu.png'), full_page=True)
         print('zu:', [(s[0], s[3]) for s in st])

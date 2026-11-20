@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.6';
+  const VERSION = '2.7';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -152,6 +152,11 @@
     ['days', 'epOut', 'intake'].forEach(k => { h[k] = h[k] || {}; });
     ['obs', 'appts', 'questions', 'meds', 'followups', 'measures', 'doctors', 'vorsorge'].forEach(k => { h[k] = h[k] || []; });
     h.record = h.record || {};
+    // Nutrition log (2.7): structure only
+    const nu = st.nutrition = st.nutrition || {};
+    ['log', 'portions'].forEach(k => { nu[k] = nu[k] || {}; });
+    ['foods', 'meals'].forEach(k => { nu[k] = nu[k] || []; });
+    st.training.protein = st.training.protein || {};
     return changed;
   }
   // quiet: no change of the data itself (backup, hint closed, view switched), so changedAt stays
@@ -463,7 +468,6 @@
           <section class="fsec">${checkinToday(d)}</section>
           <section class="fsec">${remindersToday(d)}</section>
           <section class="fsec">${trainingToday(d)}</section>
-          <section>${proteinToday(d)}</section>
         </div>
       </div>
     </div>`;
@@ -496,11 +500,12 @@
       hint = `<div class="warn-mini wp-warn" style="margin-bottom:10px">${ic('alert')}<div><b>Erste Anzeichen:</b> Heute lieber locker. Dehnen oder ein kurzes Heimtraining statt schwerer Gewichte.</div></div>`;
       main = `<button class="btn block" data-a="pl.quick" data-k="${when}">${ic('stretch')}Dehnen, 10 Minuten</button><button class="btn quiet block" style="margin-top:8px" data-a="session.start" data-plan="${np.id}">${ic('play')}Trotzdem ${esc(np.name)}</button>`;
     } else {
-      sum = 'Als Nächstes: ' + esc(np.name) + ', ca. ' + np.minutes + ' Minuten';
+      sum = 'Als Nächstes: ' + esc(np.name);
       main = `<button class="btn block" data-a="session.start" data-plan="${np.id}">${ic('play')}${esc(np.name)} starten</button><p class="small muted" style="margin-top:6px">Ca. ${np.minutes} Minuten. ${last ? 'Letztes Training: ' + esc(last.name) + ' ' + E.fmtRel(last.date) + '.' : 'Dein erstes Training mit dem neuen Plan.'}</p>`;
     }
     const meta = `<span class="fold-badge" title="Krafttraining diese Woche">Kraft ${wc.gym} von ${g.gym}</span>`;
-    return fold('training', 'Training', sum, meta, () => `<h3 class="mini-h" style="margin-top:0">Diese Woche, KW ${E.isoWeek(d)}</h3>
+    const sum2 = `<span class="fs-line">${sum}</span><span class="fs-line">${proteinSum(d)}</span>`;
+    return fold('training', 'Training', sum2, meta, () => `<h3 class="mini-h" style="margin-top:0">Diese Woche, KW ${E.isoWeek(d)}</h3>
       <div style="margin-bottom:14px">${goalRow('Kraft', wc.gym, g.gym)}${goalRow('Laufen', wc.run, g.run, 'olive')}${goalRow('Dehnen', wc.routine, g.routine)}</div>
       ${hint}${main}
       <div class="row wrap" style="margin-top:10px">
@@ -508,7 +513,8 @@
         ${w.level === 'ruhig' || act ? `<button class="btn sm quiet" data-a="pl.quick" data-k="${when}">${stretched ? ic('check') : ic('stretch')}${stretched ? 'Gedehnt' : 'Dehnen, 10 Min.'}</button>` : ''}
         <button class="btn sm quiet" data-a="run.open">${ic('run')}Lauf eintragen</button>
         ${t === 'buero' ? `<button class="btn sm quiet" data-a="pl.preset" data-k="buero">Büro-Pause${breaks ? ' (' + breaks + '× heute)' : ''}</button>` : ''}
-      </div>`);
+      </div>
+      ${proteinBlock(d)}`);
   }
   function dueText(du) {
     if (du.state === 'unknown') return 'Datum fehlt';
@@ -522,21 +528,8 @@
       <div class="check-body"><div class="check-name">${esc(t.name)}</div>${meta ? `<div class="check-meta ${metaCls}">${esc(meta)}</div>` : ''}
       ${t.how && !compact ? `<details class="how"><summary>Wie und womit</summary><p class="how-text">${esc(t.how)}</p>${t.with ? `<p class="how-with">Womit: ${esc(t.with)}</p>` : ''}</details>` : ''}</div></li>`;
   }
-  function proteinToday(d) {
-    const g = S.training.protein[d] || 0, goal = S.settings.proteinGoal;
-    const p = Math.min(100, Math.round(g / goal * 100));
-    return `<div class="sec-head"><h2 class="sec-title">Eiweiß</h2><span class="sec-meta">Ziel ${goal} g</span></div>
-      <div class="row" style="align-items:baseline;gap:12px"><span class="stat-val" style="font-size:28px">${g} g</span><span class="small muted">${g >= goal ? 'Ziel erreicht' : 'noch ' + (goal - g) + ' g'}</span></div>
-      <div class="meter" style="margin:8px 0 12px" role="meter" aria-valuemin="0" aria-valuemax="${goal}" aria-valuenow="${g}" aria-label="Eiweiß heute"><i style="width:${p}%"></i></div>
-      <div class="row wrap">
-        ${[10, 20, 30].map(x => `<button class="btn sm quiet" data-a="protein.add" data-v="${x}" data-d="${d}">+${x} g</button>`).join('')}
-        <select class="btn sm quiet" data-c="protein.food" data-d="${d}" aria-label="Lebensmittel hinzufügen" style="padding-right:8px"><option value="">Lebensmittel …</option>${S.training.foods.map((f, i) => `<option value="${i}">${esc(f.name)}, ca. ${f.g} g</option>`).join('')}</select>
-        <button class="btn sm ghost" data-a="protein.edit" data-d="${d}">Korrigieren</button>
-      </div>`;
-  }
-
   // ---------- Training ----------
-  const trTabs = sub => `<nav class="tabs" aria-label="Training">${[['', 'Gym-Plan'], ['zuhause', 'Zuhause und Dehnen'], ['verlauf', 'Verlauf'], ['fortschritt', 'Fortschritt']].map(([k, l]) => `<a href="#/training${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
+  const trTabs = sub => `<nav class="tabs" aria-label="Training">${[['', 'Gym-Plan'], ['zuhause', 'Zuhause und Dehnen'], ['ernaehrung', 'Ernährung'], ['verlauf', 'Verlauf'], ['fortschritt', 'Fortschritt']].map(([k, l]) => `<a href="#/training${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
   function viewTraining(sub) {
     if (sub === 'session') return viewSession();
     if (sub === 'dehnen') return viewPlayer();
@@ -545,6 +538,7 @@
     if (sub === 'zuhause') body = viewHome();
     else if (sub === 'verlauf') body = viewHistory();
     else if (sub === 'fortschritt') body = viewProgress();
+    else if (sub === 'ernaehrung') body = viewNutrition();
     else body = viewPlans();
     return `<div class="page">${head}${trTabs(sub)}${body}</div>`;
   }
@@ -729,32 +723,42 @@
     const goal = opt.goal ? `<line class="goal" x1="${L}" x2="${W - R}" y1="${Y(opt.goal)}" y2="${Y(opt.goal)}"/><text class="goal-label" x="${W - R}" y="${Y(opt.goal) - 6}" text-anchor="end">Ziel ${opt.goal}${opt.unit || ''}</text>` : '';
     return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">${g}${goal}${marks}</svg>`;
   }
+  // Chart renderers by type; modules add their own (matrix, stack)
+  const SVGR = { line: (c, W) => lineSVG(c, W), bar: (c, W) => barSVG(c, W) }, HOVER = {};
+  // Tooltip next to a point, kept inside the chart box
+  function placeTip(el, tip, x, y, lines) {
+    tip.textContent = '';
+    (Array.isArray(lines) ? lines : [lines]).forEach((l, i) => { const n = document.createElement(i ? 'div' : 'b'); n.textContent = l; tip.appendChild(n); });
+    tip.style.display = '';
+    const w = tip.offsetWidth, W = el.clientWidth;
+    tip.style.left = Math.max(w / 2 + 2, Math.min(W - w / 2 - 2, x)) + 'px'; tip.style.top = y + 'px';
+  }
   function wireCharts() {
     document.querySelectorAll('.chart[data-id]').forEach(el => {
-      const c = CHARTS[el.dataset.id]; if (!c) return;
+      const c = CHARTS[el.dataset.id]; if (!c || !SVGR[c.type]) return;
       const W = Math.max(260, Math.floor(el.clientWidth));
       const old = el.querySelector('svg'); if (old) old.remove();
-      el.insertAdjacentHTML('afterbegin', c.type === 'line' ? lineSVG(c, W) : barSVG(c, W));
+      el.insertAdjacentHTML('afterbegin', SVGR[c.type](c, W));
       const tip = el.querySelector('.tip');
       if (el.dataset.wired) return;
       el.dataset.wired = '1';
-      if (c.type === 'line') {
-        let idx = c.pts.length - 1;
+      if (HOVER[c.type]) HOVER[c.type](el, tip);
+      else if (c.type === 'line' || c.type === 'stack') {
+        let idx = c.pos ? c.pos.length - 1 : 0;
         const show = i => {
-          const pos = c.pos; if (!pos || !pos.length) return; idx = Math.max(0, Math.min(pos.length - 1, i));
+          const C0 = CHARTS[el.dataset.id], pos = C0 && C0.pos; if (!pos || !pos.length) return; idx = Math.max(0, Math.min(pos.length - 1, i));
           const p = pos[idx], xh = el.querySelector('.xhair');
           xh.setAttribute('x1', p.x); xh.setAttribute('x2', p.x); xh.style.display = '';
-          tip.textContent = ''; const b = document.createElement('b'); b.textContent = p.t; tip.appendChild(b);
-          tip.style.left = p.x + 'px'; tip.style.top = p.y + 'px'; tip.style.display = '';
+          placeTip(el, tip, p.x, p.y, p.t);
         };
         const hide = () => { tip.style.display = 'none'; const xh = el.querySelector('.xhair'); if (xh) xh.style.display = 'none'; };
-        el.addEventListener('pointermove', ev => { const r = el.getBoundingClientRect(); const x = ev.clientX - r.left; let best = 0, bd = 1e9; c.pos.forEach((p, i) => { const dd = Math.abs(p.x - x); if (dd < bd) { bd = dd; best = i; } }); show(best); });
+        el.addEventListener('pointermove', ev => { const C0 = CHARTS[el.dataset.id]; if (!C0 || !C0.pos) return; const r = el.getBoundingClientRect(); const x = ev.clientX - r.left; let best = 0, bd = 1e9; C0.pos.forEach((p, i) => { const dd = Math.abs(p.x - x); if (dd < bd) { bd = dd; best = i; } }); show(best); });
         el.addEventListener('pointerleave', hide); el.addEventListener('blur', hide); el.addEventListener('focus', () => show(idx));
         el.addEventListener('keydown', ev => { if (ev.key === 'ArrowLeft') { show(idx - 1); ev.preventDefault(); } if (ev.key === 'ArrowRight') { show(idx + 1); ev.preventDefault(); } });
       } else {
-        const show = g => { const r = el.getBoundingClientRect(), br = g.getBoundingClientRect(); tip.textContent = g.dataset.tip; tip.style.left = (br.left - r.left + br.width / 2) + 'px'; tip.style.top = (br.top - r.top + 12) + 'px'; tip.style.display = ''; };
-        el.addEventListener('pointerover', ev => { const g = ev.target.closest('.bar'); if (g) show(g); });
-        el.addEventListener('focusin', ev => { const g = ev.target.closest('.bar'); if (g) show(g); });
+        const show = g => { const r = el.getBoundingClientRect(), br = g.getBoundingClientRect(); placeTip(el, tip, br.left - r.left + br.width / 2, br.top - r.top + Math.min(12, br.height / 2), g.dataset.tip); };
+        el.addEventListener('pointerover', ev => { const g = ev.target.closest('[data-tip]'); if (g) show(g); });
+        el.addEventListener('focusin', ev => { const g = ev.target.closest('[data-tip]'); if (g) show(g); });
         el.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
         el.addEventListener('focusout', () => { tip.style.display = 'none'; });
       }
@@ -775,14 +779,14 @@
     }
     const bw = S.training.bodyweight.slice().sort((a, b) => a.date < b.date ? -1 : 1).map(b => ({ x: E.fmtShort(b.date), y: b.kg, tip: n0(b.kg) + ' kg am ' + E.fmtShort(b.date) }));
     const prot = [];
-    for (let i = 13; i >= 0; i--) { const d = E.addDays(E.today(), -i); prot.push({ label: E.fmtShort(d), short: i % 2 ? '' : E.fmtShort(d), v: S.training.protein[d] || 0 }); }
+    for (let i = 13; i >= 0; i--) { const d = E.addDays(E.today(), -i); prot.push({ label: E.fmtShort(d), short: i % 2 ? '' : E.fmtShort(d), v: protTotal(d) }); }
     return `<div class="filters">${ids.map(id => `<button class="chip" data-a="prog" data-id="${id}" aria-pressed="${id === ui.prog}">${esc(exById(id).name)}</button>`).join('')}</div>
       <div class="panel"><h2 class="sec-title" style="margin-bottom:2px">${ex ? esc(ex.name) : ''}</h2><p class="small muted" style="margin-bottom:10px">${ex && ex.type === 'time' ? 'Längste Haltezeit je Training' : 'Schwerster Satz je Training, in kg'}</p>${lineChart('ex', pts, { label: ex ? ex.name + ', Verlauf' : '', unit: ex && ex.type === 'time' ? 's' : 'kg', col: 'Bester Satz' })}</div>
       <div class="two-col" style="margin-top:22px">
         <div class="panel"><h2 class="sec-title" style="margin-bottom:10px">Trainings pro Woche</h2>${barChart('weeks', weeks, { label: 'Trainings pro Woche', goal: S.settings.goals.gym + S.settings.goals.run, series: [{ key: 'gym', color: 'var(--c1)', name: 'Gym' }, { key: 'run', color: 'var(--c2)', name: 'Laufen' }], xcol: 'Woche' })}</div>
         <div class="panel"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 class="sec-title">Körpergewicht</h2><button class="btn sm quiet" data-a="weight.open">${ic('plus')}Eintragen</button></div>${lineChart('bw', bw, { label: 'Körpergewicht', unit: 'kg', col: 'Gewicht', pad: 0.5 })}</div>
       </div>
-      <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:10px">Eiweiß, letzte 14 Tage</h2>${barChart('prot', prot, { label: 'Eiweiß pro Tag', goal: S.settings.proteinGoal, unit: ' g', xcol: 'Tag' })}</div>`;
+      <div class="panel" style="margin-top:22px"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 class="sec-title">Eiweiß, letzte 14 Tage</h2><a class="btn sm quiet" href="#/training/ernaehrung">${ic('food')}Ernährung</a></div>${barChart('prot', prot, { label: 'Eiweiß pro Tag', goal: S.settings.proteinGoal, unit: ' g', xcol: 'Tag' })}</div>`;
   }
 
   // ---------- Pflege ----------
@@ -985,6 +989,7 @@
           <div><span class="lbl">Winterjacke unter</span><span><input type="number" class="inline-num" value="${s.winterBelow}" data-c="set.num" data-k="winterBelow" aria-label="Winterjacke unter Grad"> ° gefühlt</span></div>
           <div><span class="lbl">Mantel unter</span><span><input type="number" class="inline-num" value="${s.coatBelow}" data-c="set.num" data-k="coatBelow" aria-label="Mantel unter Grad"> ° gefühlt</span></div>
           <div><span class="lbl">Eiweiß-Ziel pro Tag</span><span><input type="number" class="inline-num" value="${s.proteinGoal}" data-c="set.num" data-k="proteinGoal" aria-label="Eiweiß-Ziel in Gramm"> g</span></div>
+          <div><div><span class="lbl">Kalorien-Ziel pro Tag</span><p class="hint">Optional, für die Ernährung. Leer heißt ohne Ziel.</p></div><span><input type="number" class="inline-num" value="${s.kcalGoal || ''}" placeholder="–" data-c="set.num" data-k="kcalGoal" aria-label="Kalorien-Ziel pro Tag" style="width:84px"> kcal</span></div>
           <div><span class="lbl">Wochenziele</span><span class="row small wrap">Kraft <input type="number" class="inline-num" min="0" value="${s.goals.gym}" data-c="goal" data-k="gym" aria-label="Krafttraining pro Woche"> Laufen <input type="number" class="inline-num" min="0" value="${s.goals.run}" data-c="goal" data-k="run" aria-label="Laufen pro Woche"> Dehnen <input type="number" class="inline-num" min="0" value="${s.goals.routine}" data-c="goal" data-k="routine" aria-label="Dehnen pro Woche"></span></div>
           <div><label class="toggle"><input type="checkbox" data-c="sound"${s.sound ? ' checked' : ''}><span class="lbl">Ton und Vibration am Pausenende</span></label></div>
         </div></div>
@@ -1006,7 +1011,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für das Wetter fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Heute mit einklappbaren Kacheln, sichtbares Speichern beim Check-in, Gerät und Startgewicht je Übung selbst anpassen. Davor in 2.5: Handy als Hauptgerät, Datenstand und Warnung beim Einspielen.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Ernährungsprotokoll, das Lebensmittel und Mengen aus deinem Text erkennt, Eiweiß in der Training-Kachel und Verläufe deiner Beschwerden unter Gesundheit. Davor in 2.6: einklappbare Kacheln auf Heute und sichtbares Speichern beim Check-in.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1411,8 +1416,8 @@
     'weight.open': () => openDialog(`${dlgHead('Körpergewicht eintragen')}<form class="form-grid" id="w-form" onsubmit="return false"><label class="field"><span>Datum</span><input type="date" name="date" value="${E.today()}"></label><label class="field"><span>Gewicht in kg</span><input type="number" step="0.1" name="kg" autofocus></label></form><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="weight.save">Speichern</button></div>`),
     'weight.save': () => { const f = new FormData($('#w-form')); const kg = +String(f.get('kg')).replace(',', '.'); if (!kg) { toast('Bitte ein Gewicht eintragen.'); return; } const d = f.get('date') || E.today(); S.training.bodyweight = S.training.bodyweight.filter(b => b.date !== d); S.training.bodyweight.push({ date: d, kg }); save(); closeDialog(); render(); },
     'protein.add': el => { const d = el.dataset.d; S.training.protein[d] = (S.training.protein[d] || 0) + (+el.dataset.v); save(); render(); toast('+' + el.dataset.v + ' g Eiweiß', () => { S.training.protein[d] = Math.max(0, (S.training.protein[d] || 0) - (+el.dataset.v)); }); },
-    'protein.edit': el => { const d = el.dataset.d; ui.protDate = d; openDialog(`${dlgHead('Eiweiß heute korrigieren')}<label class="field"><span>Gramm insgesamt</span><input type="number" id="prot-in" min="0" value="${S.training.protein[d] || 0}" autofocus></label><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="protein.set">Speichern</button></div>`); },
-    'protein.set': () => { S.training.protein[ui.protDate] = Math.max(0, +$('#prot-in').value || 0); save(); closeDialog(); render(); },
+    'protein.edit': el => { const d = el.dataset.d; ui.protDate = d; openDialog(`${dlgHead('Eiweiß am Tag korrigieren')}<label class="field"><span>Gramm insgesamt</span><input type="number" id="prot-in" min="0" value="${protTotal(d)}" autofocus></label><p class="hint" style="margin-top:6px">Die eingetragenen Lebensmittel bleiben; die App gleicht nur die Summe an.</p><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="protein.set">Speichern</button></div>`); },
+    'protein.set': () => { const d = ui.protDate, want = Math.max(0, +$('#prot-in').value || 0), logP = nlog(d).reduce((s2, e) => s2 + (e.p || 0), 0); S.training.protein[d] = Math.round((want - logP) * 10) / 10; if (!S.training.protein[d]) delete S.training.protein[d]; save(); closeDialog(); render(); },
     // care
     'care.done': el => { const id = el.dataset.id, prev = S.grooming.last[id]; S.grooming.last[id] = el.dataset.d; save(); render(); const t = S.grooming.tasks.find(x => x.id === id); toast(t.name + ' erledigt', () => { if (prev) S.grooming.last[id] = prev; else delete S.grooming.last[id]; }); },
     'shop': el => { const p = S.grooming.products.find(x => x.id === el.dataset.id); p.have = !p.have; save(); render(); },
@@ -1445,7 +1450,6 @@
     'loc.pick': el => { const x = ui.locRes[+el.dataset.i]; S.settings[ui.locWhich] = { name: x.name + (x.admin1 ? ' (' + x.admin1 + ')' : ''), lat: +x.latitude.toFixed(4), lon: +x.longitude.toFixed(4) }; save(); closeDialog(); refreshWeather(true); render(); toast('Ort gespeichert'); }
   };
   const C = {
-    'protein.food': el => { if (el.value === '') return; const f = S.training.foods[+el.value], d = el.dataset.d; S.training.protein[d] = (S.training.protein[d] || 0) + f.g; save(); render(); toast('+' + f.g + ' g: ' + f.name, () => { S.training.protein[d] = Math.max(0, (S.training.protein[d] || 0) - f.g); }); },
     'temp.set': el => { const v = el.value.trim(); if (v === '') delete S.wardrobe.tempOverride[el.dataset.d]; else S.wardrobe.tempOverride[el.dataset.d] = +v.replace(',', '.'); save(); render(); },
     'ex.swap': el => { const e = S.training.active.entries[+el.dataset.e]; const id = el.value; if (id === e.ex) return; const ex = exById(id); const sg = E.suggestion(S, ex); e.ex = id; e.sugg = sg; e.sets = Array.from({ length: ex.sets }, () => ({ kg: ex.type === 'time' ? 0 : sg.kg, reps: null, done: false })); save(); render(); },
     'care.last': el => { if (el.value) S.grooming.last[el.dataset.id] = el.value; else delete S.grooming.last[el.dataset.id]; save(); render(); },
@@ -1519,6 +1523,7 @@
     document.addEventListener('input', e => { const el = e.target.closest('[data-i]'); if (el && I[el.dataset.i]) I[el.dataset.i](el, e); });
     document.addEventListener('keydown', e => {
       if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-a][role="button"]:not(button)')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
+      if (e.key === 'Enter' && !e.isComposing && e.target.dataset && e.target.dataset.enter && A[e.target.dataset.enter]) { e.preventDefault(); A[e.target.dataset.enter](e.target, e); }
     });
     $('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeDialog(); });
     window.addEventListener('hashchange', render);
