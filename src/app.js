@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.10';
+  const VERSION = '2.11';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -162,6 +162,8 @@
     // Weather, pollen and air quality per day (2.8): structure only, the app fetches the values itself
     st.env = st.env || {};
     st.env.days = st.env.days || {};
+    // Trips with a packing list (2.11): structure only
+    st.trips = st.trips || [];
     return changed;
   }
   // quiet: no change of the data itself (backup, hint closed, view switched), so changedAt stays
@@ -522,6 +524,7 @@
       </header>
       ${backupNote()}
       ${reviewToday(d)}
+      ${tripToday(d)}
       <div class="today-grid">
         <div>${board(d, { fold: true })}</div>
         <div class="ledger">
@@ -864,13 +867,14 @@
 
   // ---------- Outfit ----------
   function viewOutfit(sub) {
-    const tabs = `<nav class="tabs" aria-label="Outfit">${[['', 'Vorschläge'], ['schrank', 'Kleiderschrank'], ['listen', 'Meine Outfits'], ['inspiration', 'Inspiration'], ['analyse', 'Analyse']].map(([k, l]) => `<a href="#/outfit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
+    const tabs = `<nav class="tabs" aria-label="Outfit">${[['', 'Vorschläge'], ['schrank', 'Kleiderschrank'], ['listen', 'Meine Outfits'], ['reisen', 'Reisen'], ['inspiration', 'Inspiration'], ['analyse', 'Analyse']].map(([k, l]) => `<a href="#/outfit${k ? '/' + k : ''}" aria-current="${(sub || '') === k ? 'page' : 'false'}">${l}</a>`).join('')}</nav>`;
     const head = `<header class="page-head"><div><h1 class="page-title">Outfit</h1><p class="page-sub">Smart Casual in Blau und Erdtönen, mit Lagen und Struktur für mehr Volumen.</p></div></header>`;
     let body;
     if (sub === 'schrank') body = viewWardrobe();
     else if (sub === 'listen') body = viewLists();
     else if (sub === 'analyse') body = viewAnalysis();
     else if (sub === 'inspiration') body = viewInspiration();
+    else if (sub === 'reisen') body = viewTrips();
     else body = viewSuggest();
     return `<div class="page">${head}${tabs}${body}</div>`;
   }
@@ -1072,7 +1076,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Der Wochenrückblick am Montag zeigt eine Zeile zu deinem Experiment, mit den eingehaltenen Tagen und dem Zwischenstand. Davor in 2.9: Selbstexperimente unter Gesundheit und die Wahl deiner Pollenarten; in 2.8: Wochenrückblick montags auf Heute, Wetter, Pollen und Luftqualität je Tag in den Verläufen.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Reisen mit Packliste unter Outfit. Du gibst Ziel und Tage ein, die App plant Outfits aus deinem Schrank fürs Wetter dort und macht daraus eine Packliste mit Kulturbeutel und Medikamenten. Davor in 2.10: das Experiment im Wochenrückblick; in 2.9: Selbstexperimente und die Wahl deiner Pollenarten.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1330,7 +1334,7 @@
     const data = r.data, warn = backupRisk(data);
     const text = 'Das ' + backupLabel(data.device, data.exported) + ' ersetzt alle Daten auf diesem Gerät.' + (warn ? ' ' + warn : '');
     confirmDlg(warn ? 'Trotzdem laden?' : 'Backup laden?', text, warn ? 'Trotzdem laden' : 'Backup laden', async () => {
-      await applyBackup(data); render(); refreshEnv(); toast('Backup geladen');
+      await applyBackup(data); render(); refreshEnv(); refreshTrips(); toast('Backup geladen');
     }, !!warn);
   }
 
@@ -1591,7 +1595,7 @@
     let rz = null; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(wireCharts, 150); });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); });
     setInterval(() => { const c = document.querySelector('[data-clock]'); if (c) c.textContent = minText(+clockText()); badges(); }, 15000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); refreshEnv(); render(); } });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); refreshEnv(); refreshTrips(); render(); } });
   }
   // ---------- Welcome: no data on this device yet ----------
   const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#3E5C8A"/><path d="M341 171A120 120 0 1 0 341 341" fill="none" stroke="#F4F1EB" stroke-width="58" stroke-linecap="round"/><circle cx="364" cy="256" r="31" fill="#D39A6A"/></svg>';
@@ -1676,6 +1680,7 @@
     render();
     refreshWeather();
     refreshEnv();
+    refreshTrips();
     if (ui.update) notice('Neue Version bereit', 'Jetzt laden', ui.update);
   }
   async function boot() {

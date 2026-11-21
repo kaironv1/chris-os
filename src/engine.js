@@ -100,8 +100,9 @@
   function topBand(t) { if (t >= 24) return [0.9, 1.9]; if (t >= 19) return [1.0, 2.3]; if (t >= 14) return [2.2, 4.0]; if (t >= 8) return [3.0, 5.0]; return [3.4, 5.6]; }
   function bottomBand(t) { if (t >= 22) return [0.6, 1.6]; if (t >= 14) return [1.0, 2.0]; if (t >= 6) return [1.3, 2.4]; return [1.6, 2.6]; }
 
-  function pool(S, extra) {
-    const items = S.wardrobe.items.filter(i => i.status === 'aktiv' && !i.laundry);
+  // withLaundry: pieces in the wash count too (for a trip in the future they will be clean by then, 2.11)
+  function pool(S, extra, withLaundry) {
+    const items = S.wardrobe.items.filter(i => i.status === 'aktiv' && (withLaundry || !i.laundry));
     if (extra) items.push(extra);
     const by = r => items.filter(i => i.role === r);
     return { items, tees: by('tee'), polos: by('polo'), shirts: by('shirt'), overs: by('overshirt'), knits: by('knit'), cards: by('cardigan'), blazers: by('blazer'), jackets: by('jacket'), bottoms: by('bottom'), shoes: by('shoes'), coats: by('coat'), winters: by('winter'), caps: by('cap'), scarves: by('scarf'), beanies: by('beanie'), belts: by('belt'), watches: by('watch') };
@@ -268,7 +269,7 @@
 
   function suggest(S, ctx, opts) {
     opts = opts || {};
-    const P = pool(S, opts.extra);
+    const P = pool(S, opts.extra, opts.laundry);
     if (!P.bottoms.length || !(P.tees.length + P.shirts.length + P.knits.length + P.polos.length)) return { fav: null, alts: [], list: [] };
     const env = {
       curated: curatedIndex(S), ratings: S.wardrobe.ratings || {}, pairs: S.wardrobe.pairs || {},
@@ -469,7 +470,7 @@
   }
 
   const api = { iso, parse, today, addDays, diffDays, weekday, weekStart, WD, WD_LONG, MON, fmtLong, fmtShort, fmtDate, fmtRel, isoWeek, fmtNum, hash,
-    WMO, dayWeather, context, OCC, defaultOccasion, suggest, swapOptions, applyChoice, fromIds, outfitIds, keyOf, goodCombos, pool,
+    WMO, dayWeather, context, OCC, defaultOccasion, suggest, swapOptions, applyChoice, fromIds, outfitIds, keyOf, goodCombos, pool, rankShoes,
     lastEntry, suggestion, e1rm, sessionStats, series, weekCounts, nextPlan, sessionsSorted,
     initGrooming, due, dueList, dailyTasks, everyText };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
