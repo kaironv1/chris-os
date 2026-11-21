@@ -18,7 +18,8 @@
       wc: E.weekCounts(S, ws),
       pDays: prot.length, pHit: pg ? prot.filter(g => g >= pg).length : 0,
       pAvg: prot.length ? Math.round(prot.reduce((s, g) => s + g, 0) / prot.length) : null,
-      worn: new Set(S.wardrobe.wear.filter(w => w.date >= ws && w.date <= we).map(w => w.date)).size
+      worn: new Set(S.wardrobe.wear.filter(w => w.date >= ws && w.date <= we).map(w => w.date)).size,
+      exp: window.Exp.week(S, ws, we, E.today())  // 2.10 (K51): the experiment that ran in the week
     };
   }
   const hasWeek = w => !!(w.logged || w.wc.gym || w.wc.run || w.wc.routine || w.pDays || w.worn);
@@ -55,6 +56,8 @@
     // Outfit days
     t = (A.worn ? 'An ' + pl2(A.worn, 'Tag', 'Tagen') + ' ein Outfit als getragen markiert' : 'Kein Outfit als getragen markiert') + (B.worn ? ', in der Vorwoche an ' + pl2(B.worn, 'Tag', 'Tagen') : '') + '.';
     L.push({ k: 'Outfit', t });
+    // Experiment (2.10, K51): days kept in that week and the interim comparison, a hint, never a proof
+    if (A.exp) L.push({ k: 'Experiment', t: window.Exp.weekText(A.exp) });
     return L;
   }
   // One hint from the Verläufe for the most frequent complaint of the week, never as a cause
@@ -72,14 +75,14 @@
     if (!hasWeek(A)) return '';
     const B = weekData(E.addDays(ws, -7)), g = S.settings.goals, pg = S.settings.proteinGoal || 0;
     const sum = [A.sleepN ? 'Schlaf ' + n0(A.sleep) + ' h' : '', A.logged ? (A.symDays ? 'Beschwerden an ' + pl2(A.symDays, 'Tag', 'Tagen') : 'keine Beschwerden') : '',
-      'Kraft ' + A.wc.gym + ' von ' + g.gym, A.pDays && pg ? 'Eiweiß-Ziel an ' + pl2(A.pHit, 'Tag', 'Tagen') : '', A.worn ? 'Outfit an ' + pl2(A.worn, 'Tag', 'Tagen') : ''].filter(Boolean).join(', ');
+      'Kraft ' + A.wc.gym + ' von ' + g.gym, A.pDays && pg ? 'Eiweiß-Ziel an ' + pl2(A.pHit, 'Tag', 'Tagen') : '', A.worn ? 'Outfit an ' + pl2(A.worn, 'Tag', 'Tagen') : '', window.Exp.weekSum(A.exp)].filter(Boolean).join(', ');
     const meta = `<span class="fold-badge" title="${esc(E.fmtShort(ws) + ' bis ' + E.fmtShort(A.we))}">KW ${E.isoWeek(ws)}</span>`;
     return `<section class="review" aria-label="Wochenrückblick">${fold('review', 'Wochenrückblick', esc(capF(sum)), meta, () => {
       const hint = reviewHint(A);
       return `<p class="small muted" style="margin:0 0 10px">${esc(E.fmtShort(ws) + ' bis ' + E.fmtShort(A.we))}, verglichen mit der Woche davor</p>
         <ul class="rv-list">${reviewLines(A, B).map(l => `<li><span class="rv-k">${esc(l.k)}</span><span class="rv-t">${esc(l.t)}</span></li>`).join('')}</ul>
         ${hint ? `<p class="small ink2 rv-hint">${ic('info')}<span>${esc(hint)}</span></p>` : ''}
-        <div class="row wrap" style="margin-top:12px;gap:8px"><a class="btn sm quiet" href="#/gesundheit/verlauf">Verläufe ansehen</a><span class="grow"></span><button class="btn sm ghost" data-a="dismiss" data-k="review:${ws}">Ausblenden</button></div>
+        <div class="row wrap" style="margin-top:12px;gap:8px"><a class="btn sm quiet" href="#/gesundheit/verlauf">Verläufe ansehen</a>${A.exp ? '<a class="btn sm quiet rv-exp" href="#/gesundheit/experimente">Experiment ansehen</a>' : ''}<span class="grow"></span><button class="btn sm ghost" data-a="dismiss" data-k="review:${ws}">Ausblenden</button></div>
         <p class="small muted" style="margin-top:8px">Der Rückblick kommt jeden Montag und bleibt bis Mittwoch, außer du blendest ihn aus.</p>`;
     })}</section>`;
   }

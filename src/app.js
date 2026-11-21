@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.9';
+  const VERSION = '2.10';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -1072,7 +1072,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Selbstexperimente unter Gesundheit. Du hältst dich ein paar Tage an eine Regel, die App vergleicht danach Schlaf, Befinden und Beschwerden mit den Tagen davor. Dazu wählst du die Pollen, auf die du reagierst. Davor in 2.8: Wochenrückblick montags auf Heute, Wetter, Pollen und Luftqualität je Tag in den Verläufen.</p></div>
+        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Der Wochenrückblick am Montag zeigt eine Zeile zu deinem Experiment, mit den eingehaltenen Tagen und dem Zwischenstand. Davor in 2.9: Selbstexperimente unter Gesundheit und die Wahl deiner Pollenarten; in 2.8: Wochenrückblick montags auf Heute, Wetter, Pollen und Luftqualität je Tag in den Verläufen.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js

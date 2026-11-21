@@ -229,6 +229,37 @@
     return r;
   }
 
+  // ---------- Line in the weekly review (2.10, K51) ----------
+  // The experiment that ran in the week ws..we: how many of its days in that week kept the rule, and the interim
+  // comparison for up to two values (kept days against the days before). A planned one is not shown.
+  const pl = (n, s, p) => n + ' ' + (n === 1 ? s : p);
+  function week(S, ws, we, today) {
+    const L = (S.health.exps || []).filter(e => e.start <= we && lastDay(e) >= ws && status(e, today) !== 'geplant');
+    const cand = L.map(e => ({ e, days: ruleDays(e, today).filter(d => d >= ws && d <= we) })).filter(c => c.days.length)
+      .sort((a, b) => b.days.length - a.days.length || (a.e.start < b.e.start ? 1 : -1));
+    if (!cand.length) return null;
+    const { e, days } = cand[0];
+    const K = days.map(d => kept(S, e, d));
+    const R = evaluate(S, e, today);
+    const rank = r => (r.verdict === 'besser' || r.verdict === 'schlechter' ? 0 : r.verdict === 'gleich' ? 1 : 2);
+    const cmp = R.res.filter(r => r.ref && r.g.kept.n >= MIN).sort((a, b) => rank(a) - rank(b)).slice(0, 2)
+      .map(r => ({ key: r.key, l: r.m.l, kept: fmt(r.m, r.g.kept), ref: fmt(r.m, r.g[r.ref]), verdict: r.verdict }));
+    return { e, state: R.state, days: days.length, yes: K.filter(k => k && k.v).length, open: K.filter(k => !k).length, cmp, R };
+  }
+  function weekText(W) {
+    if (!W) return '';
+    const { e, R } = W;
+    if (W.state !== 'laeuft') {
+      const all = R.days === W.days ? 'an ' + R.yes + ' von ' + pl(R.days, 'Tag', 'Tagen') + ' eingehalten' : 'in dieser Woche an ' + W.yes + ' von ' + pl(W.days, 'Tag', 'Tagen') + ' eingehalten, insgesamt an ' + R.yes + ' von ' + R.days;
+      return e.rule + ' ist ' + (W.state === 'fertig' ? 'abgeschlossen' : 'beendet') + ': ' + all + '. ' + (R.ready ? verdictLine(R) : 'Für einen Vergleich waren es zu wenige Tage mit Regel.');
+    }
+    let t = e.rule + ': an ' + W.yes + ' von ' + pl(W.days, 'Tag', 'Tagen') + ' eingehalten' + (W.open ? ', ' + pl(W.open, 'Tag', 'Tage') + ' noch offen' : '');
+    if (W.cmp.length) t += '; ' + W.cmp.map((c, i) => c.l + (i ? ' ' : ' bisher ') + c.kept + ' statt ' + c.ref).join(', ') + '.';
+    else t += R.yes < MIN ? '; der Vergleich kommt ab ' + MIN + ' Tagen mit Regel.' : '; zum Vergleich fehlen noch Einträge im Check-in.';
+    return t;
+  }
+  const weekSum = W => (W ? 'Experiment an ' + W.yes + ' von ' + pl(W.days, 'Tag', 'Tagen') : '');
+
   // ---------- Suggestions from the own data ----------
   // One line per template, only where the data gives a reason: sleep against the goal, late coffee, the breath hunch
   function hints(S, today) {
@@ -255,7 +286,7 @@
   }
 
   const api = { M, BASE, MIN, TPL, DAYS, tplById, measure, create, lastDay, status, ruleDays, dayNo, inRange, fromHour, ask, auto, kept, askDay,
-    lagOf, value, beforeDays, evaluate, VERDICT, fmt, fmtDay, label, verdictLine, remind, hints, hm };
+    lagOf, value, beforeDays, evaluate, VERDICT, fmt, fmtDay, label, verdictLine, remind, hints, hm, week, weekText, weekSum };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Exp = api;
 })(typeof window !== 'undefined' ? window : globalThis);

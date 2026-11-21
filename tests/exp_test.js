@@ -120,6 +120,7 @@ for (let k = 0; k < 14; k++) {
   if (!no) ki++;
   S.health.days[at(k + 1)] = Object.assign({ sym: {}, f: {} }, x);
 }
+const SK = S;  // für Teil 10
 let R = X.evaluate(S, ex, at(15));
 eq([R.state, R.days, R.total, R.yes, R.no, R.open, R.before, R.beforeFull, R.ready], ['fertig', 14, 14, 11, 3, 0, 14, true, true]);
 const by = k => R.res.find(r => r.key === k);
@@ -200,5 +201,38 @@ eq(hs, {
 });
 S.health.profile.triggers = [];
 eq(X.hints(S, T).bett, 'Zuletzt 6,5 h statt 7,5 h Schlaf.');
+
+// 10. Zeile im Wochenrückblick (2.10, K51): dieselben Kaffee-Daten, Wochen um den Start am 1.11. (Sonntag)
+// Woche 26.10. bis 1.11.: nur der Starttag liegt darin
+let W = X.week(SK, '2026-10-26', '2026-11-01', at(1));
+eq([W.e.id, W.state, W.days, W.yes, W.open, W.cmp], ['k1', 'laeuft', 1, 1, 0, []]);
+eq(X.weekText(W), 'Kein Kaffee nach 14 Uhr: an 1 von 1 Tag eingehalten; der Vergleich kommt ab 4 Tagen mit Regel.');
+// Woche 2. bis 8.11., Montag danach (9.11.): sieben Tage, zwei nicht eingehalten, Zwischenstand mit zwei Werten
+W = X.week(SK, '2026-11-02', '2026-11-08', at(8));
+eq([W.state, W.days, W.yes, W.open, W.R.yes, W.cmp.map(c => [c.key, c.verdict])], ['laeuft', 7, 5, 0, 7, [['sleepQ', 'besser'], ['sleepH', 'besser']]]);
+eq(X.weekText(W), 'Kein Kaffee nach 14 Uhr: an 5 von 7 Tagen eingehalten; Schlafqualität bisher ' + W.cmp[0].kept + ' statt 2,9, Schlaf ' + W.cmp[1].kept + ' statt 6,5 h.');
+eq(X.weekSum(W), 'Experiment an 5 von 7 Tagen');
+// Offene Tage werden gezählt
+const S5 = JSON.parse(JSON.stringify(SK)); delete S5.health.exps[0].log[at(3)]; delete S5.health.exps[0].log[at(4)];
+W = X.week(S5, '2026-11-02', '2026-11-08', at(8));
+eq([W.yes, W.open], [3, 2]);
+ok(X.weekText(W).includes('an 3 von 7 Tagen eingehalten, 2 Tage noch offen;'), X.weekText(W));
+// Woche 9. bis 15.11., Montag danach (16.11.): das Experiment endete am Samstag, Ergebnis in Worten
+W = X.week(SK, '2026-11-09', '2026-11-15', at(15));
+eq([W.state, W.days, W.yes, W.R.days, W.R.yes], ['fertig', 6, 5, 14, 11]);
+eq(X.weekText(W), 'Kein Kaffee nach 14 Uhr ist abgeschlossen: in dieser Woche an 5 von 6 Tagen eingehalten, insgesamt an 11 von 14. Besser: Schlafqualität, Schlaf, Tage mit „Kopfschmerzen“. Kein klarer Unterschied: Energie. Zu wenige Einträge: Atem.');
+// Eine Woche später nichts mehr; ein geplantes Experiment zählt nicht; ohne Experimente null
+eq(X.week(SK, '2026-11-16', '2026-11-22', at(22)), null);
+const S6 = state(); S6.health.exps.push(X.create({ tpl: 'bett', rule: 'Um 22:30 ins Bett', start: 'morgen' }, P, '2026-11-08', 'p1'));
+eq([X.week(S6, '2026-11-02', '2026-11-08', '2026-11-08'), X.week(state(), '2026-11-02', '2026-11-08', '2026-11-09'), X.weekText(null), X.weekSum(null)], [null, null, '', '']);
+// Ein kurzes, ganz in der Woche liegendes und abgebrochenes Experiment ohne Vergleich
+const S7 = state(), e7 = X.create({ tpl: 'wasser', rule: 'Jeden Tag 2 Liter trinken', when: 'tag', days: 7 }, P, '2026-11-02', 'w1');
+e7.log = { '2026-11-02': true, '2026-11-03': false, '2026-11-04': true }; e7.stopped = '2026-11-04'; S7.health.exps.push(e7);
+W = X.week(S7, '2026-11-02', '2026-11-08', '2026-11-09');
+eq([W.state, W.days, W.yes], ['abgebrochen', 3, 2]);
+eq(X.weekText(W), 'Jeden Tag 2 Liter trinken ist beendet: an 2 von 3 Tagen eingehalten. Für einen Vergleich waren es zu wenige Tage mit Regel.');
+// Laufen zwei in einer Woche (eines endete, eines begann), zählt das mit mehr Tagen
+S7.health.exps.push(X.create({ tpl: 'alkohol', rule: 'Kein Alkohol' }, P, '2026-11-07', 'a1'));
+eq(X.week(S7, '2026-11-02', '2026-11-08', '2026-11-09').e.id, 'w1');
 
 console.log('exp_test: ' + n + ' Prüfungen bestanden');
