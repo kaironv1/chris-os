@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.11';
+  const VERSION = '2.12';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -24,6 +24,12 @@
 
   // ---------- Icons ----------
   const IC = {
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    trash: '<path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/>',
+    download: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/>',
     today: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2"/>',
     training: '<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
     care: '<path d="M12 3.5c3 3.6 5.5 6.7 5.5 10a5.5 5.5 0 0 1-11 0c0-3.3 2.5-6.4 5.5-10z"/><path d="M9.5 14a2.5 2.5 0 0 0 2.5 2.5"/>',
@@ -1076,7 +1082,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px">Version ${VERSION}, November 2026. Neu: Reisen mit Packliste unter Outfit. Du gibst Ziel und Tage ein, die App plant Outfits aus deinem Schrank fürs Wetter dort und macht daraus eine Packliste mit Kulturbeutel und Medikamenten. Davor in 2.10: das Experiment im Wochenrückblick; in 2.9: Selbstexperimente und die Wahl deiner Pollenarten.</p></div>
+        <p class="small muted" style="margin-top:8px" data-a="about.tap">Version ${VERSION}, November 2026. Neu in 2.11: Reisen mit Packliste unter Outfit. Du gibst Ziel und Tage ein, die App plant Outfits aus deinem Schrank fürs Wetter dort und macht daraus eine Packliste mit Kulturbeutel und Medikamenten. Davor in 2.10: das Experiment im Wochenrückblick; in 2.9: Selbstexperimente und die Wahl deiner Pollenarten.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1100,6 +1106,7 @@
   function render() {
     const r = route();
     const rk = r.top + '/' + r.sub;
+    if (vaultRender(rk)) { lastRoute = rk; return; }
     const scroll = rk === lastRoute ? window.scrollY : 0;
     document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === r.top ? 'page' : 'false'));
     const active = document.activeElement;
@@ -1311,6 +1318,7 @@
     return { data };
   }
   async function applyBackup(data) {
+    vaultLock(false);
     S = data.state; migrate(S);
     S.meta.restored = { at: new Date().toISOString(), exported: data.exported || null, from: devOf(data.device) };
     await Photos.clear();
@@ -1595,7 +1603,7 @@
     let rz = null; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(wireCharts, 150); });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); });
     setInterval(() => { const c = document.querySelector('[data-clock]'); if (c) c.textContent = minText(+clockText()); badges(); }, 15000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshWeather(); refreshEnv(); refreshTrips(); render(); } });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { vaultOnHidden(); return; } vaultOnVisible(); refreshWeather(); refreshEnv(); refreshTrips(); render(); });
   }
   // ---------- Welcome: no data on this device yet ----------
   const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#3E5C8A"/><path d="M341 171A120 120 0 1 0 341 341" fill="none" stroke="#F4F1EB" stroke-width="58" stroke-linecap="round"/><circle cx="364" cy="256" r="31" fill="#D39A6A"/></svg>';

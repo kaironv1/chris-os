@@ -16,7 +16,7 @@ root = pathlib.Path(__file__).resolve().parent
 argv = sys.argv[1:]
 seed_file = pathlib.Path(argv[argv.index('--seed') + 1]) if '--seed' in argv else root / 'tests' / 'fixtures' / 'test-seed.json'
 MARK = '/*@@UI_HEALTH@@*/'
-NAMES = ['parser.js', 'garments.js', 'figure.js', 'engine.js', 'food.js', 'env.js', 'health.js', 'exp.js', 'trip.js', 'app.js']
+NAMES = ['parser.js', 'garments.js', 'figure.js', 'engine.js', 'food.js', 'env.js', 'health.js', 'exp.js', 'trip.js', 'vault.js', 'app.js']
 APP = (root / 'src' / 'app.js').read_text(encoding='utf-8')
 VERSION = re.search(r"const VERSION = '([^']+)'", APP).group(1)
 FONT = base64.b64encode((root / 'fonts/package/files/archivo-latin-wdth-normal.woff2').read_bytes()).decode()
@@ -28,7 +28,7 @@ FAVICON = 'data:image/svg+xml;base64,' + base64.b64encode(ICON_SVG.encode()).dec
 def sources():
     js = [(root / 'src' / f).read_text(encoding='utf-8') for f in NAMES]
     ia = NAMES.index('app.js')
-    ui = '\n'.join((root / 'src' / f).read_text(encoding='utf-8') for f in ('ui-health.js', 'ui-style.js', 'ui-figure.js', 'ui-food.js', 'ui-trends.js', 'ui-review.js', 'ui-exp.js', 'ui-trip.js'))
+    ui = '\n'.join((root / 'src' / f).read_text(encoding='utf-8') for f in ('ui-health.js', 'ui-style.js', 'ui-figure.js', 'ui-food.js', 'ui-trends.js', 'ui-review.js', 'ui-exp.js', 'ui-trip.js', 'ui-vault.js'))
     assert js[ia].count(MARK) == 1, 'marker missing in app.js'
     js[ia] = js[ia].replace(MARK, ui.strip())
     return js
