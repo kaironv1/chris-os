@@ -1032,5 +1032,7 @@ mark.vt-falle { background: var(--cognac-wash); color: inherit; border-radius: 3
 .vt-ritual .scale-ends { color: #9fb0c0; }
 .vt-parked { list-style: none; margin: 12px 0 0; padding: 0; color: #cfd6de; }
 .vt-trend tr.is-sel td { background: var(--denim-wash); }
+em.vt-pre { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 5px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); font-style: normal; font-size: 11.5px; font-weight: 600; line-height: 18px; color: var(--muted); vertical-align: 1px; }
+.vt-trend td.vt-pre { font-style: italic; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .vt-breath { transition: none !important; } }
 @media (max-width: 640px) { .vt .today-grid { grid-template-columns: 1fr; } .vt-matrix td { width: 24px; } }

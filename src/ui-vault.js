@@ -82,7 +82,17 @@
     vsess = sess; vc = await VT.read(S.vault, sess);
     ui.vault.busy = false; ui.vault.msg = ''; ui.vault.tab = 'start';
     ui.vault.hint = !prfReady() && window.isSecureContext && window.PublicKeyCredential ? 'prf' : '';
+    if (ciSync()) vaultSave();
     render();
+  }
+  // Values taken over from the normal check-in follow its later corrections; those happen while the room is closed
+  function ciSync() {
+    let n = 0;
+    for (const [d, c] of Object.entries(vc.checkins || {})) {
+      const h = (S.health && S.health.days && S.health.days[d]) || null, src = (c && c.src) || {};
+      if (h) CI_FROM.forEach(([k, hk]) => { if (src[k] === 'hc' && h[hk] != null && h[hk] !== c[k]) { c[k] = h[hk]; n++; } });
+    }
+    return n > 0;
   }
 
   // ---------- Views ----------
@@ -302,19 +312,35 @@
     if (i < L.length - 1) rtGo(L[i + 1]);
   }
   // ----- Check-in -----
+  // K59 (2.13): sleep, sleep quality and energy from the normal check-in fill empty fields here. Nothing flows back.
+  // c.src[k]: 'hc' = taken over (keeps following the normal check-in until changed here), 'du' = set or cleared here.
+  const CI_FROM = [['sleepHours', 'sleepH'], ['sleepQuality', 'sleepQ'], ['energy', 'energy']];
+  function ciFrom(d) {
+    const h = (S.health && S.health.days && S.health.days[d]) || null, c = vc.checkins[d] || {}, src = c.src || {}, o = {};
+    if (h) CI_FROM.forEach(([k, hk]) => { if (h[hk] != null && src[k] !== 'du' && (src[k] === 'hc' || c[k] == null)) o[k] = h[hk]; });
+    return o;
+  }
+  // What the check-in shows for a day: own values, otherwise those from the normal check-in (listed in pre)
+  function ciView(d) {
+    const o = ciFrom(d);
+    return { c: Object.assign({}, vc.checkins[d] || {}, o), pre: Object.keys(o) };
+  }
   function vtCheckin() {
-    const d = E.addDays(E.today(), -ui.vault.day), c = vc.checkins[d] || {};
+    const d = E.addDays(E.today(), -ui.vault.day), V = ciView(d), c = V.c;
+    const pre = k => (V.pre.includes(k) ? ' <em class="vt-pre">übernommen</em>' : '');
     const chips = (k, opts, val, fmt) => `<div class="schips">${opts.map(o => `<button class="chip" data-a="vt.ci.set" data-k="${k}" data-v="${o}" aria-pressed="${val === o}">${fmt ? fmt(o) : o}</button>`).join('')}<input class="search" style="width:90px" type="number" min="0" max="600" placeholder="andere" value="${val != null && !opts.includes(val) ? val : ''}" data-c="vt.ci.num" data-k="${k}" aria-label="${k}, eigener Wert"></div>`;
     const sc = (k, lo, hi) => `<div class="scale-wrap"><div class="scale" role="group" aria-label="${k}">${[1, 2, 3, 4, 5].map(n => `<button data-a="vt.ci.set" data-k="${k}" data-v="${n}" aria-pressed="${c[k] === n}">${n}</button>`).join('')}</div><div class="scale-ends"><span>${lo}</span><span>${hi}</span></div></div>`;
     const active = (c.sport && c.sport > 0) || (c.selfCare && c.selfCare.trim());
     const fear = (c.motivations || []).filter(VT.isFear);
-    const days = Array.from({ length: 14 }, (_, i) => E.addDays(E.today(), -13 + i)).map(x => [x, vc.checkins[x]]);
+    const days = Array.from({ length: 14 }, (_, i) => E.addDays(E.today(), -13 + i)).map(x => [x, ciView(x)]);
+    const anyPre = days.some(([, w]) => w.pre.includes('sleepHours') || w.pre.includes('energy'));
     const fmtN = v => (v == null ? '' : String(v).replace('.', ','));
-    return `<div class="row wrap" style="gap:10px;align-items:center;margin-bottom:12px">${seg('Tag', [['0', 'Heute'], ['1', 'Gestern'], ['2', 'Vorgestern']], String(ui.vault.day), { a: 'vt.ci.day' })}<span class="small muted">${E.WD[E.weekday(d)]}, ${E.fmtShort(d)}. Jede Angabe speichert sofort.</span></div>
+    const cell = (w, k, txt) => `<td class="num${w.pre.includes(k) ? ' vt-pre' : ''}">${txt}</td>`;
+    return `<div class="row wrap" style="gap:10px;align-items:center;margin-bottom:12px">${seg('Tag', [['0', 'Heute'], ['1', 'Gestern'], ['2', 'Vorgestern']], String(ui.vault.day), { a: 'vt.ci.day' })}<span class="small muted">${E.WD[E.weekday(d)]}, ${E.fmtShort(d)} Jede Angabe speichert sofort.${V.pre.length ? ' Mit „übernommen“ markierte Werte stammen aus „Wie geht’s dir?“; änderst du sie hier, gelten sie nur im Raum.' : ''}</span></div>
       <div class="panel form-grid">
-        <div class="field"><span>Schlaf letzte Nacht (Stunden)</span><input type="number" inputmode="decimal" min="0" max="16" step="0.5" value="${c.sleepHours ?? ''}" data-c="vt.ci.num" data-k="sleepHours"></div>
-        <div class="field"><span>Schlafqualität</span><div class="schips">${VT.SLEEP_QUALITY.map((l, i) => `<button class="chip" data-a="vt.ci.set" data-k="sleepQuality" data-v="${i + 1}" aria-pressed="${c.sleepQuality === i + 1}">${l}</button>`).join('')}</div></div>
-        <div class="field"><span>Energie gerade</span>${sc('energy', 'leer', 'voller Akku')}</div>
+        <div class="field"><span>Schlaf letzte Nacht (Stunden)${pre('sleepHours')}</span><input type="number" inputmode="decimal" min="0" max="16" step="0.5" value="${c.sleepHours ?? ''}" data-c="vt.ci.num" data-k="sleepHours"></div>
+        <div class="field"><span>Schlafqualität${pre('sleepQuality')}</span><div class="schips">${VT.SLEEP_QUALITY.map((l, i) => `<button class="chip" data-a="vt.ci.set" data-k="sleepQuality" data-v="${i + 1}" aria-pressed="${c.sleepQuality === i + 1}">${l}</button>`).join('')}</div></div>
+        <div class="field"><span>Energie gerade${pre('energy')}</span>${sc('energy', 'leer', 'voller Akku')}</div>
         <div class="field"><span>Anspannung</span>${sc('stress', 'ruhig', 'am Limit')}</div>
         <div class="field full"><span>Zeit nur für dich heute (Minuten)</span>${chips('meTime', VT.ME_TIME, c.meTime)}</div>
         <div class="field"><span>Kontakt zu Freunden heute</span>${seg('Kontakt zu Freunden', [['1', 'Ja'], ['0', 'Nein']], c.social == null ? '' : c.social ? '1' : '0', { a: 'vt.ci.social' })}</div>
@@ -324,11 +350,14 @@
           ${fear.length ? `<div class="note" style="margin-top:10px;display:block"><p style="margin:0"><strong>Kurz innehalten: Selbstoptimierung auf Bewährung?</strong></p><p style="margin:6px 0 0">Du hast es (auch) gemacht, um Streit zu vermeiden oder Frieden zu verdienen. Das ist menschlich. Aber Veränderung als Friedensangebot kippt auf Dauer in Groll: Du lieferst, und der Frieden bleibt trotzdem an Bedingungen geknüpft.</p><ul style="margin:8px 0 0;padding-left:18px"><li>Würdest du es auch machen, wenn ${esc(partner())} es nie erfährt?</li><li>Was hast du selbst davon, ganz unabhängig von ihr?</li><li>Was passiert in dir, wenn sie es nicht bemerkt oder trotzdem kritisiert?</li></ul><label class="field" style="margin-top:10px"><span>Dein eigener Grund</span><input value="${esc(c.ownReason || '')}" placeholder="Was hättest du davon, nur für dich?" data-c="vt.ci.text" data-k="ownReason"></label><p class="small" style="margin:8px 0 0">Findest du keinen eigenen Grund, ist es völlig okay, es morgen zu lassen. Der Frieden zu Hause ist eure gemeinsame Aufgabe.</p></div>` : ''}</div>` : ''}
         <label class="field full"><span>Notiz</span><textarea rows="2" data-c="vt.ci.text" data-k="note">${esc(c.note || '')}</textarea></label>
       </div>
-      <div class="panel" style="margin-top:14px;overflow-x:auto"><h2 class="sec-title">Letzte 14 Tage</h2><table class="tbl vt-trend" style="margin-top:8px"><thead><tr><th>Tag</th><th>Schlaf</th><th>Energie</th><th>Anspannung</th><th>Me-Time</th><th>Bewegung</th><th>Freunde</th><th>Motiv</th></tr></thead><tbody>${days.map(([x, v]) => `<tr${x === d ? ' class="is-sel"' : ''}><td>${E.WD[E.weekday(x)].slice(0, 2)} ${E.fmtShort(x)}</td><td class="num">${v ? fmtN(v.sleepHours) : ''}</td><td class="num">${v && v.energy ? v.energy : ''}</td><td class="num">${v && v.stress ? v.stress : ''}</td><td class="num">${v && v.meTime != null ? v.meTime : ''}</td><td class="num">${v && v.sport != null ? v.sport : ''}</td><td>${v && v.social != null ? (v.social ? 'ja' : 'nein') : ''}</td><td>${v && v.motivationType ? { eigen: 'eigen', gemischt: 'gemischt', angst: 'aus Angst' }[v.motivationType] : ''}</td></tr>`).join('')}</tbody></table></div>`;
+      <div class="panel" style="margin-top:14px;overflow-x:auto"><h2 class="sec-title">Letzte 14 Tage</h2><table class="tbl vt-trend" style="margin-top:8px"><thead><tr><th>Tag</th><th>Schlaf</th><th>Energie</th><th>Anspannung</th><th>Me-Time</th><th>Bewegung</th><th>Freunde</th><th>Motiv</th></tr></thead><tbody>${days.map(([x, w]) => { const v = w.c; return `<tr${x === d ? ' class="is-sel"' : ''}><td>${E.WD[E.weekday(x)].slice(0, 2)} ${E.fmtShort(x)}</td>${cell(w, 'sleepHours', fmtN(v.sleepHours))}${cell(w, 'energy', v.energy ? v.energy : '')}<td class="num">${v.stress ? v.stress : ''}</td><td class="num">${v.meTime != null ? v.meTime : ''}</td><td class="num">${v.sport != null ? v.sport : ''}</td><td>${v.social != null ? (v.social ? 'ja' : 'nein') : ''}</td><td>${v.motivationType ? { eigen: 'eigen', gemischt: 'gemischt', angst: 'aus Angst' }[v.motivationType] : ''}</td></tr>`; }).join('')}</tbody></table>${anyPre ? '<p class="small muted" style="margin:8px 0 0">Kursiv: aus „Wie geht’s dir?“ übernommen.</p>' : ''}</div>`;
   }
   function ciDay() { return E.addDays(E.today(), -ui.vault.day); }
   function ciSet(k, v) {
-    const d = ciDay(); const c = (vc.checkins[d] = vc.checkins[d] || { motivations: [] });
+    const d = ciDay(), from = ciFrom(d); const c = (vc.checkins[d] = vc.checkins[d] || { motivations: [] });
+    const src = (c.src = c.src || {});
+    Object.keys(from).forEach(x => { if (x !== k) { c[x] = from[x]; src[x] = 'hc'; } });
+    if (CI_FROM.some(f => f[0] === k)) src[k] = 'du';
     c[k] = v; c.t = new Date().toISOString();
     if (!((c.sport && c.sport > 0) || (c.selfCare && c.selfCare.trim()))) { c.motivations = []; c.motivationType = null; c.ownReason = ''; }
     else c.motivationType = VT.classifyMotives(c.motivations);
@@ -455,7 +484,7 @@
     'vt.rt.finish': () => { const r = ui.vault.reset; VT.addReset(vc, { variant: r.variant, before: r.before, after: r.after, intention: r.intention, parked: r.parked, at: new Date().toISOString() }); rtTimers.splice(0).forEach(clearTimeout); ui.vault.reset = null; ui.vault.before = null; vaultSave(); render(); toast('Gespeichert. Willkommen zu Hause.'); },
     // Check-in
     'vt.ci.day': el => { ui.vault.day = +el.dataset.v; render(); },
-    'vt.ci.set': el => { const k = el.dataset.k, v = +el.dataset.v, c = vc.checkins[ciDay()] || {}; ciSet(k, c[k] === v ? null : v); render(); },
+    'vt.ci.set': el => { const k = el.dataset.k, v = +el.dataset.v, c = ciView(ciDay()).c; ciSet(k, c[k] === v ? null : v); render(); },
     'vt.ci.social': el => { const c = vc.checkins[ciDay()] || {}, v = el.dataset.v === '1'; ciSet('social', c.social === v ? null : v); render(); },
     'vt.ci.motive': el => { const c = vc.checkins[ciDay()] || { motivations: [] }, m = (c.motivations || []).slice(), i = m.indexOf(el.dataset.v); if (i >= 0) m.splice(i, 1); else m.push(el.dataset.v); ciSet('motivations', m); render(); }
   });
