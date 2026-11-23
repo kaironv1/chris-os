@@ -116,4 +116,23 @@ eq(H.dayF(S, E.addDays(today, -9)).f.alkohol, true);
 days[E.addDays(today, -9)].f.alkohol = false;
 eq(H.dayF(S, E.addDays(today, -9)).f.alkohol, false, 'Eintrag von Hand geht vor');
 
+// 2.14: no alcohol from words that only look like it, seasonal foods, compounds with a real front part
+const keyOf = t => P(t).items.map(x => x.key).join('+');
+const alc = t => P(t).items.some(x => x.fl.includes('a'));
+['Marzipan', 'Sprite', 'Kinderpunsch', 'Glühwein ohne Alkohol', 'Pommes rot weiß', 'Energy Balls'].forEach(t => ok(!alc(t), 'kein Alkohol: ' + t));
+['Glühwein', 'Weißbier', 'Rotwein', 'IPA', 'Hugo', 'Weinbrand', 'Eierpunsch'].forEach(t => ok(alc(t), 'Alkohol: ' + t));
+eq(P('Sprite').items[0].key, 'f:cola', 'Sprite ist Limonade, kein Spritz');
+eq(P('Glühwien').items.length, 0, 'Tippfehler wird nie zu Alkohol');
+eq([keyOf('Bananne'), keyOf('Kaffe'), keyOf('Joghurth')], ['f:banane', 'f:kaffee', 'f:joghurt'], 'andere Tippfehler weiter erkannt');
+eq(P('weiß').items.length, 0, 'weiß ist kein Eis');
+eq([keyOf('Erdbeereis'), keyOf('Wassereis'), keyOf('Softeis'), keyOf('Kräutertee'), keyOf('Milchreis'), keyOf('Basmatireis')], ['f:eis', 'f:eis', 'f:eis', 'f:tee', 'f:pudding', 'f:reis']);
+eq([keyOf('Stollen'), keyOf('Langos'), keyOf('Entenbrust'), keyOf('Wildschwein'), keyOf('Zwiebelkuchen')], ['f:stollen', 'f:langos', 'f:gans', 'f:wild', 'f:zwiebelkuchen'], 'nicht mehr Stulle, Mango, Pute, Schwein oder Kuchen');
+eq([keyOf('Whey Shake'), keyOf('Schnitzel Wiener Art'), keyOf('Beef Jerky'), keyOf('Pommes Schranke'), keyOf('Tomaten mit Mozzarella')],
+  ['f:proteinshake', 'f:schnitzel', 'f:beef_jerky', 'f:pommes_rot_weiss', 'f:caprese'], 'ein Eintrag statt zwei');
+i = one('2 Dominosteine'); eq([i.g, i.amt], [24, '2 Stück (24 g)']);
+i = one('eine Tüte gebrannte Mandeln'); eq([i.key, i.g], ['f:gebrannte_mandeln', 100]);
+i = one('2 Scheiben Stollen'); eq(i.g, 100);
+i = one('Kinderpunsch'); eq([i.g, i.fl], [200, 'dh'], 'heiß, ohne Alkohol');
+ok(F.count >= 360, 'mindestens 360 Lebensmittel und Gerichte');
+
 console.log('food_test: ' + n + ' Prüfungen bestanden (' + F.count + ' Lebensmittel und Gerichte)');

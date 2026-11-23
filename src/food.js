@@ -14,7 +14,7 @@
     ['Rührei|Rühreier', 170, 11, 1.5, 13.5, 0, 130, 'po:130', 'ei', ''],
     ['Spiegelei|Spiegeleier', 195, 13.5, 0.8, 15, 0, 60, 'st:60,s:60', 'ei', ''],
     ['Omelett|Omelette', 155, 10.5, 1, 12, 0, 150, 'st:150', 'ei', ''],
-    ['Eiklar|Eiklar flüssig|flüssiges Eiweiß|Eiweiß flüssig|Hühnereiweiß', 48, 11, 0.7, 0.2, 0, 100, 'st:33', 'ei', ''],
+    ['Eiklar|Eiklar flüssig|flüssiges Eiweiß|Eiweiß flüssig|Hühnereiweiß|Eiweiß', 48, 11, 0.7, 0.2, 0, 100, 'st:33', 'ei', ''],
     ['Milch|Vollmilch|Kuhmilch|Frischmilch|H-Milch', 64, 3.3, 4.8, 3.5, 0, 200, 'gl:200,ta:200,be:250,el:15,s:150,h:30', 'milch', 'd'],
     ['fettarme Milch|Milch fettarm|teilentrahmte Milch|Magermilch|entrahmte Milch', 46, 3.4, 4.9, 1.5, 0, 200, 'gl:200,ta:200,be:250,el:15,s:150,h:30', 'milch', 'd'],
     ['Haferdrink|Hafermilch', 46, 0.8, 7, 1.5, 0.8, 200, 'gl:200,ta:200,be:250,s:150,h:30', 'milch', 'd'],
@@ -49,6 +49,9 @@
     ['Proteinpudding|High-Protein-Pudding|Eiweißpudding|Protein-Pudding', 75, 10, 6, 1.3, 0, 200, 'be:200,x:200', 'protein', ''],
     ['Pudding|Vanillepudding|Schokopudding|Schokoladenpudding|Grießpudding|Grießbrei|Milchreis', 115, 3.3, 18, 3, 0.3, 150, 'be:125,x:150,s:100', 'suess', ''],
     ['Proteinmilch|Proteindrink|High-Protein-Drink|Protein-Drink|Eiweißdrink', 60, 8, 4, 1, 0, 330, 'fl:330,gl:250,x:330', 'protein', 'd'],
+    ['Mascarpone', 430, 4.5, 4, 44, 0, 30, 'el:20,be:250,s:30', 'milch', ''],
+    ['Ricotta', 150, 9, 3.5, 11, 0, 50, 'el:20,be:250,s:50', 'milch', ''],
+    ['Burrata', 300, 15, 1, 26, 0, 125, 'st:125,x:125,s:60', 'milch', ''],
 
     // Bread and cereals
     ['Brot|Mischbrot|Bauernbrot|Roggenbrot|Graubrot|Sauerteigbrot|Roggenmischbrot|Weizenmischbrot|Landbrot|Kastenbrot|Weißbrot|Ciabatta|Fladenbrot|Brotscheibe|Brotscheiben', 225, 6.5, 44, 1.5, 5, 45, 'sch:45,st:45,s:45', 'brot', ''],
@@ -86,12 +89,19 @@
     ['Couscous|Bulgur|Hirse|Graupen', 112, 3.8, 23, 0.4, 2, 180, 'po:180,s:180', 'getreide', ''],
     ['Quinoa|Amaranth|Buchweizen', 120, 4.4, 21, 1.9, 2.8, 180, 'po:180,s:180', 'getreide', ''],
     ['Wrap|Wraps|Tortilla|Tortillas|Tortillafladen|Weizentortilla', 300, 8, 50, 7, 3, 60, 'st:60,s:60', 'brot', ''],
-    ['Pizza|Pizza Salami|Salamipizza|Tiefkühlpizza|Pizza Schinken|Pizza Funghi|Pizza Tonno|Pizza Hawaii', 255, 11, 29, 10.5, 2, 400, 'x:400,st:100,po:400', 'gericht', ''],
+    ['Pizza|Pizza Salami|Salamipizza|Tiefkühlpizza|Pizza Schinken|Pizza Funghi|Pizza Tonno|Pizza Hawaii|Calzone', 255, 11, 29, 10.5, 2, 400, 'x:400,st:100,po:400', 'gericht', ''],
     ['Pizza Margherita|Margherita|Gemüsepizza|Pizza vegetarisch', 240, 10, 30, 9, 2, 400, 'x:400,st:100,po:400', 'gericht', ''],
     ['Pfannkuchen|Eierkuchen|Pancakes|Pancake|Crêpes|Crepes|Crêpe|Crepe|Palatschinken', 220, 7, 28, 9, 1, 80, 'st:80', 'suess', ''],
     ['Bagel|Bagels', 260, 10, 50, 1.6, 2.5, 90, 'st:90,s:90', 'brot', ''],
     ['Flammkuchen|Tarte flambée', 250, 8, 27, 12, 1.5, 350, 'x:350,st:80', 'gericht', 'z'],
     ['Toast Hawaii|Croque|Croque Monsieur|überbackener Toast', 230, 12, 20, 11, 1.5, 150, 'st:150', 'gericht', ''],
+    ['Pita|Pitabrot|Naan|Naanbrot|Chapati|Roti', 270, 9, 54, 1.5, 2.5, 70, 'st:70,x:70,s:70', 'brot', ''],
+    ['Zwieback', 400, 10, 75, 5, 4, 20, 'st:10,x:10', 'brot', ''],
+    ['Semmelknödel|Serviettenknödel|Brezenknödel|Brezelknödel|Speckknödel', 170, 6, 27, 4, 1.5, 200, 'st:100,x:100', 'getreide', ''],
+    ['Kartoffelknödel|Kartoffelklöße|Klöße|Kloß|Knödel|Thüringer Klöße|Grüne Klöße', 115, 2.5, 24, 0.5, 2, 200, 'st:100,x:100', 'getreide', ''],
+    ['Pommes rot weiß|Pommes Schranke|Pommes Mayo Ketchup|Pommes Mayo|Pommes mit Mayo', 305, 3, 32.3, 18.3, 2.5, 180, 'po:180,x:180', 'getreide', ''],
+    ['Chia-Pudding|Chiapudding', 130, 5, 10, 7, 6, 200, 'po:200,be:150,x:200', 'getreide', ''],
+    ['Bircher Müsli|Birchermüsli', 120, 4, 18, 3.5, 2.5, 250, 'po:250,be:200,x:250', 'getreide', ''],
 
     // Meat
     ['Hähnchenbrust|Hähnchenbrustfilet|Hähnchenbrustfilets|Hühnerbrust|Hähnchenfilet|Hühnchenbrust|Hähnchen|Huhn|Hühnchen|Hühnerfleisch|Chicken|Hähnchengeschnetzeltes|Hähnchenstreifen|Pouletbrust', 110, 23.5, 0, 1.5, 0, 150, 'st:150,po:150,s:120', 'fleisch', ''],
@@ -104,8 +114,8 @@
     ['Steak|Rindersteak|Rumpsteak|Hüftsteak|Entrecôte|Entrecote|Rinderfilet|Rindfleisch|Filetsteak|Roastbeef|Flanksteak|Ribeye|Rib-Eye|Beef', 155, 25, 0, 6, 0, 200, 'st:200,po:200', 'fleisch', ''],
     ['Schweinefilet|Schweinelende|Schweinefleisch|Schwein|Schweinemedaillons|Lende', 110, 21.5, 0, 2.5, 0, 150, 'po:150', 'fleisch', ''],
     ['Kotelett|Schweinekotelett|Nackensteak|Schweinenacken|Grillsteak|Schweinesteak|Schweinebauch|Bauchfleisch|Spareribs|Rippchen', 220, 18, 0, 16.5, 0, 180, 'st:180,po:180', 'fleisch', ''],
-    ['Schnitzel|Wiener Schnitzel|Schweineschnitzel|paniertes Schnitzel|Jägerschnitzel|Rahmschnitzel|Cordon bleu|Schnitzel paniert', 230, 18, 11, 13, 0.5, 180, 'st:180,po:180', 'fleisch', ''],
-    ['Braten|Schweinebraten|Rinderbraten|Sauerbraten|Krustenbraten|Rollbraten|Kasseler|Rinderroulade|Roulade|Rouladen', 200, 25, 1, 11, 0, 150, 'sch:60,po:150', 'fleisch', ''],
+    ['Schnitzel|Wiener Schnitzel|Schweineschnitzel|paniertes Schnitzel|Jägerschnitzel|Rahmschnitzel|Cordon bleu|Schnitzel paniert|Schnitzel Wiener Art', 230, 18, 11, 13, 0.5, 180, 'st:180,po:180', 'fleisch', ''],
+    ['Braten|Schweinebraten|Rinderbraten|Sauerbraten|Krustenbraten|Rollbraten|Kasseler|Rinderroulade|Roulade|Rouladen|Spanferkel', 200, 25, 1, 11, 0, 150, 'sch:60,po:150', 'fleisch', ''],
     ['Bratwurst|Grillwurst|Rostbratwurst|Thüringer|Bratwürste|Grillwürstchen|Rote Wurst|Weißwurst|Weißwürste', 300, 13, 0.5, 27, 0, 100, 'st:100,po:100', 'fleisch', ''],
     ['Nürnberger|Nürnberger Würstchen|Nürnberger Rostbratwürstchen|Rostbratwürstchen', 300, 13, 0.5, 27, 0, 75, 'st:25', 'fleisch', ''],
     ['Würstchen|Wiener|Wiener Würstchen|Frankfurter|Frankfurter Würstchen|Bockwurst|Würstel|Wienerle|Geflügelwürstchen|Wurst|Würste', 270, 13, 1, 24, 0, 100, 'st:50,po:100', 'fleisch', ''],
@@ -120,11 +130,17 @@
     ['Leberkäse|Fleischkäse|Leberkäs', 290, 12, 1, 27, 0, 120, 'sch:120,st:120,x:120', 'fleisch', ''],
     ['Frikadelle|Frikadellen|Bulette|Buletten|Fleischpflanzerl|Fleischküchle|Hacksteak|Fleischlaberl', 240, 15, 8, 16, 0.5, 90, 'st:90,x:90', 'fleisch', ''],
     ['Köttbullar|Hackbällchen|Fleischbällchen', 240, 15, 8, 16, 0.5, 150, 'st:15,x:15', 'fleisch', ''],
-    ['Döner|Döner Kebab|Dönertasche|Kebab|Dürüm|Dürüm Döner|Yufka', 215, 11, 20, 10, 1.5, 400, 'x:400,st:400', 'gericht', 'z'],
+    ['Döner|Döner Kebab|Dönertasche|Kebab|Dürüm|Dürüm Döner|Yufka|Shawarma|Schawarma', 215, 11, 20, 10, 1.5, 400, 'x:400,st:400', 'gericht', 'z'],
     ['Dönerbox|Döner Box|Dönerteller|Döner Teller', 230, 12, 18, 12, 2, 450, 'po:450,x:450', 'gericht', 'z'],
-    ['Burger|Hamburger|Cheeseburger|Rindfleischburger|Beefburger|Chickenburger', 250, 13, 24, 11, 1.5, 200, 'x:200,st:200', 'gericht', ''],
+    ['Burger|Hamburger|Cheeseburger|Rindfleischburger|Beefburger|Chickenburger|Pulled Pork Burger', 250, 13, 24, 11, 1.5, 200, 'x:200,st:200', 'gericht', ''],
     ['Gyros|Gyrosteller|Gyros Teller', 230, 16, 6, 16, 1, 250, 'po:250', 'fleisch', 'z'],
     ['Leber|Rinderleber|Hähnchenleber', 135, 20, 4, 4, 0, 150, '', 'fleisch', ''],
+    ['Gans|Gänsebraten|Gänsekeule|Gänsebrust|Martinsgans|Weihnachtsgans|Gänseklein|Ente|Entenbraten|Entenkeule|Entenbrust|Pekingente|knusprige Ente', 290, 24, 0, 21.5, 0, 200, 'po:200,st:250,x:250', 'fleisch', ''],
+    ['Wild|Wildbraten|Hirsch|Hirschbraten|Hirschrücken|Hirschkeule|Reh|Rehbraten|Rehrücken|Rehkeule|Wildschwein|Wildschweinbraten', 140, 23, 1, 5, 0, 150, 'po:150,sch:60', 'fleisch', ''],
+    ['Schweinshaxe|Haxe|Hachse|Schweinshachse|Schweinehaxe|Eisbein|Grillhaxe', 250, 22, 0, 18, 0, 350, 'po:350,st:350,x:350', 'fleisch', ''],
+    ['Pulled Pork', 200, 20, 8, 10, 0.5, 150, 'po:150,s:100', 'fleisch', ''],
+    ['Cevapcici|Ćevapčići|Cevapi|Köfte|Kofta|Adana|Adana Kebap|Hackfleischspieß|Hackspieß|Hackfleischröllchen', 250, 17, 2, 19.5, 0, 200, 'po:200,st:25,x:25', 'fleisch', ''],
+    ['Pinkel|Pinkelwurst|Kohlwurst', 330, 12, 8, 28, 1, 120, 'st:120,x:120,s:120', 'fleisch', ''],
 
     // Fish
     ['Lachs|Lachsfilet|Wildlachs|Lachssteak|Lachsforelle', 200, 20, 0, 13, 0, 125, 'st:125,po:125,s:100', 'fisch', ''],
@@ -132,7 +148,7 @@
     ['Thunfisch|Thun|Tunfisch|Thunfisch im eigenen Saft|Thunfisch natur|Thunfischsteak', 110, 25, 0, 1, 0, 140, 'do:140,s:70', 'fisch', ''],
     ['Thunfisch in Öl', 200, 24, 0, 11.5, 0, 140, 'do:140,s:70', 'fisch', ''],
     ['Forelle|Saibling|Forellenfilet|Räucherforelle|Regenbogenforelle|Zander|Barsch|Karpfen', 110, 20, 0, 3.5, 0, 125, 'st:125,po:125', 'fisch', ''],
-    ['Fisch|Fischfilet|Kabeljau|Dorsch|Seelachs|Alaska-Seelachs|Pangasius|Rotbarsch|Scholle|Seehecht|Schellfisch|Tilapia|weißer Fisch|Heilbutt', 85, 18.5, 0, 1, 0, 150, 'st:150,po:150', 'fisch', ''],
+    ['Fisch|Fischfilet|Kabeljau|Dorsch|Seelachs|Alaska-Seelachs|Pangasius|Rotbarsch|Scholle|Seehecht|Schellfisch|Tilapia|weißer Fisch|Heilbutt|Dorade|Wolfsbarsch|Loup de Mer|Seebarsch|Branzino', 85, 18.5, 0, 1, 0, 150, 'st:150,po:150', 'fisch', ''],
     ['Backfisch|Fisch paniert|Schlemmerfilet|Fischfilet paniert', 210, 13, 15, 11, 1, 150, 'st:150', 'fisch', ''],
     ['Fischstäbchen', 200, 12, 18, 9, 1, 150, 'st:30,x:30', 'fisch', ''],
     ['Garnelen|Shrimps|Shrimp|Krabben|Scampi|Gambas|Crevetten|Nordseekrabben|Riesengarnelen|Prawns', 85, 19, 0.5, 1, 0, 100, 'st:15,po:100,s:80', 'fisch', ''],
@@ -141,6 +157,7 @@
     ['Makrele|Räuchermakrele|Makrelenfilet|Bückling|Sprotten', 230, 19, 0, 17, 0, 100, 'st:100', 'fisch', ''],
     ['Tintenfisch|Calamari|Kalamari|Tintenfischringe|Oktopus', 150, 15, 8, 6, 0.3, 150, '', 'fisch', ''],
     ['Sushi|Maki|Makis|Nigiri|Nigiris|Inside Out|California Roll|Sushirolle|Sushirollen', 150, 5.5, 28, 1.8, 0.8, 200, 'st:25,x:25,po:200', 'gericht', ''],
+    ['Muscheln|Miesmuscheln|Venusmuscheln|Jakobsmuscheln|Vongole|Austern', 120, 18, 4, 3.5, 0, 150, 'po:150,x:150', 'fisch', ''],
 
     // Plant protein, nuts, seeds
     ['Tofu|Tofu natur|Naturtofu|Seidentofu', 122, 13, 1.5, 7, 1, 200, 'pk:200,po:150,s:100', 'pflanze', ''],
@@ -171,13 +188,18 @@
     ['Chiasamen|Chia|Chia-Samen', 490, 17, 8, 31, 34, 15, 'el:12,tl:5', 'nuss', ''],
     ['Leinsamen|Leinsaat|geschroteter Leinsamen|Leinsamen geschrotet', 520, 18, 2, 42, 27, 10, 'el:10,tl:4', 'nuss', ''],
     ['Sonnenblumenkerne|Sesam|Sesamsamen|Hanfsamen|Pinienkerne', 580, 21, 12, 51, 9, 20, 'el:10', 'nuss', ''],
+    ['gebrannte Mandeln|gebrannte Nüsse|kandierte Mandeln|gebrannte Erdnüsse|gebrannte Cashews', 500, 13, 45, 30, 6, 100, 'pk:100,hv:30,x:100', 'nuss', ''],
+    ['Maronen|Maroni|Esskastanien|Edelkastanien|Kastanien|heiße Maronen', 210, 3, 44, 2, 5, 150, 'pk:150,hv:40,x:10', 'nuss', ''],
 
     // Protein products
     ['Proteinpulver|Eiweißpulver|Whey|Whey Protein|Wheyprotein|Molkenprotein|Casein|Erbsenprotein|Sojaprotein|veganes Proteinpulver', 380, 78, 6, 5, 0, 30, 'ms:30,el:10,x:30', 'protein', ''],
-    ['Proteinshake|Eiweißshake|Shake|Protein-Shake|Proteinshake mit Wasser|Eiweißshake mit Wasser|Shake mit Wasser', 35, 7.1, 0.6, 0.5, 0, 330, 'gl:330,be:330,fl:330,x:330', 'protein', 'd'],
+    ['Proteinshake|Eiweißshake|Shake|Protein-Shake|Proteinshake mit Wasser|Eiweißshake mit Wasser|Shake mit Wasser|Whey Shake|Wheyshake', 35, 7.1, 0.6, 0.5, 0, 330, 'gl:330,be:330,fl:330,x:330', 'protein', 'd'],
     ['Proteinshake mit Milch|Eiweißshake mit Milch|Shake mit Milch|Protein-Shake mit Milch', 77, 10.2, 5, 1.8, 0, 330, 'gl:330,be:330,fl:330,x:330', 'protein', 'd'],
     ['Proteinriegel|Eiweißriegel|Protein Bar|Proteinbar|Protein-Riegel', 350, 32, 28, 11, 6, 60, 'st:60,ri:60,x:60', 'protein', ''],
     ['Proteinchips|Protein-Chips', 400, 40, 35, 10, 5, 30, 'pk:30', 'protein', ''],
+    ['Beef Jerky|Jerky|Trockenfleisch|Biltong|Bündnerfleisch', 280, 40, 10, 8, 0.5, 30, 'pk:50,x:30', 'protein', ''],
+    ['Protein-Eis|Proteineis|High-Protein-Eis|Eiweißeis', 100, 10, 12, 1.5, 2, 125, 'ku:60,be:250,x:125', 'protein', ''],
+    ['Proteinbrötchen|Eiweißbrötchen|Low-Carb-Brötchen|Protein-Brötchen', 270, 25, 12, 12, 8, 75, 'st:75,x:75,s:75', 'protein', ''],
 
     // Vegetables
     ['Brokkoli|Broccoli|Brokkoliröschen', 34, 3, 3, 0.4, 3, 150, 'po:150,s:150', 'gem', ''],
@@ -217,6 +239,8 @@
     ['Sellerie|Staudensellerie|Knollensellerie|Fenchel|Pastinake|Pastinaken|Petersilienwurzel|Rettich|Radieschen', 20, 1.2, 3, 0.2, 2.5, 100, 'st:40,s:60', 'gem', ''],
     ['Oliven|Olive|grüne Oliven|schwarze Oliven', 140, 1, 1, 14, 3, 30, 'st:4,x:4,hv:30,s:20', 'gem', ''],
     ['Tomatenmark', 80, 4.5, 13, 0.5, 4, 15, 'el:15,tl:5', 'gem', ''],
+    ['Steckrübe|Kohlrübe|Topinambur|Mairübchen|Rübe|Wurzelgemüse', 35, 1, 7, 0.2, 2.5, 150, 'po:150,st:150,s:100', 'gem', ''],
+    ['Pak Choi|Pak Choy|Bok Choy|Asiasalat', 18, 1.6, 2, 0.2, 1.5, 150, 'po:150,st:150,s:100', 'gem', ''],
 
     // Fruit
     ['Apfel|Äpfel|Apfelstücke|Apfelschnitze', 52, 0.3, 11.5, 0.2, 2.4, 150, 'st:150,x:150,s:75', 'obst', ''],
@@ -241,6 +265,9 @@
     ['Rosinen|Sultaninen|Trockenobst|Trockenfrüchte|getrocknete Aprikosen|getrocknete Cranberries|Trockenpflaumen|getrocknete Feigen', 300, 2.5, 68, 0.6, 5, 30, 'el:10,hv:30,s:20', 'obst', ''],
     ['Obst|Obstsalat|Früchte|Frucht|Fruchtsalat|Obstteller|Obststücke', 55, 0.7, 12, 0.3, 2, 150, 'po:150,s:75', 'obst', ''],
     ['Apfelmus|Apfelkompott|Kompott', 80, 0.3, 19, 0.1, 1.5, 100, 'el:20,s:60', 'obst', ''],
+    ['Feigen|Feige', 70, 1.3, 13, 0.4, 3, 50, 'st:50,x:50', 'obst', ''],
+    ['Papaya|Kaki|Sharonfrucht|Litschi|Lychee|Maracuja|Passionsfrucht|Guave|Drachenfrucht|Pitaya|exotische Früchte', 60, 0.8, 13, 0.3, 2.5, 150, 'st:150,x:150,hv:40,s:75', 'obst', ''],
+    ['Bratapfel|Bratäpfel|Ofenapfel|gebackener Apfel', 120, 1, 22, 3, 2.5, 200, 'st:200,x:200', 'obst', ''],
 
     // Sweets and snacks
     ['Schokolade|Vollmilchschokolade|Milchschokolade|Schoki|Schoko|Nussschokolade|weiße Schokolade', 540, 8, 56, 31, 2, 25, 'st:5,reihe:20,tafel:100,ri:40', 'suess', ''],
@@ -251,11 +278,11 @@
     ['Käsekuchen|Quarkkuchen|Cheesecake|Käsesahne', 230, 8, 24, 11, 0.5, 120, 'st:120,x:120', 'suess', ''],
     ['Torte|Sahnetorte|Schwarzwälder Kirschtorte|Buttercremetorte|Obsttorte|Frankfurter Kranz|Sachertorte', 290, 4, 31, 17, 1, 120, 'st:120,x:120', 'suess', ''],
     ['Obstkuchen|Apfelkuchen|Pflaumenkuchen|Zwetschgenkuchen|Erdbeerkuchen|Kirschkuchen|Rhabarberkuchen|Apfelstrudel|Strudel', 220, 3.5, 32, 8, 2, 120, 'st:120,x:120', 'suess', ''],
-    ['Keks|Kekse|Butterkeks|Butterkekse|Plätzchen|Cookies|Cookie|Doppelkeks|Spekulatius|Lebkuchen', 470, 7, 68, 19, 2, 30, 'st:10,x:10,hv:30', 'suess', ''],
+    ['Keks|Kekse|Butterkeks|Butterkekse|Plätzchen|Cookies|Cookie|Doppelkeks|Spekulatius|Vanillekipferl|Zimtsterne|Butterplätzchen|Weihnachtsplätzchen|Spitzbuben|Makronen|Kokosmakronen|Spritzgebäck|Pfeffernüsse', 470, 7, 68, 19, 2, 30, 'st:10,x:10,hv:30', 'suess', ''],
     ['Berliner|Krapfen|Kreppel|Donut|Donuts|Berliner Pfannkuchen', 370, 6, 48, 17, 1.5, 70, 'st:70,x:70', 'suess', ''],
     ['Muffin|Muffins|Brownie|Brownies|Cupcake|Cupcakes', 400, 5.5, 50, 20, 1.5, 80, 'st:80,x:80', 'suess', ''],
     ['Waffel|Waffeln|Belgische Waffel', 330, 6, 42, 15, 1, 60, 'st:60,x:60', 'suess', ''],
-    ['Eis|Eiscreme|Speiseeis|Eiskugel|Eiskugeln|Softeis|Eis am Stiel|Gelato|Sorbet', 200, 3.5, 24, 10, 0.5, 120, 'ku:60,st:70,x:120,be:500', 'suess', ''],
+    ['Eis|Eiscreme|Speiseeis|Eiskugel|Eiskugeln|Softeis|Eis am Stiel|Gelato|Sorbet|Erdbeereis|Himbeereis|Heidelbeereis|Waldbeereis|Johannisbeereis|Wassereis', 200, 3.5, 24, 10, 0.5, 120, 'ku:60,st:70,x:120,be:500', 'suess', ''],
     ['Chips|Kartoffelchips|Crisps|Tortillachips|Nachos|Paprikachips', 535, 6, 50, 34, 4, 30, 'hv:25,pk:175', 'suess', ''],
     ['Salzstangen|Salzbrezeln|Brezelsticks|Salzbrezel|Cracker|Kräcker', 390, 10, 74, 5, 3.5, 30, 'hv:25,pk:250', 'suess', ''],
     ['Popcorn', 430, 8, 60, 17, 10, 30, 'hv:15,pk:100', 'suess', ''],
@@ -267,6 +294,20 @@
     ['Zucker|Rohrzucker|Würfelzucker|Zuckerwürfel', 400, 0, 100, 0, 0, 4, 'tl:4,el:12,st:3,x:3,s:4,h:4', 'suess', ''],
     ['Kakao|heiße Schokolade|Trinkschokolade|Kakaogetränk|Schokomilch|Kakaomilch', 80, 3.5, 11, 2.5, 0.5, 250, 'ta:250,gl:250,be:300,x:250', 'getraenk', 'dh'],
     ['Milchshake|Milkshake|Bananenshake|Erdbeershake|Schokoshake|Bananenmilch', 110, 3.5, 17, 3, 0, 300, 'be:300,gl:300,x:300', 'getraenk', 'd'],
+    ['Stollen|Christstollen|Weihnachtsstollen|Butterstollen|Mandelstollen|Quarkstollen|Marzipanstollen|Mohnstollen|Stollenkonfekt', 400, 6, 55, 17, 2.5, 50, 'sch:50,st:50,x:50', 'suess', ''],
+    ['Lebkuchen|Elisenlebkuchen|Pfefferkuchen|Honigkuchen|Printen|Aachener Printen|Lebkuchenherz|Magenbrot', 380, 6, 65, 10, 3, 40, 'st:40,x:40', 'suess', ''],
+    ['Dominosteine|Dominostein', 380, 4.5, 65, 11, 2.5, 36, 'st:12,x:12', 'suess', ''],
+    ['Marzipan|Marzipanbrot|Marzipanriegel|Marzipanschwein', 460, 8, 50, 25, 3, 50, 'st:50,x:50,ri:40', 'suess', ''],
+    ['Marzipankartoffeln|Marzipankugeln', 460, 8, 50, 25, 3, 50, 'st:10,x:10', 'suess', ''],
+    ['Zimtschnecke|Cinnamon Roll|Kanelbulle|Zimtknoten|Nussschnecke|Puddingschnecke|Rosinenschnecke|Mohnschnecke', 360, 6, 50, 15, 2, 90, 'st:90,x:90', 'suess', ''],
+    ['Apfeltasche|Kirschtasche|Quarktasche|Plunder|Plunderstück|Plundergebäck|Puddingbrezel|Puddingteilchen|Teilchen|Hefeteilchen|Blätterteigtasche|Kopenhagener', 330, 4.5, 38, 17.5, 1.5, 100, 'st:100,x:100', 'suess', ''],
+    ['Tiramisu|Tiramisù', 280, 5, 28, 16.5, 0.5, 150, 'po:150,st:150,x:150', 'suess', ''],
+    ['Mousse au Chocolat|Schokomousse|Schokoladenmousse|Mousse', 300, 5, 25, 20, 1.5, 100, 'po:100,be:100,x:100', 'suess', ''],
+    ['Panna Cotta|Crème brûlée|Creme brulee|Crema Catalana', 250, 3, 20, 18, 0, 120, 'po:120,st:120,x:120', 'suess', ''],
+    ['Kaiserschmarrn|Kaiserschmarren|Schmarrn', 220, 7, 28, 9, 1, 300, 'po:300,x:300', 'suess', ''],
+    ['Arme Ritter|Armer Ritter|French Toast|Pain perdu', 230, 8, 27, 10, 1.5, 150, 'st:75,sch:75,x:75', 'suess', ''],
+    ['Energy Balls|Energiebällchen|Energy Bites|Dattelbällchen|Protein Balls|Proteinbällchen', 400, 10, 45, 18, 7, 40, 'st:20,x:20', 'suess', ''],
+    ['Erdnussflips|Flips|Erdnusslocken', 520, 13, 50, 30, 3, 30, 'hv:30,pk:150,po:30', 'suess', ''],
 
     // Drinks
     ['Wasser|Mineralwasser|Sprudel|Leitungswasser|Sprudelwasser|stilles Wasser|Tafelwasser', 0, 0, 0, 0, 0, 250, 'gl:250,fl:500,ta:250,x:250', 'getraenk', 'dw'],
@@ -276,11 +317,11 @@
     ['Latte Macchiato|Latte|Milchkaffee|Café au Lait|Caffè Latte|Kaffee Latte', 50, 2.6, 3.8, 2.8, 0, 300, 'gl:300,ta:300,be:350,x:300', 'getraenk', 'dhk'],
     ['Chai Latte|Matcha Latte', 70, 2.5, 10, 2.5, 0, 300, 'gl:300,ta:300,x:300', 'getraenk', 'dh'],
     ['Tee|Kräutertee|Früchtetee|grüner Tee|schwarzer Tee|Pfefferminztee|Ingwertee|Kamillentee|Rooibos|Rooibostee|Fencheltee|Salbeitee|Earl Grey', 1, 0, 0.2, 0, 0, 250, 'ta:250,be:300,gl:250,kanne:1000,x:250', 'getraenk', 'dhw'],
-    ['Orangensaft|O-Saft|Saft|Fruchtsaft|Multivitaminsaft|Multisaft|Grapefruitsaft|Traubensaft|Kirschsaft|Direktsaft|Ananassaft|Mangosaft', 45, 0.7, 9.5, 0.2, 0.2, 200, 'gl:200,fl:1000,x:200', 'getraenk', 'd'],
+    ['Orangensaft|O-Saft|Saft|Fruchtsaft|Multivitaminsaft|Multisaft|Grapefruitsaft|Direktsaft|Ananassaft|Mangosaft', 45, 0.7, 9.5, 0.2, 0.2, 200, 'gl:200,fl:1000,x:200', 'getraenk', 'd'],
     ['Apfelsaft|Apfeldirektsaft|naturtrüber Apfelsaft', 46, 0.1, 11, 0.1, 0.1, 200, 'gl:200,fl:1000,x:200', 'getraenk', 'd'],
     ['Apfelschorle|Schorle|Saftschorle|Fruchtschorle|Johannisbeerschorle|Rhabarberschorle|Apfelsaftschorle', 24, 0, 5.5, 0, 0, 300, 'gl:300,fl:500,x:300', 'getraenk', 'dw'],
-    ['Cola|Limo|Limonade|Spezi|Eistee|Softdrink|Brause|Orangenlimonade|Zitronenlimonade|Ginger Ale|Tonic|Tonic Water|Bitter Lemon|Fassbrause|Mate', 42, 0, 10.6, 0, 0, 330, 'do:330,gl:250,fl:500,x:330', 'getraenk', 'd'],
-    ['Cola Zero|Cola light|Cola zuckerfrei|Limo zuckerfrei|zuckerfreie Limo|Light-Limo|Zero', 0.3, 0, 0.1, 0, 0, 330, 'do:330,gl:250,fl:500,x:330', 'getraenk', 'd'],
+    ['Cola|Limo|Limonade|Spezi|Eistee|Softdrink|Brause|Orangenlimonade|Zitronenlimonade|Ginger Ale|Tonic|Tonic Water|Bitter Lemon|Fassbrause|Fanta|Sprite|Mezzo Mix|Mezzomix|Seven Up|Almdudler|Bionade|Ginger Beer', 42, 0, 10.6, 0, 0, 330, 'do:330,gl:250,fl:500,x:330', 'getraenk', 'd'],
+    ['Cola Zero|Cola light|Cola zuckerfrei|Limo zuckerfrei|zuckerfreie Limo|Light-Limo|Zero|Coke Zero|Pepsi Max|Fanta Zero|Sprite Zero', 0.3, 0, 0.1, 0, 0, 330, 'do:330,gl:250,fl:500,x:330', 'getraenk', 'd'],
     ['Energy Drink|Energydrink|Energy', 45, 0, 11, 0, 0, 250, 'do:250,x:250', 'getraenk', 'd'],
     ['Bier|Pils|Pilsener|Helles|Weizen|Weißbier|Hefeweizen|Export|Kölsch|Altbier|Lager|Dunkles|Bockbier|Märzen|Weizenbier|Pale Ale|IPA', 43, 0.5, 3.1, 0, 0, 500, 'gl:300,fl:500,do:500,x:500', 'getraenk', 'da'],
     ['Radler|Alster|Alsterwasser|Panaché', 40, 0.3, 6, 0, 0, 500, 'gl:300,fl:500,x:500', 'getraenk', 'da'],
@@ -289,9 +330,13 @@
     ['Glühwein|Punsch', 100, 0, 12, 0, 0, 200, 'ta:200,gl:200,x:200', 'getraenk', 'dah'],
     ['Weinschorle|Weißweinschorle|Rotweinschorle|Gespritzter', 38, 0, 1.3, 0, 0, 250, 'gl:250,x:250', 'getraenk', 'da'],
     ['Apfelwein|Ebbelwoi|Äppler|Äppelwoi|Ebbelwei|Stöffche|Cidre|Cider', 45, 0, 2, 0, 0, 300, 'gl:300,fl:1000,x:300', 'getraenk', 'da'],
-    ['Schnaps|Wodka|Whisky|Whiskey|Gin|Rum|Obstler|Tequila|Ouzo|Grappa|Kurzer|Klarer|Shot|Shots|Brandy|Likör|Amaretto', 230, 0, 2, 0, 0, 20, 'gl:20,x:20', 'getraenk', 'da'],
+    ['Schnaps|Wodka|Whisky|Whiskey|Gin|Rum|Obstler|Tequila|Ouzo|Grappa|Kurzer|Klarer|Shot|Shots|Brandy|Likör|Amaretto|Weinbrand|Cognac|Sambuca|Calvados', 230, 0, 2, 0, 0, 20, 'gl:20,x:20', 'getraenk', 'da'],
     ['Cocktail|Aperol Spritz|Spritz|Hugo|Mojito|Caipirinha|Gin Tonic|Longdrink', 90, 0, 9, 0, 0, 250, 'gl:250,x:250', 'getraenk', 'da'],
     ['Smoothie|Fruchtsmoothie|grüner Smoothie', 55, 0.7, 12, 0.3, 1.5, 250, 'gl:250,fl:250,x:250', 'getraenk', 'd'],
+    ['Kinderpunsch|alkoholfreier Punsch|Früchtepunsch|Apfelpunsch|alkoholfreier Glühwein|Punsch ohne Alkohol|Glühwein ohne Alkohol|heißer Apfelsaft', 50, 0.1, 12, 0, 0, 200, 'ta:200,gl:200,x:200', 'getraenk', 'dh'],
+    ['Traubensaft|Kirschsaft|Johannisbeersaft|Kirschnektar|Johannisbeernektar|Holundersaft', 70, 0.3, 16.5, 0, 0.1, 200, 'gl:200,fl:1000,x:200', 'getraenk', 'd'],
+    ['Mate-Limonade|Club-Mate|Mate|Mate-Limo', 20, 0, 5, 0, 0, 500, 'fl:500,do:330,gl:250,x:500', 'getraenk', 'd'],
+    ['Kombucha', 15, 0, 3.5, 0, 0, 330, 'fl:330,gl:250,x:330', 'getraenk', 'd'],
 
     // Dishes
     ['Spaghetti Bolognese|Nudeln Bolognese|Pasta Bolognese|Bolognese|Spaghetti Bolo|Nudeln mit Bolognese|Spaghetti mit Bolognese|Pasta mit Bolognese|Nudeln mit Hackfleischsoße|Spaghetti mit Hackfleischsoße', 140, 7, 17, 4.5, 1.7, 450, 'po:450,x:450', 'gericht', ''],
@@ -322,6 +367,21 @@
     ['Hot Dog|Hotdog', 250, 10, 22, 13, 1, 150, 'st:150,x:150', 'gericht', ''],
     ['Wrap mit Hähnchen|Hähnchenwrap|Hähnchen-Wrap|Chicken Wrap|Chickenwrap|Wrap gefüllt|gefüllter Wrap', 200, 11, 21, 7.5, 2, 250, 'st:250,x:250', 'gericht', ''],
     ['Grüne Soße|Grüne Sauce|Grie Soß|Frankfurter Grüne Soße', 120, 4, 4, 10, 0.5, 150, 'po:150,s:100', 'gericht', ''],
+    ['Langos|Lángos|Langosch', 280, 7, 32, 13, 1.5, 250, 'st:250,x:250', 'gericht', 'z'],
+    ['Lahmacun|türkische Pizza', 220, 9, 30, 7, 2, 200, 'st:200,x:200', 'gericht', 'z'],
+    ['Pide', 250, 11, 32, 8.5, 1.5, 350, 'st:350,x:350', 'gericht', ''],
+    ['Börek|Burek|Sigara Börek|Spinatbörek|Käsebörek|Hackbörek', 300, 9, 28, 17, 1.5, 150, 'st:150,x:150', 'gericht', ''],
+    ['Frühlingsrolle|Frühlingsrollen|Spring Rolls|Minifrühlingsrollen', 230, 5, 25, 12, 2, 120, 'st:60,x:60', 'gericht', ''],
+    ['Gyoza|Dumplings|Dim Sum|Wan Tan|Wantan|Wontons|Jiaozi|Teigtaschen|Momos', 200, 8, 25, 7.5, 1.5, 150, 'st:25,x:25,po:150', 'gericht', ''],
+    ['Quiche|Quiche Lorraine|Gemüsequiche|Lauchquiche|Spinatquiche', 270, 9, 18, 18, 1, 150, 'st:150,x:150', 'gericht', ''],
+    ['Zwiebelkuchen', 235, 7, 22, 13, 1.5, 150, 'st:150,x:150', 'gericht', 'z'],
+    ['Strammer Max', 220, 13, 15, 12, 1.5, 200, 'po:200,st:200,x:200', 'gericht', ''],
+    ['Bauernfrühstück', 170, 7, 12, 10.5, 1.5, 350, 'po:350,x:350', 'gericht', 'z'],
+    ['Shakshuka|Schakschuka|Eier in Tomatensoße', 110, 6, 6, 7, 1.5, 350, 'po:350,x:350', 'gericht', 'z'],
+    ['Hühnerfrikassee|Frikassee|Hühnchenfrikassee|Geflügelfrikassee|Ragout fin', 130, 11, 5, 7.5, 0.5, 300, 'po:300,x:300', 'gericht', ''],
+    ['Caesar Salad|Caesar Salat|Caesars Salad|Cäsarsalat', 150, 8, 7, 10, 1.5, 300, 'po:300,x:300', 'gericht', ''],
+    ['griechischer Salat|Bauernsalat|Hirtensalat|Greek Salad', 110, 4, 4, 9, 1.5, 300, 'po:300,x:300', 'gericht', 'z'],
+    ['Caprese|Tomate Mozzarella|Insalata Caprese|Tomaten mit Mozzarella', 160, 9, 3, 12.5, 1, 250, 'po:250,x:250', 'gericht', ''],
 
     // Fats, sauces, spreads
     ['Öl|Olivenöl|Rapsöl|Sonnenblumenöl|Pflanzenöl|Bratöl|Leinöl|Kokosöl|Sesamöl|Walnussöl|Kürbiskernöl|Speiseöl|Butterschmalz|Ghee|Schmalz', 880, 0, 0, 99.5, 0, 10, 'el:10,tl:4,s:10', 'fett', ''],
@@ -403,6 +463,7 @@
     return { first, single };
   }
   const BASE_IDX = buildIndex(BASE);
+  const SHORT_HEADS = new Set(['eis', 'tee', 'dip']);
   const RAW = new Set(['roh', 'rohe', 'roher', 'rohes', 'ungekocht', 'ungekochte', 'ungekochter', 'trocken', 'trockene', 'trockener']);
   const RAWOF = new Map();
   BASE.forEach(f => { if (/ roh$/.test(f.n)) { const b = BASE.find(x => x.n === f.n.replace(/ roh$/, '')); if (b) RAWOF.set(b.key, f); } });
@@ -433,9 +494,12 @@
     // German compounds: the last part names the food ("erdbeerjoghurt", "kräutertee", "vollkornnudeln")
     const t = toks[i], ts = stems[i];
     let suf = null;
+    // The front part needs three letters, and a last part of three letters counts only for a few common ones
+    // (SHORT_HEADS); otherwise "weiß" became ice cream and "Marzipan" an IPA (2.14).
     for (const idx of idxs) for (const e of idx.single) {
       if (e.len < 3 && e.raw !== 'öl') continue;
-      if ((t.length > e.len && t.endsWith(e.raw)) || (ts.length > e.len && ts.endsWith(e.raw)) || (ts.length > e.toks[0].length && e.toks[0].length >= 3 && ts.endsWith(e.toks[0]))) {
+      if (e.len === 3 && !SHORT_HEADS.has(e.raw)) continue;
+      if ((t.length - e.len >= 3 && t.endsWith(e.raw)) || (ts.length - e.len >= 3 && ts.endsWith(e.raw)) || (ts.length - e.toks[0].length >= 3 && e.toks[0].length >= 3 && ts.endsWith(e.toks[0]))) {
         if (!suf || e.len > suf.len || (e.len === suf.len && e.f.own && !suf.f.own)) suf = { f: e.f, n: 1, len: e.len, used: 1, compound: true, syn: t[0].toUpperCase() + t.slice(1) };
       }
     }
@@ -444,6 +508,9 @@
     let fz = null;
     for (const idx of idxs) for (const e of idx.single) {
       if (e.len < 5 || Math.abs(e.len - t.length) > 2) continue;
+      // A typing error never turns a word into alcohol ("Sprite" is no Spritz): it would distort the patterns and
+      // the experiment without alcohol; an unknown word stays visible instead (2.14)
+      if (e.f.fl.includes('a')) continue;
       const d = dist(t, e.raw, t.length >= 9 ? 2 : 1);
       if (d >= 0 && (!fz || d < fz.d || (d === fz.d && e.f.own && !fz.f.own))) fz = { f: e.f, n: 1, len: e.len, used: 1, compound: true, fuzzy: true, d, syn: e.orig };
     }

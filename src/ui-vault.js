@@ -35,6 +35,7 @@
   function vaultRender(rk) {
     if (!ui.vault.on) return false;
     if (rk !== ui.vault.route) { vaultLock(false); return false; }
+    vtKeep();
     $('#view').innerHTML = vaultView();
     const f = $('#view [data-vfocus]'); if (f) { f.focus({ preventScroll: true }); }
     return true;
@@ -191,6 +192,13 @@
       <label class="field full"><span>Nächster kleiner Schritt</span><input name="nextStep" value="${esc(v.nextStep)}"></label>
       <div class="field full"><span>Muster</span>${vc.patterns.length ? patternChips(v, 'vt.entry.pat') : '<span class="small muted">Noch keine Muster angelegt.</span>'}</div>
       <div class="sheet-foot full"><button class="btn quiet" data-a="vt.back">Abbrechen</button>${d.id ? `<button class="btn ghost danger" data-a="vt.entry.del" data-id="${d.id}">Löschen</button>` : ''}<button class="btn" data-a="vt.entry.save">Speichern</button></div></form>`;
+  }
+  // What is being typed in an entry or a pattern survives any rebuild of the view (2.14). Before, a short switch to
+  // another app re-rendered the room and emptied an entry that was being written.
+  function vtKeep() {
+    if ($('#vt-entry')) vtEntrySync();
+    const pf = $('#vt-pattern'), ed = ui.vault.edit;
+    if (pf && ed && ed.type === 'pattern') { const d = new FormData(pf); ['name', 'summary', 'description', 'guideline'].forEach(k => { ed.v[k] = String(d.get(k) || ''); }); }
   }
   function vtEntrySync() {
     const f = $('#vt-entry'); if (!f || !ui.vault.edit) return;

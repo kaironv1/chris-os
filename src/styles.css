@@ -163,8 +163,15 @@ main { margin-left: var(--rail); padding: 34px 40px 120px; }
 .btn.olive { background: var(--olive); color: #fff; }
 :root[data-theme="dark"] .btn.olive { color: #161a0c; }
 .btn.danger { background: transparent; color: var(--rust); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.btn svg { width: 18px; height: 18px; }
+.btn svg { width: 18px; height: 18px; flex: none; }
 .btn.block { width: 100%; }
+/* Long labels never push the page sideways: a button keeps its width (as with nowrap), but never grows wider than
+   its container; on narrow phones its label may then wrap onto a second line. */
+.btn { flex-shrink: 0; max-width: 100%; }
+@media (max-width: 520px) {
+  .btn { white-space: normal; height: auto; min-height: 44px; padding-top: 6px; padding-bottom: 6px; line-height: 1.2; text-align: center; }
+  .btn.sm { height: auto; min-height: 36px; padding-top: 5px; padding-bottom: 5px; }
+}
 .icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 0; background: transparent; color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; }
 .icon-btn:hover { background: var(--surface-2); color: var(--ink); }
 .icon-btn svg { width: 20px; height: 20px; }

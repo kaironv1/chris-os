@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.13';
+  const VERSION = '2.14';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -176,8 +176,49 @@
   function save(quiet) {
     ver++; ui.memo = {};
     if (!quiet && S.meta) S.meta.changedAt = new Date().toISOString();
-    try { localStorage.setItem(KEY, JSON.stringify(S)); }
-    catch (e) { toast('Speichern fehlgeschlagen: Browser-Speicher voll? Bitte ein Backup anlegen.'); }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(S));
+      if (ui.saveFail) { ui.saveFail = false; if (ui.toastAct === exportBackup) { ui.toastAct = null; $('#toast').classList.add('hidden'); } }
+    } catch (e) {
+      // The entries are still in memory: the notice stays until the backup is saved (2.14)
+      ui.saveFail = true;
+      notice('Speichern fehlgeschlagen. Sichere deine Einträge jetzt als Backup, sonst fehlen sie nach dem Schließen.', 'Backup speichern', exportBackup);
+    }
+  }
+
+  // ---------- Storage on this device (2.14) ----------
+  // localStorage holds about 5 million characters per address (Chrome: 5 × 1024 × 1024, keys included); photos live
+  // in IndexedDB, which has far more room.
+  const LS_MAX = 5 * 1024 * 1024;
+  function lsUsed() {
+    if (ui.memo.ls != null) return ui.memo.ls;
+    let n = 0;
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); n += k.length + (localStorage.getItem(k) || '').length; } } catch (e) { /* blocked */ }
+    return (ui.memo.ls = n);
+  }
+  const fmtSize = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : n0(n / 1048576, 1) + ' MB';
+  // Asks the browser to keep the data when the device runs low on space. Chrome decides without asking (installed
+  // apps usually get it); ui.persist: true, false or null (unknown).
+  async function persistStorage() {
+    const st = navigator.storage;
+    if (!st || !st.persisted) { ui.persist = null; return; }
+    try { ui.persist = await st.persisted(); if (!ui.persist && st.persist) ui.persist = await st.persist(); } catch (e) { ui.persist = null; }
+    if (S && $('#view') && route().top === 'einstellungen' && !ui.vault.on) render();
+  }
+  async function photoSize() {
+    let n = 0, b = 0;
+    try { for (const [, blob] of await Photos.all()) { n++; b += blob.size || 0; } } catch (e) { /* no photos */ }
+    ui.photos = { n, b };
+    if ($('#view') && route().top === 'einstellungen' && !ui.vault.on) render();
+  }
+  function storageRow() {
+    const used = lsUsed(), pct = Math.round(used / LS_MAX * 100), ph = ui.photos;
+    if (!ph) photoSize();
+    const fill = 'Einträge ' + fmtSize(used) + ' von etwa 5 MB (' + pct + ' %)' + (ph && ph.n ? ', Fotos ' + fmtSize(ph.b) : '') + '.';
+    const keep = ui.persist === true ? ' Der Browser hält die Daten fest, auch wenn das Gerät knapp an Speicher ist.'
+      : ui.persist === false ? ' Bei knappem Gerätespeicher darf der Browser die Daten löschen; als installierte App passiert das seltener. Dein Backup schützt dich in jedem Fall.' : '';
+    const warn = pct >= 85 ? ' Fast voll: Speichere ein Backup.' : '';
+    return `<div data-row="storage"><div><span class="lbl">Speicher auf diesem Gerät</span><p class="hint">${fill}${warn}${keep}</p></div></div>`;
   }
 
   // ---------- Data state across devices ----------
@@ -231,11 +272,11 @@
         await new Promise(res => { const req = db.transaction('p').objectStore('p').openCursor(); req.onsuccess = () => { const c = req.result; if (c) { this.urls.set(c.key, URL.createObjectURL(c.value)); c.continue(); } else res(); }; req.onerror = () => res(); });
       } catch (e) { /* storage unavailable */ }
     },
-    async put(id, blob) { await this.run('readwrite', s => s.put(blob, id)); const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.set(id, URL.createObjectURL(blob)); },
-    async del(id) { await this.run('readwrite', s => s.delete(id)); const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.delete(id); },
+    async put(id, blob) { await this.run('readwrite', s => s.put(blob, id)); ui.photos = null; const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.set(id, URL.createObjectURL(blob)); },
+    async del(id) { await this.run('readwrite', s => s.delete(id)); ui.photos = null; const o = this.urls.get(id); if (o) URL.revokeObjectURL(o); this.urls.delete(id); },
     async all() { const db = await this.open(); return new Promise(res => { const out = []; const req = db.transaction('p').objectStore('p').openCursor(); req.onsuccess = () => { const c = req.result; if (c) { out.push([c.key, c.value]); c.continue(); } else res(out); }; req.onerror = () => res(out); }); },
     async get(id) { return this.run('readonly', s => s.get(id)); },
-    async clear() { await this.run('readwrite', s => s.clear()); for (const u of this.urls.values()) URL.revokeObjectURL(u); this.urls.clear(); },
+    async clear() { await this.run('readwrite', s => s.clear()); ui.photos = null; for (const u of this.urls.values()) URL.revokeObjectURL(u); this.urls.clear(); },
     url(id) { return this.urls.get(id) || null; }
   };
   async function shrink(file) {
@@ -263,8 +304,8 @@
       WX = { at: Date.now(), hk, ok, home, office };
       try { localStorage.setItem(WXKEY, JSON.stringify(WX)); } catch (e) { /* ignore */ }
       ui.wxError = false; ui.memo = {};
-      render();
-    } catch (e) { ui.wxError = true; if (!WX) render(); }
+      if (!ui.vault.on) render();
+    } catch (e) { ui.wxError = true; if (!WX && !ui.vault.on) render(); }
   }
 
   // ---------- Weather, pollen and air quality per day (2.8) ----------
@@ -501,6 +542,9 @@
   }
   function backupNote() {
     const m = S.meta, lb = m.lastBackup, r = m.restored;
+    // Storage nearly full (2.14): goes before every other note
+    const full = Math.round(lsUsed() / LS_MAX * 100);
+    if (full >= 85) return `<div class="note" style="margin-bottom:20px" data-note="storage">${ic('alert')}<div class="grow">Der Speicher für deine Einträge auf diesem Gerät ist zu ${full} % voll. Speichere ein Backup, damit nichts verloren geht.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button></div>`;
     const age = lb ? E.diffDays(lb, E.today()) : E.diffDays(m.setup || E.today(), E.today());
     if (!lb && m.dismissed.welcome !== true) {
       return `<div class="note info" style="margin-bottom:20px">${ic('info')}<div class="grow"><b>Deine Daten bleiben ${WEB ? 'auf diesem Gerät' : 'in diesem Browser auf deinem PC'}.</b> Speichere ab und zu ein Backup (Einstellungen), dann ist nichts verloren, falls Browserdaten gelöscht werden.</div><button class="btn sm quiet" data-a="backup.export">Backup speichern</button><button class="icon-btn" data-a="dismiss" data-k="welcome" aria-label="Hinweis schließen">${ic('x')}</button></div>`;
@@ -703,7 +747,7 @@
     for (const s of S.training.sessions) items.push({ date: s.date, kind: 'gym', s });
     for (const r of S.training.runs) items.push({ date: r.date, kind: 'run', r });
     const rl = {};
-    for (const r of S.training.routineLog) { const k = r.date + r.id; rl[k] = rl[k] || { date: r.date, kind: 'routine', id: r.id, n: 0 }; rl[k].n++; }
+    for (const r of S.training.routineLog) { const k = r.date + r.id; rl[k] = rl[k] || { date: r.date, kind: 'routine', id: r.id, n: 0, min: 0 }; rl[k].n++; rl[k].min += +r.min || 0; }
     items.push(...Object.values(rl));
     items.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
     if (!items.length) return `<div class="empty">Noch nichts eingetragen.</div>`;
@@ -715,7 +759,9 @@
           ${x.s.imported ? '' : `<button class="icon-btn" data-a="session.delete" data-id="${x.s.id}" aria-label="Training löschen">${ic('trash')}</button>`}</li>`;
       }
       if (x.kind === 'run') return `<li><span class="check" aria-hidden="true" style="box-shadow:none;color:var(--c2)">${ic('run')}</span><div class="check-body"><div class="check-name">Laufen</div><div class="check-meta">${E.fmtDate(x.date)}, ${x.r.min} Min.${x.r.km ? ', ' + n0(x.r.km) + ' km' : ''}${x.r.feel ? ', ' + esc(x.r.feel) : ''}</div></div><button class="icon-btn" data-a="run.delete" data-id="${x.r.id}" aria-label="Lauf löschen">${ic('trash')}</button></li>`;
-      return `<li><span class="check" aria-hidden="true" style="box-shadow:none">${ic('check')}</span><div class="check-body"><div class="check-name">${esc(S.training.routines[x.id].name)}${x.n > 1 ? ' ' + x.n + '×' : ''}</div><div class="check-meta">${E.fmtDate(x.date)}</div></div></li>`;
+      // The stretching player logs 'dehnen' for the morning and evening programmes, which have no routine of their own
+      const rn = (S.training.routines[x.id] || {}).name || (x.id === 'dehnen' ? 'Dehnen' : x.id);
+      return `<li><span class="check" aria-hidden="true" style="box-shadow:none">${ic('check')}</span><div class="check-body"><div class="check-name">${esc(rn)}${x.n > 1 ? ' ' + x.n + '×' : ''}</div><div class="check-meta">${E.fmtDate(x.date)}${x.min ? ', ' + x.min + ' Min.' : ''}</div></div></li>`;
     }).join('')}</ul></div>`;
   }
 
@@ -1077,6 +1123,7 @@
         <div><div><span class="lbl">Backup speichern</span><p class="hint">Eine Datei mit allem, inklusive Fotos. ${lbText}</p></div><button class="btn sm" data-a="backup.export">${ic('download')}Backup speichern</button></div>
         <div><div><span class="lbl">Backup laden</span><p class="hint">Ersetzt alle Daten auf diesem Gerät durch das Backup.${rs ? ' Zuletzt eingespielt: ' + esc(backupLabel(rs.from, rs.exported)) + '.' : ''}</p></div><label class="btn sm quiet">${ic('upload')}Datei wählen<input type="file" accept=".json,application/json" data-c="backup.import" class="sr"></label></div>
         <div><div><span class="lbl">Kleiderliste importieren</span><p class="hint">Excel (.xlsx), CSV oder Text in deinem bisherigen Format. Neue Teile kommen dazu, bekannte Nummern werden aktualisiert.</p></div><div class="row"><button class="btn sm quiet" data-a="import.open">${ic('upload')}Importieren</button><button class="btn sm ghost" data-a="csv.template">CSV-Vorlage</button></div></div>
+        ${storageRow()}
         <div><div><span class="lbl">Alles zurücksetzen</span><p class="hint">${seedEl() ? 'Löscht deine Einträge und Fotos und lädt die Startdaten neu.' : 'Löscht alle Daten und Fotos auf diesem Gerät. Danach kannst du ein Backup einspielen.'}</p></div><button class="btn sm danger" data-a="reset">Zurücksetzen</button></div>
       </div></div>
       ${lockPanel()}
@@ -1603,7 +1650,7 @@
     let rz = null; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(wireCharts, 150); });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); });
     setInterval(() => { const c = document.querySelector('[data-clock]'); if (c) c.textContent = minText(+clockText()); badges(); }, 15000);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) { vaultOnHidden(); return; } vaultOnVisible(); refreshWeather(); refreshEnv(); refreshTrips(); render(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { vaultOnHidden(); return; } vaultOnVisible(); refreshWeather(); refreshEnv(); refreshTrips(); if (!ui.vault.on) render(); });
   }
   // ---------- Welcome: no data on this device yet ----------
   const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#3E5C8A"/><path d="M341 171A120 120 0 1 0 341 341" fill="none" stroke="#F4F1EB" stroke-width="58" stroke-linecap="round"/><circle cx="364" cy="256" r="31" fill="#D39A6A"/></svg>';
@@ -1680,12 +1727,14 @@
   function offerUpdate(apply) {
     ui.update = apply;
     notice('Neue Version bereit', 'Jetzt laden', apply);
-    if (S && $('#view') && route().top === 'einstellungen') render();
+    // Not while the vault is open on this page: a rebuild would drop what is being typed there
+    if (S && $('#view') && route().top === 'einstellungen' && !ui.vault.on) render();
   }
 
   function start() {
     shell();
     render();
+    persistStorage();
     refreshWeather();
     refreshEnv();
     refreshTrips();
@@ -1694,7 +1743,7 @@
   async function boot() {
     S = load(); applyTheme(); loadWx();
     if (WEB) {
-      Lock.init({ appName: 'Chris OS', grace: 60, method: HELLO ? 'Windows Hello' : 'Fingerabdruck', onReset: wipeDevice }).then(r => { ui.lockOk = r.supported; if (S && $('#view') && route().top === 'einstellungen') render(); });
+      Lock.init({ appName: 'Chris OS', grace: 60, method: HELLO ? 'Windows Hello' : 'Fingerabdruck', onReset: wipeDevice }).then(r => { ui.lockOk = r.supported; if (S && $('#view') && route().top === 'einstellungen' && !ui.vault.on) render(); });
       PWA.init({ onUpdate: offerUpdate });
     }
     if (!S) { welcome(); return; }
