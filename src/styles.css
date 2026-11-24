@@ -318,6 +318,9 @@ details.how[open] summary { margin-bottom: 6px; }
 /* ---------- Wardrobe grid ---------- */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
 .search { height: 36px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); padding: 0 12px; min-width: 200px; }
+/* A search field that shares a row with its button may shrink: at 360 px the place search pushed „Suchen“ out of the
+   dialog and the packing list pushed „Hinzufügen“ out of the page (2.15) */
+.search.grow { min-width: 0; }
 .wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .wcard { border: 0; padding: 10px 10px 12px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-align: left; position: relative; display: flex; flex-direction: column; }
 .wcard:hover { box-shadow: inset 0 0 0 1px var(--line-strong); }
@@ -437,7 +440,7 @@ details.table-view summary { font-size: 13px; color: var(--denim); cursor: point
 .field > span { font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .field input, .field select, .field textarea { height: 42px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); padding: 0 12px; width: 100%; }
 .field textarea { height: auto; min-height: 76px; padding: 10px 12px; resize: vertical; }
-.field input[type="range"] { padding: 0; height: 28px; border: 0; background: transparent; accent-color: var(--denim); }
+.field input[type="range"] { padding: 0; height: 28px; border: 0; background: transparent; accent-color: var(--denim); margin-left: 0; margin-right: 0; }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--denim); box-shadow: 0 0 0 3px var(--denim-wash); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
 .form-grid .full { grid-column: 1 / -1; }

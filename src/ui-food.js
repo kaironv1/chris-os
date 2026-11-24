@@ -206,7 +206,9 @@
   function foodDialog(id, name) {
     const f = id ? S.nutrition.foods.find(x => x.id === id) : { name: name ? capF(name) : '', alias: '', dp: 100, kcal: '', p: '', c: '', f: '', fib: '' };
     ui.nFood = { id: id || null, per: id ? 'portion' : 'portion' };
-    const k = id ? f.dp / 100 : 1, v = x => (x === '' || x == null ? '' : n0(x * k, 1));
+    // Number fields need a point as decimal mark: n0 wrote „17,5“ (or „1.155“ for 1155 kcal), the field stayed empty or
+    // showed 1,155, and saving turned the value into 0 (2.15)
+    const k = id ? f.dp / 100 : 1, v = x => (x === '' || x == null ? '' : String(Math.round(x * k * 10) / 10));
     openDialog(`${dlgHead(id ? f.name : 'Lebensmittel anlegen')}<form class="form-grid" id="fd-form" onsubmit="return false">
       <label class="field full"><span>Name</span><input name="name" value="${esc(f.name)}" ${id ? '' : 'autofocus'}></label>
       <label class="field full"><span>Weitere Namen (optional, mit Komma)</span><input name="alias" value="${esc(f.alias || '')}" placeholder="z. B. Shake, Proteinshake"></label>

@@ -22,6 +22,8 @@
     render();
   }
   function vaultLock(rerender) {
+    // A preparation saves itself on leaving (back, status, tab): closing the room counts as leaving too (2.15)
+    if (vOpen()) vtPrepKeep();
     rtTimers.splice(0).forEach(clearTimeout);
     clearTimeout(vHideTimer); vHideTimer = null;
     vsess = null; vc = null;
@@ -43,7 +45,7 @@
   function vaultSave() {
     if (!vOpen()) return;
     const hdr = S.vault, sess = vsess, c = vc;
-    vSaving = vSaving.then(() => VT.write(hdr, sess, c)).then(() => { save(); }).catch(() => { ui.vault.msg = 'Speichern hat nicht geklappt.'; });
+    vSaving = vSaving.then(() => VT.write(hdr, sess, c)).then(() => { if (S.vault === hdr) save(); }).catch(() => { ui.vault.msg = 'Speichern hat nicht geklappt.'; });
   }
   function vaultMsg(m) { ui.vault.msg = m; render(); }
 
@@ -80,6 +82,7 @@
     } catch (e) { ui.vault.busy = false; vaultMsg(e && e.message === 'key' ? 'Der Fingerabdruck passt nicht mehr zu diesem Raum. Nimm die Passphrase und richte ihn danach neu ein.' : 'Das hat nicht geklappt. Du kannst die Passphrase nehmen.'); }
   }
   async function vaultOpened(sess) {
+    await vSaving;
     vsess = sess; vc = await VT.read(S.vault, sess);
     ui.vault.busy = false; ui.vault.msg = ''; ui.vault.tab = 'start';
     ui.vault.hint = !prfReady() && window.isSecureContext && window.PublicKeyCredential ? 'prf' : '';
@@ -194,8 +197,10 @@
       <div class="sheet-foot full"><button class="btn quiet" data-a="vt.back">Abbrechen</button>${d.id ? `<button class="btn ghost danger" data-a="vt.entry.del" data-id="${d.id}">Löschen</button>` : ''}<button class="btn" data-a="vt.entry.save">Speichern</button></div></form>`;
   }
   // What is being typed in an entry or a pattern survives any rebuild of the view (2.14). Before, a short switch to
-  // another app re-rendered the room and emptied an entry that was being written.
+  // another app re-rendered the room and emptied an entry that was being written. Since 2.15 also a preparation; it
+  // is written into the preparation itself and saved, as when leaving it.
   function vtKeep() {
+    vtPrepKeep();
     if ($('#vt-entry')) vtEntrySync();
     const pf = $('#vt-pattern'), ed = ui.vault.edit;
     if (pf && ed && ed.type === 'pattern') { const d = new FormData(pf); ['name', 'summary', 'description', 'guideline'].forEach(k => { ed.v[k] = String(d.get(k) || ''); }); }
@@ -244,7 +249,7 @@
     const step = (k, t, hint) => `<li class="vt-step"><label class="field"><span class="vt-step-title">${t}</span><span class="small muted">${hint}</span><textarea name="${k}" rows="4" placeholder="In deinen Worten, so wie du redest">${esc(p[k])}</textarea></label></li>`;
     const pn = esc(partner());
     return `<div class="row wrap" style="gap:8px;margin-bottom:12px"><button class="btn sm quiet" data-a="vt.prep.list">${ic('back')}Vorbereitungen</button><span class="grow"></span>${seg('Stand', Object.entries(VT.prepStatus), p.status, { a: 'vt.prep.status', d: String(p.id) })}</div>
-      <form class="panel form-grid" id="vt-prep" onsubmit="return false">
+      <form class="panel form-grid" id="vt-prep" data-id="${p.id}" onsubmit="return false">
         <label class="field full"><span>Titel</span><input name="title" value="${esc(p.title)}" placeholder="Worum geht es in einem Satz?"></label>
         <label class="field full"><span>Worum geht es?</span><span class="small muted">Was ist passiert oder steht an? Ein paar Stichworte reichen.</span><textarea name="situation" rows="3">${esc(p.situation)}</textarea></label>
         <label class="field full"><span>Was willst du in diesem Gespräch erreichen?</span><span class="small muted">Ein realistisches Ziel für dieses eine Gespräch, nicht für die ganze Beziehung.</span><textarea name="goal" rows="2">${esc(p.goal)}</textarea></label>
@@ -267,11 +272,18 @@
       ${t ? `<div class="vt-marked">${marked}</div>` : ''}
       ${F.length ? `<ul class="vt-findings">${F.map(f => `<li class="vt-${f.kind}"><strong>${esc(f.label)}</strong> („${esc(f.text)}“): ${esc(f.hint)}</li>`).join('')}</ul>` : t ? '<p class="small" style="margin-top:8px;color:var(--olive)">Klingt nach dir. Nichts gefunden.</p>' : ''}</div>`;
   }
+  // Takes the editor's fields into the preparation; true when something changed (only then it counts as updated)
   function vtPrepSync(p) {
-    const f = $('#vt-prep'); if (!f) return;
-    const d = new FormData(f), g = k => String(d.get(k) || '');
-    ['title', 'situation', 'goal', 'validation', 'woundedPoint', 'eyeLevel', 'stopSignal', 'debrief'].forEach(k => { p[k] = g(k).trim(); });
-    p.updated = new Date().toISOString();
+    const f = $('#vt-prep'); if (!f || +f.dataset.id !== p.id) return false;
+    const d = new FormData(f); let ch = false;
+    ['title', 'situation', 'goal', 'validation', 'woundedPoint', 'eyeLevel', 'stopSignal', 'debrief'].forEach(k => { const v = String(d.get(k) || '').trim(); if ((p[k] || '') !== v) { p[k] = v; ch = true; } });
+    if (ch) p.updated = new Date().toISOString();
+    return ch;
+  }
+  function vtPrepKeep() {
+    const f = $('#vt-prep'); if (!f || !vc) return;
+    const p = vc.preps.find(x => x.id === +f.dataset.id);
+    if (p && vtPrepSync(p)) vaultSave();
   }
   // ----- Türschwelle -----
   const INTENTIONS = ['ruhig', 'neugierig', 'präsent', 'freundlich', 'verspielt', 'klar'];
@@ -477,7 +489,7 @@
     'vt.prep.from': el => { const e = vc.entries.find(x => x.id === +el.dataset.id); const p = VT.addPrep(vc, { title: e ? 'Zu: ' + e.title : '', situation: e && e.trigger ? e.trigger : '', entryId: e ? e.id : null }); ui.vault.tab = 'vorbereitung'; ui.vault.sel = null; ui.vault.prep = p.id; vaultSave(); render(); },
     'vt.prep.open': el => { ui.vault.prep = +el.dataset.id; render(); },
     'vt.prep.list': () => { const p = vc.preps.find(x => x.id === ui.vault.prep); if (p) { vtPrepSync(p); vaultSave(); } ui.vault.prep = null; render(); },
-    'vt.prep.status': el => { const p = vc.preps.find(x => x.id === +el.dataset.d); if (!p) return; vtPrepSync(p); p.status = el.dataset.v; vaultSave(); render(); },
+    'vt.prep.status': el => { const p = vc.preps.find(x => x.id === +el.dataset.d); if (!p) return; vtPrepSync(p); if (p.status !== el.dataset.v) { p.status = el.dataset.v; p.updated = new Date().toISOString(); } vaultSave(); render(); },
     'vt.prep.save': el => { const p = vc.preps.find(x => x.id === +el.dataset.id); if (!p) return; vtPrepSync(p); vaultSave(); toast('Gespeichert'); },
     'vt.prep.del': el => confirmDlg('Vorbereitung löschen?', 'Die Vorbereitung wird entfernt.', 'Löschen', () => { vc.preps = vc.preps.filter(x => x.id !== +el.dataset.id); ui.vault.prep = null; vaultSave(); render(); }, true),
     // Türschwelle

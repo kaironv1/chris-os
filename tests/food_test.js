@@ -135,4 +135,30 @@ i = one('2 Scheiben Stollen'); eq(i.g, 100);
 i = one('Kinderpunsch'); eq([i.g, i.fl], [200, 'dh'], 'heiß, ohne Alkohol');
 ok(F.count >= 360, 'mindestens 360 Lebensmittel und Gerichte');
 
+// 2.15: adjectives that are also drinks, alcohol-free drinks, words ending in "speise", names with a number word
+['dunkles Brot', 'helles Brötchen', '2 helle Brötchen', 'Dunkles Vollkornbrot', 'helle Soße', 'klare Brühe', 'klarer Tee', 'Kurze Nudeln', 'Espresso Shot',
+  'Spirulina Shot', 'Roggen-Weizen-Brot', 'Weizen Toast', 'Steak rosé', 'alkoholfreier Sekt', 'Sekt alkoholfrei', 'alkoholfreier Wein', 'Radler alkoholfrei',
+  'alkoholfreies Radler', 'Bier 0,0 %', '0,0 Bier', 'Weizen 0,0%', 'Bier ohne Alkohol', 'Virgin Mojito', 'Hugo alkoholfrei', 'alkoholfreier Gin Tonic', 'Kindersekt',
+  'Malzbier', 'Ingwerbier', 'Rumkugeln', 'Eierlikörkuchen', 'Götterspeise', 'Bethmännchen'].forEach(t => ok(!alc(t), 'kein Alkohol: ' + t));
+['ein Helles', '2 Helle', 'ein Dunkles', 'Weizen', '2 Kurze', 'ein Klarer', 'ein Rosé', '2 Shots', 'Craft Beer', 'Feuerzangenbowle', 'Erdbeerbowle', 'Sangria',
+  'Hard Seltzer', 'Jägermeister', 'Eierlikör', 'Baileys', 'Grog', 'Crémant', 'Lillet', 'Campari'].forEach(t => ok(alc(t), 'Alkohol: ' + t));
+i = one('alkoholfreier Sekt'); eq([i.key, i.g], ['f:alkoholfreier_wein', 200], 'ein Eintrag statt alkoholfreiem Bier und Sekt');
+i = one('Radler alkoholfrei'); eq([i.key, i.name], ['f:alkoholfreies_bier', 'Radler alkoholfrei']);
+i = one('2 Bier 0,0'); eq([i.key, i.g], ['f:alkoholfreies_bier', 1000], 'Menge bleibt');
+i = one('Virgin Mojito'); eq([i.key, i.name], ['f:alkoholfreier_cocktail', 'Mojito alkoholfrei']);
+eq([keyOf('alkoholfreies Bier'), keyOf('Alkoholfreies'), keyOf('Erdinger alkoholfrei'), keyOf('Joghurt 0,0 %')], ['f:alkoholfreies_bier', 'f:alkoholfreies_bier', 'f:alkoholfreies_bier', 'f:fettarmer_joghurt']);
+i = one('2 helle Brötchen'); eq([i.key, i.g], ['f:brötchen', one('2 Brötchen').g], 'helle zählt nicht, die Menge bleibt');
+eq([keyOf('Espresso Shot'), keyOf('klare Brühe'), keyOf('Steak rosé')], ['f:espresso', 'f:suppe', 'f:steak']);
+eq(P('Spirulina Shot').unknown, ['spirulina shot'], 'bleibt sichtbar unerkannt');
+eq([keyOf('Götterspeise'), keyOf('Nachspeise'), keyOf('Eierspeise'), keyOf('Quarkspeise'), keyOf('Speiseeis')], ['f:götterspeise', 'f:dessert', 'f:rührei', 'f:quarkspeise', 'f:eis'], 'Speise ist kein Eis');
+eq(P('Grießspeise').items.length, 0, 'unbekannte Speise bleibt unerkannt statt Eis');
+i = one('ein halbes Hähnchen'); eq([i.key, i.g], ['f:halbes_hähnchen', 350]);
+i = one('2 halbe Hähnchen'); eq(i.g, 700);
+i = one('halbes Brötchen'); eq([i.key, i.g], ['f:brötchen', one('Brötchen').g / 2], 'halb bleibt eine Menge');
+eq([keyOf('Bowl'), keyOf('Poke Bowl'), keyOf('Wan Tan Suppe'), keyOf('Leberkäsweck'), keyOf('Rippchen mit Kraut')], ['f:bowl', 'f:bowl', 'f:ramen', 'f:leberkäsbrötchen', 'f:kotelett+f:sauerkraut']);
+eq([keyOf('Cranberries'), keyOf('frische Cranberries'), keyOf('Dampfnudeln'), keyOf('Raclette-Käse'), keyOf('Fondue chinoise')], ['f:rosinen', 'f:beeren', 'f:germknödel', 'f:käse', 'f:fleischfondue']);
+i = one('Eiskaffee'); ok(i.fl.includes('k') && i.kcal > 200, 'Eiskaffee mit Eis und Sahne, zählt als Kaffee');
+i = one('Kokoswasser'); ok(i.kcal > 40 && i.fl.includes('w'), 'Kokoswasser hat Kalorien');
+ok(F.count >= 410, 'mindestens 410 Lebensmittel und Gerichte');
+
 console.log('food_test: ' + n + ' Prüfungen bestanden (' + F.count + ' Lebensmittel und Gerichte)');
