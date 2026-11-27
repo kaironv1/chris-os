@@ -7,7 +7,8 @@
   const expP = () => S.health.profile || {};
   // Only one experiment at a time, so the effects do not mix
   const expActive = () => exps().find(e => ['laeuft', 'geplant'].includes(XP.status(e, E.today()))) || null;
-  const xDay = d => { const t = E.today(); return d === t ? 'Heute' : d === E.addDays(t, -1) ? 'Gestern' : E.WD_LONG[E.weekday(d)]; };
+  // A week or more back the weekday alone is ambiguous (check-in after the fact, 2.16): "Am 17.11."
+  const xDay = d => { const t = E.today(); return d === t ? 'Heute' : d === E.addDays(t, -1) ? 'Gestern' : E.diffDays(d, t) >= 7 ? 'Am ' + E.fmtShort(d) : E.WD_LONG[E.weekday(d)]; };
   const listDe = a => (a.length > 1 ? a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1] : a.join(''));
   const FAZIT = { besser: 'hat geholfen', gleich: 'kein Unterschied', schlechter: 'eher schlechter' };
 

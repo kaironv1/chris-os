@@ -587,6 +587,33 @@ dialog.sheet::backdrop { background: rgba(12, 16, 24, .42); }
 .schip .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); }
 .schip.on { color: var(--ink); background: var(--cognac-wash); box-shadow: inset 0 0 0 1.5px var(--cognac); font-weight: 620; }
 .schip.on .dots i.on { background: var(--cognac); }
+/* Check-in after the fact and times of day (2.16) */
+.hday-nav { display: inline-flex; align-items: center; gap: 2px; }
+.hday-nav .icon-btn { width: 36px; height: 36px; }
+.hday-nav .icon-btn:disabled { opacity: .35; cursor: default; background: transparent; }
+.inline-date { height: 38px; border-radius: 9px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); padding: 0 8px; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 0; max-width: 150px; }
+.inline-date:focus { outline: none; border-color: var(--denim); box-shadow: 0 0 0 3px var(--denim-wash); }
+.hday-note { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 10px; padding: 10px 12px; border-radius: 10px; background: var(--denim-wash); color: var(--ink); font-size: 14px; }
+.hday-note svg { width: 18px; height: 18px; color: var(--denim); flex: none; margin-top: 1px; }
+.hday-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.tzseg { margin-bottom: 2px; }
+.tzseg button { height: 32px; padding: 0 10px; font-size: 13.5px; display: inline-flex; align-items: center; gap: 5px; }
+.tzdot { width: 7px; height: 7px; border-radius: 50%; background: var(--cognac); flex: none; }
+.tzdot.free { background: transparent; box-shadow: inset 0 0 0 1.5px var(--olive); }
+.tz-other { margin-top: 2px; }
+.tzlist { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.tzrow { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: center; width: 100%; min-height: 40px; padding: 6px 10px; border: 0; border-radius: 10px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); text-align: left; font-size: 13.5px; }
+.tzrow:hover { box-shadow: inset 0 0 0 1px var(--ink-2); }
+.tzrow[aria-pressed="true"] { background: var(--denim-wash); box-shadow: inset 0 0 0 1.5px var(--denim); color: var(--ink); }
+.tzl { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.tzl b { font-weight: 640; color: var(--ink); }
+.tzl span { font-size: 11.5px; color: var(--muted); }
+.tzt { min-width: 0; overflow-wrap: anywhere; line-height: 1.3; }
+.tzrow.has .tzt { color: var(--ink); font-weight: 560; }
+.tzrow.free .tzt { color: var(--olive); font-weight: 560; }
+.tz-cap { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: 2px 0 4px; font-size: 13.5px; color: var(--ink-2); }
+.tz-cap b { color: var(--ink); }
+.wdg.tzg { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 320px; }
 .stepper { display: inline-flex; align-items: center; gap: 2px; margin-left: 2px; }
 .stepper .num { min-width: 46px; text-align: center; font-weight: 620; }
 .stepper .icon-btn { width: 34px; height: 34px; }
@@ -666,9 +693,11 @@ dialog.sheet::backdrop { background: rgba(12, 16, 24, .42); }
   .bm-fig svg { width: 118px; }
   .player { padding: 18px 16px 14px; }
   .pl-name { font-size: 28px; }
+  .tzrow { grid-template-columns: 92px 1fr; gap: 8px; }
 }
 @media (max-width: 380px) {
   .tabbar a { font-size: 10px; }
+  .tzseg button { padding: 0 8px; font-size: 13px; }
 }
 .vs-date { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; }
 .vs-date input { width: auto; padding: 0 8px; height: 34px; }

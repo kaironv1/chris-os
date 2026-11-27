@@ -65,7 +65,9 @@
       const logged = col.days.filter(d => H.hasData(D[d])), on = logged.filter(d => D[d].sym && D[d].sym[key]);
       const v = on.reduce((m, d) => Math.max(m, Math.min(3, D[d].sym[key])), 0);
       cells.push(logged.length ? v : null);
-      tips.push(!logged.length ? 'kein Eintrag' : col.days.length === 1 ? (v ? label + ' ' + H.INT[v] : 'ohne ' + label) : (on.length ? label + ' an ' + pl2(on.length, 'Tag', 'Tagen') + ', am stärksten ' + H.INT[v] : 'ohne ' + label + ', ' + pl2(logged.length, 'Tag', 'Tage') + ' erfasst'));
+      // A single day with times of day shows the course (2.16): "Kopfschmerzen mittel (morgens mittel, abends ohne)"
+      const ct = col.days.length === 1 && v ? H.courseText(D[col.days[0]], key) : '';
+      tips.push(!logged.length ? 'kein Eintrag' : col.days.length === 1 ? (v ? label + ' ' + H.INT[v] + (ct ? ' (' + ct + ')' : '') : 'ohne ' + label) : (on.length ? label + ' an ' + pl2(on.length, 'Tag', 'Tagen') + ', am stärksten ' + H.INT[v] : 'ohne ' + label + ', ' + pl2(logged.length, 'Tag', 'Tage') + ' erfasst'));
     });
     return { label, cells, tips };
   }
@@ -305,6 +307,16 @@
     const cmps = [cmp('Schlaf', X.sleep, v => n0(v) + ' h'), cmp('Schlafqualität', X.sleepQ, v => n0(v)), cmp('Befinden', X.mood, v => n0(v)), cmp('Energie', X.energy, v => n0(v)), cmp('Tagestemperatur', X.temp, v => n0(v) + ' °C')].join('');
     const fs = X.factors.slice(0, 4).map(f => `<li><div class="check-body"><div class="row" style="align-items:baseline"><div class="check-name grow">${esc(f.label)}</div>${f.lift >= 1.8 && f.pk >= 4 ? '<span class="tag cognac">auffällig</span>' : ''}</div><div class="check-meta">an ${f.pn} von ${f.pk} Tagen mit ${esc(X.label)}, sonst an ${Math.round(f.b * 100)} % der Tage</div></div></li>`).join('');
     const strong = X.lv[3] ? ', ' + pl2(X.lv[3], 'Tag', 'Tage') + ' stark' : '';
+    // When in the day (2.16): days per time of day, the most frequent one, and how often it eased within the day
+    const TZ4 = H.TZ.filter(z => z.id !== 'ganz'), tzMax = Math.max(1, ...TZ4.map(z => X.tz.n[z.id]));
+    const tzTop = TZ4.slice().sort((a, b) => X.tz.n[b.id] - X.tz.n[a.id])[0];
+    const tzTie = TZ4.filter(z => X.tz.n[z.id] === X.tz.n[tzTop.id]).length > 1;
+    const tzNote = X.tz.days ? 'Mit Tageszeit an ' + pl2(X.tz.days, 'Tag', 'Tagen') + ' eingetragen' + (X.tz.days >= 2 && !tzTie ? ', am häufigsten ' + tzTop.w + ' (' + pl2(X.tz.n[tzTop.id], 'Tag', 'Tage') + ')' : '') + '.'
+      + (X.tz.eased ? ' An ' + pl2(X.tz.eased, 'Tag', 'Tagen') + ' stand später am selben Tag ein Eintrag ohne ' + X.label + '.' : '') : '';
+    const tzBlock = X.tz.days ? `<div class="tr-tz" style="margin-top:14px"><h3 class="mini-h">Wann am Tag</h3>
+        <div class="wdg tzg">${TZ4.map(z => { const n = X.tz.n[z.id], p = Math.round(n / tzMax * 100); return `<div class="wdc" title="${esc(z.l + ' (' + z.h + '): ' + (n ? 'an ' + pl2(n, 'Tag', 'Tagen') : 'nie'))}"><span class="wdv num">${n}</span><div class="wdb"><i style="height:${p}%"></i></div><b>${esc(z.l)}</b></div>`; }).join('')}</div>
+        <p class="small ink2" style="margin-top:6px">${esc(tzNote)}</p></div>`
+      : (X.n ? `<p class="small muted" style="margin-top:12px">Trägst du diese Beschwerde im Check-in je Tageszeit ein, zeigt die App hier, wann am Tag sie auftritt und ob sie im Lauf des Tages nachlässt.</p>` : '');
     return `<div class="panel" style="margin-top:22px"><div class="sec-head"><h2 class="sec-title">Eine Beschwerde genauer</h2><span class="sec-meta">${esc(X.label)}</span></div>
       <div class="schips" role="group" aria-label="Beschwerde wählen" style="margin-bottom:14px">${keys.map(k => `<button class="chip" data-a="tr.sym" data-k="${esc(k)}" aria-pressed="${k === ui.trSym}">${esc(H.symLabel(k))}</button>`).join('')}</div>
       <div class="stats tr-stats small-stats">
@@ -314,7 +326,7 @@
       <div style="margin-top:14px">${matrixChart('trdet', [symRow(X.key, X.label, cols)], cols, { label: X.label + ' im Verlauf', noLabels: true })}</div>
       <div class="two-col tr-det" style="margin-top:10px">
         <div><h3 class="mini-h">Im Vergleich zu Tagen ohne</h3>${cmps ? `<ul class="cmp">${cmps}</ul>` : '<p class="small ink2">Braucht Angaben zu Schlaf oder Befinden an Tagen mit und ohne.</p>'}</div>
-        <div><h3 class="mini-h">Was damit zusammenfällt</h3>${fs ? `<ul class="checklist">${fs}</ul>` : `<p class="small ink2">${X.n >= 3 ? 'Bisher fällt nichts Bestimmtes zusammen.' : 'Braucht mindestens drei Tage mit dieser Beschwerde.'} Die App vergleicht Schlaf, Stress, Kaffee, Alkohol, spätes Essen, Training, Bürotage, Wetter, Pollen und Luft mit den Tagen ohne.</p>`}</div></div></div>`;
+        <div><h3 class="mini-h">Was damit zusammenfällt</h3>${fs ? `<ul class="checklist">${fs}</ul>` : `<p class="small ink2">${X.n >= 3 ? 'Bisher fällt nichts Bestimmtes zusammen.' : 'Braucht mindestens drei Tage mit dieser Beschwerde.'} Die App vergleicht Schlaf, Stress, Kaffee, Alkohol, spätes Essen, Training, Bürotage, Wetter, Pollen und Luft mit den Tagen ohne.</p>`}</div></div>${tzBlock}</div>`;
   }
 
   Object.assign(A, {

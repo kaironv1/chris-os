@@ -3,7 +3,7 @@
   'use strict';
   const E = window.Engine, G = window.Garments, WP = window.WardrobeParser;
   const KEY = 'haltung.v1', WXKEY = 'haltung.wetter';
-  const VERSION = '2.15';
+  const VERSION = '2.16';
   // Web version (PWA): lock.js and pwa.js are embedded only there. window.Lock alone is not enough: Chrome has a native Lock (Web Locks API).
   const WEB = !!(window.Lock && window.Lock.init && window.PWA && window.PWA.init);
   // Two devices (K39, K40): phone and PC both run the web version with separate data; the main device is the
@@ -1129,7 +1129,7 @@
       ${lockPanel()}
       <div class="panel" style="margin-top:22px"><h2 class="sec-title" style="margin-bottom:8px">Über diese App</h2>
         <p class="how-text">${WEB ? 'Die App selbst kommt aus dem Netz und läuft danach auch offline. Deine Daten und Fotos liegen nur auf diesem Gerät, ohne Konto und ohne Cloud; der Server sieht sie nie.' : 'Alles läuft lokal in deinem Browser, ohne Konto und ohne Server. Daten und Fotos liegen im Speicher dieses Browsers; ein anderer Browser oder ein anderes Gerät sieht sie nicht.'} Nur für Wetter, Pollen und Luftqualität fragt die App den freien Dienst Open-Meteo mit den Koordinaten deiner Orte; deine Einträge verlassen das Gerät dabei nicht. Erinnerungen siehst du, sobald die App offen ist. Für Termine, Vorsorge, Medikamente und Pflege speicherst du Kalender-Dateien, dann meldet sich dein Kalender auch ohne die App.</p>
-        <p class="small muted" style="margin-top:8px" data-a="about.tap">Version ${VERSION}, November 2026. Zuletzt neu: Reisen mit Packliste unter Outfit. Du gibst Ziel und Tage ein, die App plant Outfits aus deinem Schrank fürs Wetter dort und macht daraus eine Packliste mit Kulturbeutel und Medikamenten. Davor in 2.10: das Experiment im Wochenrückblick; in 2.9: Selbstexperimente und die Wahl deiner Pollenarten.</p></div>
+        <p class="small muted" style="margin-top:8px" data-a="about.tap">Version ${VERSION}, November 2026. Zuletzt neu: Beschwerden im Tagesverlauf. Im Check-in trägst du sie je Tageszeit ein, etwa morgens Kopfschmerzen und abends nichts mehr, und für jeden früheren Tag nachträglich. Davor: Reisen mit Packliste unter Outfit, das Experiment im Wochenrückblick, Selbstexperimente und die Wahl deiner Pollenarten.</p></div>
     </div>`;
   }
   // Lock and updates: only in the web version, which embeds lock.js and pwa.js
@@ -1153,6 +1153,8 @@
   function render() {
     const r = route();
     const rk = r.top + '/' + r.sub;
+    // A day chosen in the check-in holds within Gesundheit; elsewhere and on coming back it is today again (2.16)
+    if (r.top !== 'gesundheit') ui.hDate = null;
     if (vaultRender(rk)) { lastRoute = rk; return; }
     const scroll = rk === lastRoute ? window.scrollY : 0;
     document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === r.top ? 'page' : 'false'));

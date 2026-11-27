@@ -72,6 +72,71 @@
     const s = symById(key); return s ? s.fach : ['allg'];
   }
 
+  // ---------- Times of day (2.16): complaints as a course over the day ----------
+  // A day keeps its complaints for the whole day (as before) and per time of day in day.tz. day.sym stays the sum over
+  // all entries (the strongest value of each complaint) and day.none means "nothing at all", so everything that counts
+  // days works unchanged. Night is the start of the date (0 to 5 o'clock), like the sleep of "last night".
+  const TZ = [
+    { id: 'ganz', l: 'Ganzer Tag', w: 'ganzer Tag', h: 'ohne Tageszeit' },
+    { id: 'nacht', l: 'Nachts', w: 'nachts', h: '0 bis 5 Uhr', from: 0, to: 5 },
+    { id: 'morgen', l: 'Morgens', w: 'morgens', h: '5 bis 11 Uhr', from: 5, to: 11 },
+    { id: 'tags', l: 'Tagsüber', w: 'tagsüber', h: '11 bis 18 Uhr', from: 11, to: 18 },
+    { id: 'abend', l: 'Abends', w: 'abends', h: 'ab 18 Uhr', from: 18, to: 24 }
+  ];
+  const TZ_IDS = TZ.map(z => z.id);
+  const tzById = id => TZ.find(z => z.id === id) || TZ[0];
+  function tzAt(h) { const z = TZ.find(x => x.from != null && h >= x.from && h < x.to); return z ? z.id : 'abend'; }
+  const onKeys = o => Object.keys(o || {}).filter(k => o[k]);
+  // The entries of a day in order, only those with something in them: [{ k, sym, none, t }]. A day without times of day
+  // (every day before 2.16) is one entry for the whole day.
+  function parts(day) {
+    if (!day) return [];
+    if (!day.tz) return onKeys(day.sym).length || day.none ? [{ k: 'ganz', sym: day.sym || {}, none: !onKeys(day.sym).length && !!day.none }] : [];
+    return TZ_IDS.filter(k => day.tz[k]).map(k => ({ k, sym: day.tz[k].sym || {}, none: !!day.tz[k].none && !onKeys(day.tz[k].sym).length, t: day.tz[k].t || null }))
+      .filter(p => onKeys(p.sym).length || p.none);
+  }
+  const entry = (day, k) => parts(day).find(p => p.k === k) || null;
+  const timed = day => parts(day).filter(p => p.k !== 'ganz');
+  // For editing: the entry of a time of day, created if missing; a plain day first becomes its whole-day entry
+  function tzEntry(x, k) {
+    if (!TZ_IDS.includes(k)) k = 'ganz';
+    if (!x.tz) {
+      x.tz = {};
+      const s = {}; onKeys(x.sym).forEach(q => { s[q] = x.sym[q]; });
+      if (Object.keys(s).length || x.none) x.tz.ganz = { sym: s, none: !Object.keys(s).length && !!x.none };
+    }
+    const e = x.tz[k] || (x.tz[k] = { sym: {}, none: false });
+    e.sym = e.sym || {}; e.t = Date.now();
+    return e;
+  }
+  // Recomputes day.sym and day.none from the entries after a change. Empty entries go; a day left with only the
+  // whole-day entry goes back to the plain form, so days without times of day look exactly as before.
+  function syncDay(x) {
+    if (!x || !x.tz) return x;
+    const agg = {}; let none = false;
+    TZ_IDS.forEach(k => {
+      const e = x.tz[k]; if (!e) return;
+      const s = {}; onKeys(e.sym).forEach(q => { s[q] = Math.min(3, e.sym[q]); });
+      e.sym = s;
+      if (Object.keys(s).length) e.none = false; else e.none = !!e.none;
+      if (!Object.keys(s).length && !e.none) { delete x.tz[k]; return; }
+      if (e.none) none = true;
+      Object.entries(s).forEach(([q, v]) => { agg[q] = Math.max(agg[q] || 0, v); });
+    });
+    x.sym = agg; x.none = !Object.keys(agg).length && none;
+    const ks = TZ_IDS.filter(k => x.tz[k]);
+    if (!ks.length || (ks.length === 1 && ks[0] === 'ganz')) delete x.tz;
+    return x;
+  }
+  // One complaint over the day: [{ k, v }] for every entry with a time of day (v 0: not there at that time); empty if
+  // the complaint has no time of day
+  function course(day, key) { const ps = timed(day); return ps.some(p => p.sym[key]) ? ps.map(p => ({ k: p.k, v: Math.min(3, p.sym[key] || 0) })) : []; }
+  const courseText = (day, key) => course(day, key).map(c => tzById(c.k).w + ' ' + (c.v ? INT[c.v] : 'ohne')).join(', ');
+  // Times of day with this complaint, e.g. "morgens, tagsüber" (empty if only for the whole day)
+  const tzWords = (day, key) => timed(day).filter(p => p.sym[key]).map(p => tzById(p.k).w).join(', ');
+  // An entry in words: "Kopfschmerzen mittel, Halskratzen leicht" or "nichts gespürt"
+  function entryText(p) { const ks = onKeys(p && p.sym); return ks.length ? ks.map(k => symLabel(k) + ' ' + INT[Math.min(3, p.sym[k])]).join(', ') : (p && p.none ? 'nichts gespürt' : ''); }
+
   // ---------- Day helpers ----------
   const dayOf = (S, d) => (S.health.days || {})[d] || null;
   function hasData(day) { return !!day && (day.mood != null || day.energy != null || day.stress != null || day.sleepH != null || day.sleepQ != null || day.breath != null || day.temp != null || Object.keys(day.sym || {}).length > 0 || !!day.none); }
@@ -391,8 +456,16 @@
     }
     const tm = ds => mean(ds.map(d => (envD[d] && envD[d].tm != null ? envD[d].tm : null)));
     const wd = [1, 2, 3, 4, 5, 6, 0].map(w => ({ w, n: on.filter(d => E.weekday(d) === w).length, of: logged.filter(d => E.weekday(d) === w).length }));
+    // Times of day (2.16): when the complaint shows, and on how many days a later entry of the same day is without it
+    const tz = { n: { nacht: 0, morgen: 0, tags: 0, abend: 0 }, days: 0, eased: 0 };
+    on.forEach(d => {
+      const ps = timed(days[d]), w = ps.filter(p => p.sym[key]);
+      if (!w.length) return;
+      tz.days++; w.forEach(p => { tz.n[p.k]++; });
+      if (ps.indexOf(w[w.length - 1]) < ps.length - 1) tz.eased++;
+    });
     return { key, label: symLabel(key), n: on.length, of: logged.length, runs, longest: Math.max(0, ...runs), lv, avgInt: mean(on.map(d => Math.min(3, days[d].sym[key]))), last: on[on.length - 1] || null,
-      sleep: cmp('sleepH'), mood: cmp('mood'), sleepQ: cmp('sleepQ'), energy: cmp('energy'), temp: { with: tm(on), without: tm(off) }, wd, factors: factors.filter(f => f.p >= 0.3 && f.lift >= 1.3).sort((a, b) => b.lift - a.lift) };
+      sleep: cmp('sleepH'), mood: cmp('mood'), sleepQ: cmp('sleepQ'), energy: cmp('energy'), temp: { with: tm(on), without: tm(off) }, wd, tz, factors: factors.filter(f => f.p >= 0.3 && f.lift >= 1.3).sort((a, b) => b.lift - a.lift) };
   }
 
   // ---------- Home workout ----------
@@ -519,6 +592,7 @@
   function inFach(key, fach) { return fach === 'alle' || symFach(key).includes(fach); }
 
   const api = { SYMPTOMS, QUICK, REGIONS, FACTORS, FACH, INT, BREATH, symById, regById, symLabel, symFach, hasData, infScore, infSyms, describe,
+    TZ, tzById, tzAt, parts, entry, timed, tzEntry, syncDay, course, courseText, tzWords, entryText,
     episodes, OUTCOME, measureStats, onsetFactors, warning, LEVEL, breathFactors,
     HOME_SLOTS, HOME_FOCUS, homeCount, homePlan, STRETCHES, STRETCH_FOCUS, stretchPlan, presetFromRoutine, itemSec,
     ics, vorsorgeDue, firstMondayJan, inFach, doseSec, sleepDebt, bedtime, dayF, trend, symDetail, datesFrom };

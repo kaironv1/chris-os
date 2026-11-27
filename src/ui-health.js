@@ -18,6 +18,12 @@
     if (d === E.today() && WX && WX.home && !x.wx) { const w = E.dayWeather(WX.home, d); if (w) x.wx = { tMin: Math.round(w.tMin), tMax: Math.round(w.tMax) }; }
     return x;
   }
+  // One tap on a complaint: leicht, mittel, stark, wieder aus, in the entry of that time of day (2.16)
+  function hcSym(d, tz, k) {
+    const x = hEdit(d), e = H.tzEntry(x, tz || 'ganz'), v = ((e.sym[k] || 0) + 1) % 4;
+    if (v) { e.sym[k] = v; e.none = false; } else delete e.sym[k];
+    H.syncDay(x); save(); render();
+  }
   const docById = id => S.health.doctors.find(x => x.id === id);
   const docName = id => { const x = docById(id); return x ? (x.title + (x.name ? ', ' + x.name : '')) : 'Arzt'; };
   const WARN_CLS = { ruhig: 'ok', achtung: 'warn', schonen: 'stop', arzt: 'stop' };
@@ -39,9 +45,37 @@
       ${v != null ? `<span class="stepper"><button class="icon-btn" data-a="hc.step" data-d="${d}" data-k="sleepH" data-v="-0.5" aria-label="Eine halbe Stunde weniger">${ic('minus')}</button><span class="num" aria-live="polite">${n0(v)} h</span><button class="icon-btn" data-a="hc.step" data-d="${d}" data-k="sleepH" data-v="0.5" aria-label="Eine halbe Stunde mehr">${ic('plus')}</button></span>` : ''}</div>`;
   }
   const breathCtl = (d, v) => seg('Atem', [['0', 'Frisch'], ['1', 'Geht so'], ['2', 'Schlecht']], v == null ? '' : String(v), { a: 'hc.breath', d });
-  function symChip(d, key, v) {
+  // tz: the time of day the chip edits (2.16); every chip carries it, so a tap always lands where it was shown
+  function symChip(d, key, v, tz) {
     v = v || 0;
-    return `<button class="schip${v ? ' on lvl' + v : ''}" data-a="hc.sym" data-d="${d}" data-k="${esc(key)}" aria-label="${esc(H.symLabel(key))}: ${v ? H.INT[v] : 'nein'}"><span>${esc(H.symLabel(key))}</span><span class="dots" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= v ? ' class="on"' : ''}></i>`).join('')}</span></button>`;
+    return `<button class="schip${v ? ' on lvl' + v : ''}" data-a="hc.sym" data-d="${d}" data-tz="${tz || 'ganz'}" data-k="${esc(key)}" aria-label="${esc(H.symLabel(key))}: ${v ? H.INT[v] : 'nein'}"><span>${esc(H.symLabel(key))}</span><span class="dots" aria-hidden="true">${[1, 2, 3].map(i => `<i${i <= v ? ' class="on"' : ''}></i>`).join('')}</span></button>`;
+  }
+
+  // ---------- Times of day (2.16) ----------
+  // Which time of day is being edited: what was tapped (for today only while the clock is still in that time of day),
+  // otherwise today the current one and on earlier days the first entry of the day, or the whole day.
+  function tzSel(d, heute) {
+    const t = E.today(), now = H.tzAt(new Date().getHours()), s = ui.hTz;
+    if (s && s.d === d && (d !== t || s.at === now) && !(heute && s.k === 'ganz')) return s.k;
+    if (d === t) return now;
+    const ps = H.parts(hday(d));
+    return ps.length ? ps[0].k : 'ganz';
+  }
+  const tzEmpty = { sym: {}, none: false };
+  const tzLabel = k => H.tzById(k).l;
+  // Heute: the four times of day as a small switch; a dot marks those with an entry
+  function tzSeg(d, x, k) {
+    return `<div class="seg tzseg" role="group" aria-label="Tageszeit">${H.TZ.filter(z => z.id !== 'ganz').map(z => {
+      const p = H.entry(x, z.id);
+      return `<button data-a="hc.tz" data-d="${d}" data-v="${z.id}" aria-pressed="${z.id === k}"${p ? ` aria-label="${esc(z.l + ': ' + H.entryText(p))}"` : ''}>${esc(z.l)}${p ? `<i class="tzdot${p.none ? ' free' : ''}" aria-hidden="true"></i>` : ''}</button>`;
+    }).join('')}</div>`;
+  }
+  // Gesundheit: the course of the day as a list; a tap on a row edits that time of day
+  function tzList(d, x, k) {
+    return `<div class="tzlist" role="group" aria-label="Tagesverlauf, Tageszeit wählen">${H.TZ.map(z => {
+      const p = H.entry(x, z.id), txt = p ? H.entryText(p) : '';
+      return `<button class="tzrow${p && !p.none ? ' has' : ''}${p && p.none ? ' free' : ''}" data-a="hc.tz" data-d="${d}" data-v="${z.id}" aria-pressed="${z.id === k}" aria-label="${esc(z.l + ', ' + z.h + ': ' + (txt || 'nichts eingetragen'))}"><span class="tzl"><b>${esc(z.l)}</b><span>${esc(z.h)}</span></span><span class="tzt">${txt ? esc(txt) : '<span class="muted">–</span>'}</span></button>`;
+    }).join('')}</div>`;
   }
   function toggleChip(action, d, key, on, label) { return `<button class="chip" data-a="${action}" data-d="${d}" data-k="${esc(key)}" aria-pressed="${!!on}">${esc(label)}</button>`; }
 
@@ -64,16 +98,19 @@
       wade_l: '<rect x="46" y="158" width="12" height="44" rx="6"/>', wade_r: '<rect x="62" y="158" width="12" height="44" rx="6"/>',
       ferse_l: '<ellipse cx="52" cy="211" rx="7" ry="5"/>', ferse_r: '<ellipse cx="68" cy="211" rx="7" ry="5"/>' } }
   };
-  function bodyMap(d, x) {
+  // x: the entry of the chosen time of day (2.16), tz its id
+  function bodyMap(d, x, tz) {
+    tz = tz || 'ganz';
     const fig = side => {
       const parts = Object.entries(BM[side].parts).map(([id, shape]) => {
         const r = H.regById(id), v = (x.sym || {})['bm:' + id] || 0;
-        return `<g class="bm-r lv${v}" data-a="hc.bm" data-d="${d}" data-k="${id}" role="button" tabindex="0" aria-label="${esc(r.l)}: ${v ? H.INT[v] : 'keine Beschwerden'}"><title>${esc(r.l)}${v ? ', ' + H.INT[v] : ''}</title>${shape}</g>`;
+        return `<g class="bm-r lv${v}" data-a="hc.bm" data-d="${d}" data-tz="${tz}" data-k="${id}" role="button" tabindex="0" aria-label="${esc(r.l)}: ${v ? H.INT[v] : 'keine Beschwerden'}"><title>${esc(r.l)}${v ? ', ' + H.INT[v] : ''}</title>${shape}</g>`;
       }).join('');
       return `<figure class="bm-fig"><svg viewBox="0 0 120 222" role="group" aria-label="Körper ${side === 'v' ? 'vorne' : 'hinten'}"><g class="bm-base">${BM[side].base}</g>${parts}</svg><figcaption>${side === 'v' ? 'Vorne' : 'Hinten'}</figcaption></figure>`;
     };
     const sel = Object.entries(x.sym || {}).filter(([k, v]) => k.startsWith('bm:') && v).map(([k, v]) => H.symLabel(k).replace('Schmerz ', '') + ' (' + H.INT[v] + ')');
-    return `<div class="bm">${fig('v')}${fig('h')}</div><p class="small muted" style="margin-top:6px">${sel.length ? 'Schmerzen: ' + esc(sel.join(', ')) : 'Tippe auf eine Stelle: leicht, mittel, stark, wieder aus.'}</p>`;
+    const when = tz === 'ganz' ? '' : ' ' + H.tzById(tz).w;
+    return `<div class="bm">${fig('v')}${fig('h')}</div><p class="small muted" style="margin-top:6px">${sel.length ? 'Schmerzen' + esc(when) + ': ' + esc(sel.join(', ')) : 'Tippe auf eine Stelle: leicht, mittel, stark, wieder aus.'}</p>`;
   }
 
   // ---------- Heute: compact check-in ----------
@@ -96,12 +133,18 @@
       if (savedToday(d, x, yx)) return 'Gestern eingetragen, heute noch offen';
       return early ? 'Schlaf und Anzeichen, dauert 10 Sekunden' : 'Noch nicht eingetragen, dauert 10 Sekunden';
     }
-    const sym = Object.keys(x.sym || {}).filter(k => x.sym[k] && !k.startsWith('bm:')).map(k => H.symLabel(k) + ' ' + H.INT[x.sym[k]]);
-    const bm = Object.keys(x.sym || {}).filter(k => x.sym[k] && k.startsWith('bm:')).length;
     const parts = [];
     if (x.sleepH != null) parts.push('Schlaf ' + n0(x.sleepH) + ' h');
-    if (sym.length) parts.push(sym.join(', ')); else if (x.none && !bm) parts.push('nichts gespürt');
-    if (bm) parts.push(bm === 1 ? '1 Schmerzstelle' : bm + ' Schmerzstellen');
+    // Complaints of one entry: names with strength, pain spots as a count
+    const symSum = s => {
+      const sym = Object.keys(s || {}).filter(k => s[k] && !k.startsWith('bm:')).map(k => H.symLabel(k) + ' ' + H.INT[s[k]]);
+      const bm = Object.keys(s || {}).filter(k => s[k] && k.startsWith('bm:')).length;
+      return sym.concat(bm ? [bm === 1 ? '1 Schmerzstelle' : bm + ' Schmerzstellen'] : []);
+    };
+    const ps = H.parts(x);
+    // With times of day (2.16) the course in order: "morgens Kopfschmerzen mittel, abends nichts gespürt"
+    if (ps.some(p => p.k !== 'ganz')) ps.forEach(p => { const s = symSum(p.sym); parts.push((p.k === 'ganz' ? '' : H.tzById(p.k).w + ' ') + (s.length ? s.join(', ') : 'nichts gespürt')); });
+    else { const s = symSum(x.sym); if (s.length) parts.push(s.join(', ')); else if (x.none) parts.push('nichts gespürt'); }
     if (x.breath != null) parts.push('Atem ' + BREATH[x.breath]);
     if (x.mood != null) parts.push('Befinden ' + x.mood + ' von 5');
     return esc(parts.join(', '));
@@ -117,16 +160,20 @@
       : `<div class="hrow"><span class="hlbl">Befinden heute</span>${scaleCtl(d, 'mood', x.mood, 'schlecht', 'sehr gut')}</div>`;
     const meta = ts ? savedBadge(ts) : `<span class="fold-badge due">offen</span>`;
     const xs = expSum();
+    // Complaints per time of day (2.16): the chips show and edit the chosen one, the others stand below
+    const tz = tzSel(d, true), e = H.entry(x, tz) || tzEmpty;
+    const others = H.parts(x).filter(p => p.k !== tz);
     return fold('checkin', 'Wie geht’s dir?', checkinSum(d, x, yx, early) + (xs ? esc(', ' + xs) : ''), meta, () => `
       <div class="hrow stack"><span class="hlbl">Schlaf letzte Nacht</span>${sleepCtl(d, x.sleepH)}</div>
-      <div class="hrow stack"><span class="hlbl">Spürst du was?</span><div class="schips">${H.QUICK.map(k => symChip(d, k, x.sym[k])).join('')}<button class="chip" data-a="hc.none" data-d="${d}" aria-pressed="${!!x.none}">Nichts</button></div></div>
+      <div class="hrow stack"><span class="hlbl">Spürst du was?</span>${tzSeg(d, x, tz)}<div class="schips">${H.QUICK.map(k => symChip(d, k, e.sym[k], tz)).join('')}<button class="chip" data-a="hc.none" data-d="${d}" data-tz="${tz}" aria-pressed="${!!e.none}">Nichts</button></div>
+        ${others.length ? `<p class="small ink2 tz-other">Heute schon: ${esc(others.map(p => tzLabel(p.k) + ': ' + H.entryText(p)).join('. '))}.</p>` : ''}</div>
       <div class="hrow"><span class="hlbl">Atem</span><div>${breathCtl(d, x.breath)}${hungerChip(d, x)}</div></div>
       ${moodRow}
       ${expRow()}
       ${early ? '<p class="small muted" style="margin-top:6px">Wie der Tag insgesamt war, trägst du ab Mittag oder abends ein.</p>' : ''}
       ${w.level !== 'ruhig' ? `<div class="warn-mini wp-${WARN_CLS[w.level]}">${ic('alert')}<div><b>${esc(H.LEVEL[w.level])}:</b> ${esc(warnReasons(w).slice(0, 2).join(', '))}. <a href="#/gesundheit/muster">Was jetzt hilft</a></div></div>` : preventNote(w)}
       <p class="autosave">${ic('check')}Jede Angabe speichert sich sofort, ohne Knopf.</p>
-      <a class="link-btn small" href="#/gesundheit" style="display:inline-block;margin-top:6px">Mehr eintragen: Stress, Maßnahmen, Körperkarte, Notiz</a>`);
+      <a class="link-btn small" href="#/gesundheit" style="display:inline-block;margin-top:6px">Mehr eintragen oder für frühere Tage nachtragen</a>`);
   }
 
   // ---------- Heute: reminders (care, check-ups, appointments, meds) ----------
@@ -182,13 +229,22 @@
     return `<div class="page">${head}${tabs}${body}<p class="small muted" style="margin-top:28px">Die Hinweise ersetzen keine ärztliche Beratung. Bei Atemnot, Brustschmerz oder sehr hohem Fieber: Praxis oder ärztlicher Bereitschaftsdienst 116 117, im Notfall 112.</p></div>`;
   }
 
+  // Earliest day for entries after the fact; anything before is most likely a typo in the year
+  const H_MIN = '2000-01-01';
   function viewCheckin() {
     const t = E.today();
-    const d = ui.hDate || t;
+    const d = ui.hDate && ui.hDate <= t && ui.hDate >= H_MIN ? ui.hDate : t;
     const x = hday(d) || { sym: {}, meas: [], f: {} };
     const groups = [...new Set(H.SYMPTOMS.map(s => s.g))];
     const custom = Object.keys(x.sym || {}).filter(k => k.startsWith('c:'));
-    const daySel = `<div class="row wrap" style="gap:10px;margin-bottom:16px">${seg('Tag', [[E.addDays(t, -2), E.WD_LONG[E.weekday(E.addDays(t, -2))]], [E.addDays(t, -1), 'Gestern'], [t, 'Heute']], d, { a: 'hc.date' })}<span class="small muted grow">${x.t ? savedBadge(x.t) + ' ' : ''}Jede Angabe speichert sich sofort, ohne Knopf.</span><button class="btn sm ghost" data-a="ics.checkin">${ic('cal')}Tägliche Erinnerung</button></div>`;
+    // Complaints per time of day (2.16): the list shows the course, the chips and the body map edit the chosen entry
+    const tz = tzSel(d), e = H.entry(x, tz) || tzEmpty;
+    const yr = d.slice(0, 4) !== t.slice(0, 4) ? ' ' + d.slice(0, 4) : '';
+    // Any earlier day (2.16): the three last days at a tap, every other one with the arrows or the calendar
+    const daySel = `<div class="row wrap hday" style="gap:8px 10px;margin-bottom:10px">${seg('Tag', [[E.addDays(t, -2), E.WD_LONG[E.weekday(E.addDays(t, -2))]], [E.addDays(t, -1), 'Gestern'], [t, 'Heute']], d, { a: 'hc.date' })}
+        <span class="hday-nav"><button class="icon-btn" data-a="hc.day" data-v="-1" aria-label="Einen Tag früher">${ic('back')}</button><input type="date" class="inline-date" value="${d}" min="${H_MIN}" max="${t}" data-c="hc.dateIn" aria-label="Tag wählen"><button class="icon-btn" data-a="hc.day" data-v="1" aria-label="Einen Tag später"${d >= t ? ' disabled' : ''}>${ic('chev')}</button></span></div>
+      ${d !== t ? `<div class="hday-note">${ic('cal')}<div class="hday-txt"><span>Du trägst nach für <b>${esc(E.fmtLong(d) + yr)}</b>.</span><button class="link-btn small" data-a="hc.day" data-v="0">Zurück zu heute</button></div></div>` : ''}
+      <div class="row wrap" style="gap:10px;margin-bottom:16px"><span class="small muted grow">${x.t ? savedBadge(x.t) + ' ' : ''}Jede Angabe speichert sich sofort, ohne Knopf.</span><button class="btn sm ghost" data-a="ics.checkin">${ic('cal')}Tägliche Erinnerung</button></div>`;
     const left = `<div class="panel"><h2 class="sec-title" style="margin-bottom:10px">Allgemein</h2>
         <div class="hrow"><span class="hlbl">Befinden</span>${scaleCtl(d, 'mood', x.mood, 'schlecht', 'sehr gut')}</div>
         <div class="hrow"><span class="hlbl">Energie</span>${scaleCtl(d, 'energy', x.energy, 'leer', 'voll da')}</div>
@@ -196,17 +252,19 @@
         <div class="hrow"><span class="hlbl">Schlaf</span>${sleepCtl(d, x.sleepH)}</div>
         <div class="hrow"><span class="hlbl">Schlafqualität</span>${scaleCtl(d, 'sleepQ', x.sleepQ, 'unruhig', 'erholsam')}</div>
         <div class="hrow"><span class="hlbl">Atem</span><div>${breathCtl(d, x.breath)}${hungerChip(d, x)}</div></div>
-        <div class="hrow"><span class="hlbl">Temperatur</span><span class="row" style="gap:8px"><input type="text" inputmode="decimal" class="inline-num" value="${x.temp == null ? '' : n0(x.temp)}" placeholder="°C" data-c="hc.temp" data-d="${d}" aria-label="Körpertemperatur in Grad Celsius"><span class="small muted">nur wenn gemessen</span></span></div>
+        <div class="hrow"><span class="hlbl">Temperatur</span><span class="row" style="gap:8px"><input type="text" inputmode="decimal" class="inline-num" value="${x.temp == null ? '' : n0(x.temp)}" placeholder="°C" data-c="hc.temp" data-d="${d}" data-tz="${tz}" aria-label="Körpertemperatur in Grad Celsius"><span class="small muted">nur wenn gemessen</span></span></div>
         ${expDayRow(d)}
       </div>
-      <div class="panel" style="margin-top:16px"><div class="sec-head"><h2 class="sec-title">Beschwerden</h2><button class="chip" data-a="hc.none" data-d="${d}" aria-pressed="${!!x.none}">Keine Beschwerden</button></div>
-        <p class="small muted" style="margin:-4px 0 10px">Tippen: leicht, mittel, stark, wieder aus.</p>
-        ${groups.map(g => `<h3 class="mini-h">${g === 'Warnzeichen' ? 'Warnzeichen, bitte ärztlich abklären' : g}</h3><div class="schips">${H.SYMPTOMS.filter(s => s.g === g).map(s => symChip(d, s.id, x.sym[s.id])).join('')}${g === 'Körper' ? custom.map(k => symChip(d, k, x.sym[k])).join('') + `<button class="chip" data-a="hc.custom" data-d="${d}">${ic('plus')}Eigene</button>` : ''}</div>`).join('')}
+      <div class="panel" style="margin-top:16px"><div class="sec-head"><h2 class="sec-title">Beschwerden</h2><span class="sec-meta">Tagesverlauf</span></div>
+        <p class="small muted" style="margin:-4px 0 10px">Für den ganzen Tag oder je Tageszeit, auch nachträglich. So hältst du fest, wie es sich über den Tag entwickelt, etwa morgens Kopfschmerzen und abends nichts mehr.</p>
+        ${tzList(d, x, tz)}
+        <div class="tz-cap"><span class="grow"><b>${esc(tzLabel(tz))}</b>${tz === 'ganz' ? ', ohne Tageszeit' : ''}: tippen für leicht, mittel, stark, wieder aus.</span><button class="chip" data-a="hc.none" data-d="${d}" data-tz="${tz}" aria-pressed="${!!e.none}">Keine Beschwerden</button></div>
+        ${groups.map(g => `<h3 class="mini-h">${g === 'Warnzeichen' ? 'Warnzeichen, bitte ärztlich abklären' : g}</h3><div class="schips">${H.SYMPTOMS.filter(s => s.g === g).map(s => symChip(d, s.id, e.sym[s.id], tz)).join('')}${g === 'Körper' ? custom.map(k => symChip(d, k, e.sym[k], tz)).join('') + `<button class="chip" data-a="hc.custom" data-d="${d}" data-tz="${tz}">${ic('plus')}Eigene</button>` : ''}</div>`).join('')}
       </div>`;
     const measures = S.health.measures.map(m => toggleChip('hc.meas', d, m.id, (x.meas || []).includes(m.id), m.l)).join('');
     const kaffee = [0, 1, 2, 3, 4, 5].map(n => `<button class="chip" data-a="hc.fnum" data-d="${d}" data-k="kaffee" data-v="${n}" aria-pressed="${(x.f || {}).kaffee === n}">${n === 5 ? '5+' : n}</button>`).join('');
     const wasser = [1, 1.5, 2, 2.5, 3].map(n => `<button class="chip" data-a="hc.fnum" data-d="${d}" data-k="wasser" data-v="${n}" aria-pressed="${(x.f || {}).wasser === n}">${n0(n)}${n === 3 ? '+' : ''} l</button>`).join('');
-    const right = `<div class="panel"><h2 class="sec-title" style="margin-bottom:6px">Körperkarte</h2><p class="small muted" style="margin-bottom:10px">Wo tut es weh oder ist verspannt?</p>${bodyMap(d, x)}</div>
+    const right = `<div class="panel"><h2 class="sec-title" style="margin-bottom:6px">Körperkarte</h2><p class="small muted" style="margin-bottom:10px">Wo tut es weh oder ist verspannt? Gilt für: ${esc(tzLabel(tz))}, wie bei den Beschwerden.</p>${bodyMap(d, e, tz)}</div>
       <div class="panel" style="margin-top:16px"><div class="sec-head"><h2 class="sec-title">Maßnahmen</h2><span class="sec-meta">was du heute dagegen tust</span></div><div class="schips">${measures}<button class="chip" data-a="hc.measadd">${ic('plus')}Eigene</button></div></div>
       <div class="panel" style="margin-top:16px"><div class="sec-head"><h2 class="sec-title">Einflüsse</h2><span class="sec-meta">für Muster und Mundgeruch</span></div>
         <div class="hrow"><span class="hlbl">Kaffee</span><div class="schips">${kaffee}</div></div>
@@ -430,7 +488,8 @@
       else if (fach === 'neuro') { if (x.sleepH != null) extra.push('Schlaf ' + n0(x.sleepH) + ' h'); if (x.sleepQ != null) extra.push('Schlafqualität ' + x.sleepQ + '/5'); }
       const meas = (all || ['allg', 'hno'].includes(fach)) ? (x.meas || []).map(id => (S.health.measures.find(m => m.id === id) || { l: id }).l) : [];
       if (!syms.length && !(gen && (x.note || (x.temp != null && x.temp >= 37.5)))) continue;
-      rows.push({ d, syms: syms.map(([k, v]) => H.symLabel(k) + ' (' + H.INT[v] + ')'), extra, meas, note: gen ? (x.note || '') : '' });
+      // With times of day (2.16): "Kopfschmerzen (mittel; morgens, tagsüber)"
+      rows.push({ d, syms: syms.map(([k, v]) => { const w = H.tzWords(x, k); return H.symLabel(k) + ' (' + H.INT[v] + (w ? '; ' + w : '') + ')'; }), extra, meas, note: gen ? (x.note || '') : '' });
     }
     const top = Object.values(counts).sort((a, b) => b.n - a.n);
     const eps = (all || ['allg', 'hno'].includes(fach)) ? H.episodes(S, t).filter(e => e.end >= from) : [];
@@ -491,7 +550,7 @@
       const x = S.health.days[d]; if (!H.hasData(x)) continue;
       const f = x.f || {};
       lines.push([d, x.mood, x.energy, x.stress, x.sleepH != null ? n0(x.sleepH) : '', x.sleepQ, x.breath != null ? ['frisch', 'geht so', 'schlecht'][x.breath] : '', x.temp != null ? n0(x.temp) : '',
-        Object.entries(x.sym || {}).filter(([, v]) => v).map(([k, v]) => H.symLabel(k) + ' ' + H.INT[v]).join(', '),
+        Object.entries(x.sym || {}).filter(([, v]) => v).map(([k, v]) => { const w = H.tzWords(x, k); return H.symLabel(k) + ' ' + H.INT[v] + (w ? ' (' + w + ')' : ''); }).join(', '),
         (x.meas || []).map(id => (S.health.measures.find(m => m.id === id) || { l: id }).l).join(', '),
         [f.kaffee != null ? 'Kaffee ' + f.kaffee : '', f.wasser != null ? 'Getrunken ' + n0(f.wasser) + ' l' : '', ...H.FACTORS.filter(k => f[k.id]).map(k => k.l)].filter(Boolean).join(', '),
         x.note || ''].map(q).join(';'));
@@ -703,23 +762,28 @@
   // ---------- Actions ----------
   const HA = {
     'hc.date': el => { ui.hDate = el.dataset.v; render(); },
+    // Day by day with the arrows, 0: back to today (2.16)
+    'hc.day': el => { const t = E.today(), v = +el.dataset.v, cur = ui.hDate && ui.hDate <= t && ui.hDate >= H_MIN ? ui.hDate : t; const d = v ? E.addDays(cur, v) : t; ui.hDate = d > t ? t : d < H_MIN ? H_MIN : d; render(); },
+    // Time of day for the complaints (2.16); today it holds while the clock stays in that time of day
+    'hc.tz': el => { ui.hTz = { d: el.dataset.d, k: el.dataset.v, at: H.tzAt(new Date().getHours()) }; render(); },
     'hc.set': el => { const x = hEdit(el.dataset.d), k = el.dataset.k, v = +el.dataset.v; x[k] = x[k] === v ? null : v; save(); render(); },
     'hc.step': el => { const x = hEdit(el.dataset.d), k = el.dataset.k; x[k] = Math.max(0, Math.min(14, (x[k] == null ? 7 : x[k]) + (+el.dataset.v))); save(); render(); },
     'hc.breath': el => { const x = hEdit(el.dataset.d), v = +el.dataset.v; x.breath = x.breath === v ? null : v; save(); render(); },
-    'hc.sym': el => { const x = hEdit(el.dataset.d), k = el.dataset.k; const v = ((x.sym[k] || 0) + 1) % 4; if (v) { x.sym[k] = v; x.none = false; } else delete x.sym[k]; save(); render(); },
-    'hc.bm': el => { const x = hEdit(el.dataset.d), k = 'bm:' + el.dataset.k; const v = ((x.sym[k] || 0) + 1) % 4; if (v) { x.sym[k] = v; x.none = false; } else delete x.sym[k]; save(); render(); },
+    // Complaints land in the entry of the time of day on the chip (2.16); day.sym is recomputed from all entries
+    'hc.sym': el => { hcSym(el.dataset.d, el.dataset.tz, el.dataset.k); },
+    'hc.bm': el => { hcSym(el.dataset.d, el.dataset.tz, 'bm:' + el.dataset.k); },
     'hc.none': el => {
-      const x = hEdit(el.dataset.d);
-      if (x.none) { x.none = false; save(); render(); return; }
-      const prev = Object.assign({}, x.sym);
-      x.sym = {}; x.none = true; save(); render();
-      if (Object.keys(prev).length) toast('Beschwerden entfernt', () => { const y = hEdit(el.dataset.d); y.sym = prev; y.none = false; });
+      const d = el.dataset.d, tz = el.dataset.tz || 'ganz', x = hEdit(d), e = H.tzEntry(x, tz);
+      if (e.none) { e.none = false; H.syncDay(x); save(); render(); return; }
+      const prev = Object.assign({}, e.sym);
+      e.sym = {}; e.none = true; H.syncDay(x); save(); render();
+      if (Object.keys(prev).length) toast('Beschwerden entfernt', () => { const y = hEdit(d), f = H.tzEntry(y, tz); f.sym = prev; f.none = false; H.syncDay(y); });
     },
     'hc.meas': el => { const x = hEdit(el.dataset.d), k = el.dataset.k; x.meas = x.meas.includes(k) ? x.meas.filter(m => m !== k) : x.meas.concat([k]); save(); render(); },
     'hc.f': el => { const x = hEdit(el.dataset.d), k = el.dataset.k; if (x.f[k]) delete x.f[k]; else x.f[k] = true; save(); render(); },
     'hc.fnum': el => { const x = hEdit(el.dataset.d), k = el.dataset.k, v = +el.dataset.v; if (x.f[k] === v) delete x.f[k]; else x.f[k] = v; save(); render(); },
-    'hc.custom': el => { ui.customDay = el.dataset.d; openDialog(`${dlgHead('Eigene Beschwerde')}<label class="field"><span>Bezeichnung</span><input id="cust-in" autofocus placeholder="z. B. Ohrendruck"></label><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="hc.customSave">Hinzufügen</button></div>`); },
-    'hc.customSave': () => { const v = ($('#cust-in').value || '').trim(); if (!v) return; const x = hEdit(ui.customDay); x.sym['c:' + v] = 1; x.none = false; save(); closeDialog(); render(); },
+    'hc.custom': el => { ui.customDay = el.dataset.d; ui.customTz = el.dataset.tz || 'ganz'; openDialog(`${dlgHead('Eigene Beschwerde')}<label class="field"><span>Bezeichnung</span><input id="cust-in" autofocus placeholder="z. B. Ohrendruck"></label><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="hc.customSave">Hinzufügen</button></div>`); },
+    'hc.customSave': () => { const v = ($('#cust-in').value || '').trim(); if (!v) return; const x = hEdit(ui.customDay), e = H.tzEntry(x, ui.customTz || 'ganz'); e.sym['c:' + v] = 1; e.none = false; H.syncDay(x); save(); closeDialog(); render(); },
     'hc.measadd': () => openDialog(`${dlgHead('Eigene Maßnahme')}<label class="field"><span>Bezeichnung</span><input id="meas-in" autofocus placeholder="z. B. Ingwertee, Zink, Inhalieren"></label><div class="sheet-foot"><button class="btn quiet" data-a="dlg.close">Abbrechen</button><button class="btn" data-a="hc.measSave">Hinzufügen</button></div>`),
     'hc.measSave': () => { const v = ($('#meas-in').value || '').trim(); if (!v) return; S.health.measures.push({ id: uid('m'), l: v }); save(); closeDialog(); render(); },
     'obs.new': () => obsDialog(),
@@ -873,9 +937,12 @@
       const x = hEdit(el.dataset.d); const v = el.value.trim().replace(',', '.');
       if (v !== '' && (isNaN(+v) || +v < 34 || +v > 43)) { toast('Bitte die Temperatur in Grad eintragen, z. B. 37,2.'); return; }
       x.temp = v === '' ? null : Math.round(+v * 10) / 10;
-      if (x.temp != null && x.temp >= 38) { x.sym.fieber = Math.max(x.sym.fieber || 0, x.temp >= 39 ? 3 : 2); x.none = false; }
+      // Fever goes into the time of day chosen for the complaints (2.16)
+      if (x.temp != null && x.temp >= 38) { const e = H.tzEntry(x, el.dataset.tz || 'ganz'); e.sym.fieber = Math.max(e.sym.fieber || 0, x.temp >= 39 ? 3 : 2); e.none = false; H.syncDay(x); }
       save(); render();
     },
+    // Any earlier day from the calendar (2.16); a future day becomes today
+    'hc.dateIn': el => { const v = el.value, t = E.today(); if (!/^\d{4}-\d{2}-\d{2}$/.test(v) || v < H_MIN) return; ui.hDate = v > t ? t : v; render(); },
     'hc.note': el => { const x = hEdit(el.dataset.d); x.note = el.value; clearTimeout(ui.noteT); save(); },
     'ep.out': el => { S.health.epOut = S.health.epOut || {}; S.health.epOut[el.dataset.k] = el.value; save(); render(); },
     'vs.last': el => { const v = S.health.vorsorge.find(x => x.id === el.dataset.id); v.last = el.value || null; save(); render(); },
